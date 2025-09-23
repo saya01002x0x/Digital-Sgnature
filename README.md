@@ -19,7 +19,7 @@ Ví dụ: TBL_ADMIN (danh sách bảng admin)
 4. Request + Repo trả về API dạng Json
 
 5. Tạo nhánh của mình trên nhánh được giao có dạng: feature/back-end-vannc
-- Khi push code lên phải có dạng <fix/modify/update>[vannc]: nội dung
+- Khi push code lên phải có dạng <fix/modify/update/remove>[vannc]: nội dung
 - Ví dụ: </.fix/.>[vannc]: sửa code login
 
 6. Chỉ được push lên nhánh của mình và tạo Pull request cho leader duyệt
