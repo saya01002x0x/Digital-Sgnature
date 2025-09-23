@@ -41,3 +41,5 @@ Ví dụ: TBL_ADMIN (danh sách bảng admin)
 11. Đối với BE không được phép sửa file pom, nếu có thêm thì phải hỏi ý kiến của leader
 
 12. BE và FE làm việc trong groupId sis.hust.edu.vn.digital_signature, không tạo thư mục hay package bừa bãi
+
+13. Vì có những người đang đi làm có thể bị trùng nên BE sẽ có port là 5555, FE sẽ có port là 5556
