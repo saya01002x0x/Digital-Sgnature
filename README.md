@@ -21,6 +21,7 @@ Ví dụ: TBL_ADMIN (danh sách bảng admin)
 5. Tạo nhánh của mình trên nhánh được giao có dạng: feature/back-end-vannc
 - Khi push code lên phải có dạng <fix/modify/update/remove>[vannc]: nội dung
 - Ví dụ: </.fix/.>[vannc]: sửa code login
+- Phải pull code từ main về nếu leader bảo hoặc mỗi lần trước khi làm hay sau khi làm phải pull code mới nếu có
 
 6. Chỉ được push lên nhánh của mình và tạo Pull request cho leader duyệt
 
@@ -37,4 +38,6 @@ Ví dụ: TBL_ADMIN (danh sách bảng admin)
 
 10. Link tài liệu: https://www.youtube.com/playlist?list=PLgYFT7gUQL8GUoIDh1p8FDXCmImzVVbRi
 
-11. Đối với BE không được phép sửa file pom, nếu có thêm thì phải hỏi ý kiến của leader 
+11. Đối với BE không được phép sửa file pom, nếu có thêm thì phải hỏi ý kiến của leader
+
+12. BE và FE làm việc trong groupId sis.hust.edu.vn.digital_signature, không tạo thư mục hay package bừa bãi
