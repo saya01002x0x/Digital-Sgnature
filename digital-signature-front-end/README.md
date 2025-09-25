@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+1. Bổ sung thông tin thêm chỉ dành cho nhóm fe
+- Các nhánh riêng của mn trong fe thì merge vào nhánh: feature/front-end check trước khi pull request vào main nhé
+- Và nhớ tạo nhánh riêng của mình trước trước khi sửa code chứ không trực tiếp sửa code trong nhánh feature/front-end
+- Có gì không hiểu hỏi GPT
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
 
-In the project directory, you can run:
+# React Boilerplate với Vite, TypeScript và Redux Toolkit
 
-### `npm start`
+Dự án boilerplate React + Vite + TypeScript + Redux Toolkit (RTK + RTK Query) theo kiến trúc feature-first.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🔧 Cấu trúc dự án
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Feature-first: mỗi tính năng gom vào 1 thư mục: slice, api (RTK Query injectEndpoints), pages, components, types.
+- Base API RTK Query: 1 baseApi.ts, mỗi feature injectEndpoints (code-splitting).
+- Typed hooks: useAppDispatch, useAppSelector, kèm RootState, AppDispatch.
+- Routing: lazy routes theo feature + guarded routes (auth/role).
+- Shared UI: component/bộ phận dùng chung ở shared/.
+- Strict typing: mỗi feature bắt buộc có types.ts.
 
-### `npm test`
+## 📦 Công nghệ
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Core**: React, React DOM, React Router DOM
+- **State**: Redux Toolkit, React Redux
+- **RTK Query**: Tích hợp trong @reduxjs/toolkit
+- **UI**: Ant Design, @ant-design/icons, classnames
+- **Forms**: React Hook Form, Zod, @hookform/resolvers
+- **i18n**: i18next, react-i18next, i18next-http-backend, i18next-browser-languagedetector
+- **Utils**: dayjs, uuid
+- **Error boundary**: react-error-boundary
+- **Testing**: Vitest, Testing Library, MSW
+- **Lint/format**: ESLint, Prettier, husky, lint-staged, commitlint
 
-### `npm run build`
+## 🚀 Bắt đầu
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone dự án
+2. Cài đặt dependencies:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. Khởi động server dev:
 
-### `npm run eject`
+```bash
+npm run dev
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. Build cho production:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm run build
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🌐 i18n
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Hỗ trợ đa ngôn ngữ (Tiếng Anh và Tiếng Việt)
+- Resource ở public/locales/{en|vi}/translation.json
+- Sử dụng hook useTranslation() để dịch văn bản
 
-## Learn More
+## 🎨 Theme
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Hỗ trợ giao diện sáng/tối với Ant Design
+- ConfigProvider với theme.defaultAlgorithm và theme.darkAlgorithm
+- Nút chuyển đổi theme
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🧪 Testing
 
-### Code Splitting
+- Vitest + React Testing Library + jsdom cấu hình sẵn
+- MSW (Mock Service Worker) để mock API trong development và testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📝 Git Hooks
 
-### Analyzing the Bundle Size
+- Husky + lint-staged: kiểm tra và định dạng code trước khi commit
+- Commitlint: đảm bảo commit message theo chuẩn conventional commits
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📋 Tính năng
 
-### Making a Progressive Web App
+- Authentication demo với login form
+- Protected Routes và Role-based access control
+- Theme toggle (sáng/tối)
+- Language switcher (EN/VI)
+- Form validation với react-hook-form + zod
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
