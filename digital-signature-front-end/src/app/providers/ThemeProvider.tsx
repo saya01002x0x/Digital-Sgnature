@@ -48,6 +48,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       colorPrimary: '#1890ff', // Brand color
       borderRadius: 4,
     },
+    components: {
+      Layout: {
+        headerBg: themeMode === 'dark' ? '#141414' : '#ffffff',
+        headerColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)',
+        headerHeight: 64,
+        headerPadding: '0 24px',
+      },
+    },
   };
 
   return (

@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import { Provider } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { StyleProvider } from '@ant-design/cssinjs';
-import { ConfigProvider } from 'antd';
 import { store } from '../store';
 import { ThemeProvider } from './ThemeProvider';
 import { routes } from '../routes';
@@ -34,12 +33,11 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Provider store={store}>
         <StyleProvider layer>
-          <ConfigProvider>
+          {/* <ConfigProvider> */}
             <ThemeProvider>
               <RouterProvider router={router} />
               {children}
             </ThemeProvider>
-          </ConfigProvider>
         </StyleProvider>
       </Provider>
     </ErrorBoundary>
