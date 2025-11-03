@@ -26,7 +26,8 @@
     "noAccount": "Chưa có tài khoản?",
     "alreadyHaveAccount": "Đã có tài khoản?",
     "signUp": "Đăng ký",
-    "signIn": "Đăng nhập"
+    "signIn": "Đăng nhập",
+    "welcomeBack": "Chào mừng bạn đến với hệ thống."
   },
   "validation": {
     "required": "Trường này là bắt buộc",

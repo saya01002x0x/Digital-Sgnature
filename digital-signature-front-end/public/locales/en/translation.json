@@ -26,7 +26,8 @@
     "noAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
     "signUp": "Sign up",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "welcomeBack": "Welcome back, we are lucky to have you."
   },
   "validation": {
     "required": "This field is required",
