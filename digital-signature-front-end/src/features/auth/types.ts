@@ -3,6 +3,8 @@ import { z } from 'zod';
 
 export type AuthUser = UserBase & {
   email: string;
+  fullName?: string;
+  signature?: string;
 };
 
 export type Tokens = {
@@ -28,16 +30,19 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const registerSchema = z
   .object({
+    fullName: z.string().min(1, { message: 'validation.required' }),
     email: z.string().email({ message: 'validation.email' }),
     password: z.string().min(6, { message: 'validation.passwordLength' }),
-    confirmPassword: z.string(),
-    terms: z.boolean().refine((val) => val === true, {
-      message: 'validation.required',
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
+  //   confirmPassword: z.string(),
+  //   terms: z.boolean().refine((val) => val === true, {
+  //     message: 'validation.required',
+  //   }),
+  // })
+  // .refine((data) => data.password === data.confirmPassword, {
     message: 'validation.passwordMatch',
     path: ['confirmPassword'],
+    signature: z.string().min(1, { message: 'validation.required' }),
+    terms: z.boolean().optional(),
   });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;

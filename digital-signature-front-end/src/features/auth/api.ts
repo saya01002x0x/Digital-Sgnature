@@ -1,6 +1,6 @@
 import { baseApi } from '@/app/api/baseApi';
 import { ApiError } from '@/app/api/baseTypes';
-import { LoginFormValues, Tokens, AuthUser } from './types';
+import { LoginFormValues, RegisterFormValues, Tokens, AuthUser } from './types';
 
 // Auth API endpoints
 export const authApi = baseApi.injectEndpoints({
@@ -14,7 +14,7 @@ export const authApi = baseApi.injectEndpoints({
       transformErrorResponse: (response: ApiError) => response,
     }),
     
-    register: builder.mutation<{ user: AuthUser; token: string }, LoginFormValues>({
+    register: builder.mutation<{ user: AuthUser; token: string }, RegisterFormValues>({
       query: (userData) => ({
         url: 'auth/register',
         method: 'POST',
