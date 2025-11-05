@@ -4,8 +4,10 @@ import type { RouteObject } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { APP_ROUTES } from './config/constants';
 import type { UserBase } from '@/shared/types';
+import { App } from '@/App';
 
 // Lazy-loaded components
+const HeroPage = lazy(() => import('@/pages/HeroPage').then(module => ({ default: module.HeroPage })));
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage').then(module => ({ default: module.RegisterPage })));
 const ForgotPasswordPage = lazy(() => import('@/features/auth/pages/ForgotPasswordPage').then(module => ({ default: module.ForgotPasswordPage })));
@@ -58,33 +60,28 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
 };
 
 // Route configuration
-export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[] => [
-  {
-    path: APP_ROUTES.LOGIN,
-    element: (
-      <Suspense fallback={<Loader />}>
-        {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <LoginPage />}
-      </Suspense>
-    ),
-  },
-  {
-    path: APP_ROUTES.REGISTER,
-    element: (
-      <Suspense fallback={<Loader />}>
-        {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <RegisterPage />}
-      </Suspense>
-    ),
-  },
-  {
-    path: '/forgot-password',
-    element: (
-      <Suspense fallback={<Loader />}>
-        {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <ForgotPasswordPage />}
-      </Suspense>
-    ),
-  },
-  {
-    path: '/profile',
+export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[] => [{
+  path: '/',
+  element: <App />,
+  children: [
+    {
+      path: APP_ROUTES.LOGIN,
+      element: (
+        <Suspense fallback={<Loader />}>
+          {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <LoginPage />}
+        </Suspense>
+      ),
+    },
+    {
+      path: APP_ROUTES.REGISTER,
+      element: (
+        <Suspense fallback={<Loader />}>
+          {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <RegisterPage />}
+        </Suspense>
+      ),
+    },
+        {
+    path: APP_ROUTES.PROFILE,
     element: (
       <Suspense fallback={<Loader />}>
         <ProtectedRoute isAuthenticated={isAuthenticated}>
@@ -115,7 +112,7 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
     path: APP_ROUTES.HOME,
     element: (
       <Suspense fallback={<Loader />}>
-        {isAuthenticated ? <div>Home Page</div> : <Navigate to={APP_ROUTES.LOGIN} replace />}
+        <HeroPage />
       </Suspense>
     ),
   },
@@ -123,4 +120,5 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
     path: APP_ROUTES.NOT_FOUND,
     element: <div>404 - Không tìm thấy trang</div>,
   },
-];
+  ],
+}];

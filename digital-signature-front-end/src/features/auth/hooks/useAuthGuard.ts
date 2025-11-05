@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '@/app/hooks';
 import { selectIsAuthenticated, selectUser } from '../authSlice';
-import type { UserRole } from '../types';
+import type { UserRole } from '../types/index';
 
 type UseAuthGuardOptions = {
   requireAuth?: boolean;

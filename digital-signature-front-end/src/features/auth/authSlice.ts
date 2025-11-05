@@ -5,7 +5,7 @@
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { AuthState, User } from './types';
+import type { AuthState, User } from './types/index';
 import { STORAGE_KEYS } from '@/app/config/constants';
 
 const initialState: AuthState = {
@@ -59,4 +59,6 @@ export const selectAuthToken = (state: { auth: AuthState }) => state.auth.token;
 export const selectAuthError = (state: { auth: AuthState }) => state.auth.error;
 export const selectAuthStatus = (state: { auth: AuthState }) => state.auth.status;
 
+// Export both for compatibility
 export { authSlice };
+export default authSlice.reducer;

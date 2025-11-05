@@ -15,7 +15,7 @@ import {
   setCredentials,
 } from '../authSlice';
 import { useLoginMutation, useLogoutMutation } from '../services/auth.api';
-import type { LoginRequest } from '../types';
+import type { LoginRequest } from '../types/index';
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();

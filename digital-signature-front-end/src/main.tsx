@@ -12,9 +12,9 @@ import { startMsw } from "./mocks/browser";
 async function startApp() {
   // Start MSW in development mode
   if (import.meta.env.VITE_IS_DEV === 'true' && import.meta.env.VITE_USE_MSW === 'true') {
-    console.log('🔧 Starting MSW...');
+    console.log('Starting MSW...');
     await startMsw();
-    console.log('✅ MSW started successfully!');
+    console.log('MSW started successfully!');
   }
 
   const container = document.getElementById("root");

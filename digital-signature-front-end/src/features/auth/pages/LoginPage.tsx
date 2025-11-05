@@ -1,19 +1,21 @@
 /**
  * LoginPage Component
  * Page for user login
+ * Using pure Ant Design components
  */
 
 import type React from 'react';
-import { Card, Typography, Space, Divider, message } from 'antd';
+import { Typography, Space, Divider, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LoginForm } from '../components/LoginForm';
+import { AuthLayout } from '../components/AuthLayout';
 import { useAppDispatch } from '@/app/hooks';
 import { useLoginMutation } from '../services/auth.api';
 import { setCredentials } from '../authSlice';
 import type { LoginFormData } from '../utils/validators';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -33,51 +35,28 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: '20px',
-      }}
+    <AuthLayout
+      title={t('auth.welcomeBack', 'Welcome Back')}
+      description={t('auth.loginSubtitle', 'Sign in to continue to E-Signature')}
     >
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: 450,
-          boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-        }}
-      >
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <Title level={2} style={{ marginBottom: 8 }}>
-              {t('auth.welcomeBack', 'Welcome Back')}
-            </Title>
-            <Text type="secondary">
-              {t('auth.loginSubtitle', 'Sign in to continue to E-Signature')}
-            </Text>
-          </div>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <LoginForm
+          onSubmit={handleLogin}
+          isLoading={isLoading}
+          error={error ? String(error) : null}
+        />
 
-          <LoginForm
-            onSubmit={handleLogin}
-            isLoading={isLoading}
-            error={error ? String(error) : null}
-          />
+        <Divider>{t('common.or', 'OR')}</Divider>
 
-          <Divider>{t('common.or', 'OR')}</Divider>
-
-          <div style={{ textAlign: 'center' }}>
-            <Text>
-              {t('auth.noAccount', "Don't have an account?")}{' '}
-              <Link to="/register">
-                {t('auth.registerNow', 'Register now')}
-              </Link>
-            </Text>
-          </div>
-        </Space>
-      </Card>
-    </div>
+        <div style={{ textAlign: 'center' }}>
+          <Text>
+            {t('auth.noAccount', "Don't have an account?")}{' '}
+            <Link to="/register">
+              {t('auth.registerNow', 'Register now')}
+            </Link>
+          </Text>
+        </div>
+      </Space>
+    </AuthLayout>
   );
 };
