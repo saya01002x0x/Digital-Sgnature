@@ -1,0 +1,75 @@
+{
+  "apiName": "admin",
+  "baseEndpoint": "/api/admin",
+  "description": "Admin metrics dashboard API (simplified - single global admin)",
+  "endpoints": [
+    {
+      "name": "getMetrics",
+      "method": "GET",
+      "path": "/metrics",
+      "description": "Get platform-wide metrics (Admin only)",
+      "request": {
+        "query": {
+          "startDate": "string (ISO date, optional)",
+          "endDate": "string (ISO date, optional)",
+          "period": "string (optional: '7d' | '30d' | 'this_month' | 'this_year' | 'custom')"
+        }
+      },
+      "responses": {
+        "200": {
+          "totalUsers": "number (all registered users)",
+          "totalDocuments": "number (all documents created)",
+          "pendingSignatures": "number (documents in Signing status)",
+          "documentsCreatedThisMonth": "number",
+          "documentsCreatedThisWeek": "number (optional)",
+          "totalDocumentsCompleted": "number (documents in Done status)",
+          "averageSigningTime": "number (hours, optional)",
+          "period": "object { startDate, endDate }"
+        },
+        "403": "Insufficient permissions (not admin)",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["AdminMetrics"],
+        "pollingInterval": 30000
+      }
+    },
+    {
+      "name": "getMetricsTrend",
+      "method": "GET",
+      "path": "/metrics/trend",
+      "description": "Get metrics trend over time (Admin only, optional endpoint)",
+      "request": {
+        "query": {
+          "metric": "string (documents_created | users_registered | signatures_completed)",
+          "period": "string ('7d' | '30d' | '90d')",
+          "interval": "string (day | week | month)"
+        }
+      },
+      "responses": {
+        "200": {
+          "data": [
+            {
+              "timestamp": "string (ISO date)",
+              "value": "number"
+            }
+          ]
+        },
+        "403": "Insufficient permissions",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["AdminMetrics"]
+      }
+    }
+  ],
+  "notes": [
+    "This API is simplified for single global admin only",
+    "No user management endpoints (add/remove/role assignment)",
+    "No organization-specific features",
+    "Focus is on read-only metrics dashboard",
+    "User management can be added in future iterations if needed"
+  ]
+}

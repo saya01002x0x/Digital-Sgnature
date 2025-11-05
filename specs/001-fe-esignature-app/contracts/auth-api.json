@@ -1,0 +1,150 @@
+{
+  "apiName": "auth",
+  "baseEndpoint": "/api/auth",
+  "description": "Authentication and user management API",
+  "endpoints": [
+    {
+      "name": "register",
+      "method": "POST",
+      "path": "/register",
+      "description": "Register new user account",
+      "request": {
+        "body": {
+          "email": "string (required, email format)",
+          "password": "string (required, min 8 chars)",
+          "name": "string (required, 2-100 chars)"
+        }
+      },
+      "responses": {
+        "201": {
+          "user": "User object",
+          "token": "string (JWT or session ID)"
+        },
+        "400": "Validation error",
+        "409": "Email already exists"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["User"]
+      }
+    },
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/login",
+      "description": "Login with email and password",
+      "request": {
+        "body": {
+          "email": "string (required)",
+          "password": "string (required)"
+        }
+      },
+      "responses": {
+        "200": {
+          "user": "User object",
+          "token": "string"
+        },
+        "401": "Invalid credentials",
+        "400": "Validation error"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["User"]
+      }
+    },
+    {
+      "name": "logout",
+      "method": "POST",
+      "path": "/logout",
+      "description": "Logout current user",
+      "request": {},
+      "responses": {
+        "204": "Success (no content)",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["User"]
+      }
+    },
+    {
+      "name": "getProfile",
+      "method": "GET",
+      "path": "/profile",
+      "description": "Get current user profile",
+      "request": {},
+      "responses": {
+        "200": "User object",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["User"]
+      }
+    },
+    {
+      "name": "updateProfile",
+      "method": "PATCH",
+      "path": "/profile",
+      "description": "Update user profile",
+      "request": {
+        "body": {
+          "name": "string (optional)",
+          "avatar": "string (optional, URL)"
+        }
+      },
+      "responses": {
+        "200": "Updated User object",
+        "400": "Validation error",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["User"]
+      }
+    },
+    {
+      "name": "forgotPassword",
+      "method": "POST",
+      "path": "/forgot-password",
+      "description": "Request password reset link",
+      "request": {
+        "body": {
+          "email": "string (required)"
+        }
+      },
+      "responses": {
+        "200": {
+          "message": "Reset link sent if email exists"
+        },
+        "400": "Validation error"
+      },
+      "rtkQuery": {
+        "mutation": true
+      }
+    },
+    {
+      "name": "resetPassword",
+      "method": "POST",
+      "path": "/reset-password",
+      "description": "Reset password with token",
+      "request": {
+        "body": {
+          "token": "string (required, from email link)",
+          "newPassword": "string (required, min 8 chars)"
+        }
+      },
+      "responses": {
+        "200": {
+          "message": "Password reset successful"
+        },
+        "400": "Invalid or expired token",
+        "400": "Validation error"
+      },
+      "rtkQuery": {
+        "mutation": true
+      }
+    }
+  ]
+}
+

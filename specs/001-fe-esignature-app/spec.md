@@ -18,8 +18,7 @@
 
 **Actors:**
 - **User**: Người dùng thông thường có thể tạo, ký và quản lý tài liệu của mình
-- **Org Admin**: Quản trị viên tổ chức, quản lý người dùng và phân quyền trong tổ chức
-- **Super Admin**: Quản trị viên hệ thống, quản lý toàn bộ platform
+- **Admin**: Quản trị viên hệ thống toàn cục (single global admin), có thể xem overview metrics và quản lý users cơ bản
 
 ## Clarifications
 
@@ -156,21 +155,21 @@ Người dùng mới có thể đăng ký tài khoản, đăng nhập/đăng xu�
 
 ---
 
-### User Story 8 - Quản lý người dùng và phân quyền (Org Admin) (Priority: P3)
+### User Story 8 - Admin Dashboard cơ bản (Priority: P3)
 
-Org Admin có thể xem danh sách người dùng trong tổ chức, thêm/xóa người dùng, gán quyền (User/Admin), và xem tổng quan hoạt động của tổ chức.
+Admin (single global admin) có thể xem dashboard với overview metrics về usage của platform: total users, total documents, pending signatures.
 
-**Why this priority**: Chức năng quản trị tổ chức quan trọng cho enterprise customers nhưng không cần thiết cho MVP với individual users. Có thể implement sau khi core signing features ổn định.
+**Why this priority**: Admin dashboard cung cấp insight về platform usage nhưng không critical cho MVP. Users có thể sử dụng app fully mà không cần admin dashboard.
 
-**Independent Test**: Có thể test độc lập với org data có sẵn. Test user management CRUD operations, role assignment. Delivers giá trị: admins có thể quản lý members và access control.
+**Independent Test**: Có thể test độc lập với mock metrics data. Test dashboard rendering và metrics display. Delivers giá trị: admin có visibility vào platform usage.
 
 **Acceptance Scenarios**:
 
-1. **Given** Org Admin đã login, **When** họ truy cập Admin Dashboard, **Then** họ thấy overview metrics: total users, documents created this month, pending signatures
-2. **Given** Admin xem Users page, **When** họ click "Add User", **Then** modal mở ra cho phép nhập email, name, và chọn role (User/Admin)
-3. **Given** danh sách users đang hiển thị, **When** Admin chọn một user và đổi role từ "User" thành "Admin", **Then** role được update và user đó giờ có quyền admin (front-end guard)
-4. **Given** Admin xem user details, **When** họ nhấn "Remove from Organization", **Then** confirmation dialog hiện ra, sau khi confirm thì user bị remove khỏi org
-5. **Given** Admin xem dashboard, **When** họ chọn date range filter, **Then** metrics được cập nhật theo timeframe đã chọn
+1. **Given** Admin đã login, **When** họ truy cập Admin Dashboard, **Then** họ thấy overview metrics cards: total users, total documents, pending signatures, documents created this month
+2. **Given** Admin xem dashboard, **When** trang load, **Then** metrics được fetch từ API và hiển thị với số đếm chính xác
+3. **Given** Admin xem dashboard, **When** họ chọn date range filter (e.g., "Last 7 days", "This month"), **Then** time-based metrics được cập nhật theo timeframe đã chọn
+4. **Given** Dashboard đang hiển thị, **When** có document mới được tạo hoặc signed, **Then** metrics tự động refresh sau một khoảng thời gian (polling)
+5. **Given** Admin click vào một metric card (e.g., "Total Documents"), **When** card được click, **Then** navigate đến documents list page với filter tương ứng (optional enhancement)
 
 ---
 
@@ -199,7 +198,7 @@ Org Admin có thể xem danh sách người dùng trong tổ chức, thêm/xóa 
 - **FR-004**: Hệ thống PHẢI cho phép người dùng đăng xuất và xóa session
 - **FR-005**: Hệ thống PHẢI cung cấp chức năng "Forgot Password" với reset link gửi qua email
 - **FR-006**: Người dùng PHẢI có thể xem và cập nhật thông tin hồ sơ cá nhân (tên, avatar, email)
-- **FR-007**: Hệ thống PHẢI phân biệt 3 roles: User, Org Admin, Super Admin với guards ở cấp UI (không có backend enforcement trong scope này)
+- **FR-007**: Hệ thống PHẢI phân biệt 2 roles: User và Admin với guards ở cấp UI (không có backend enforcement trong scope này)
 
 #### Signature Management
 
@@ -264,12 +263,10 @@ Org Admin có thể xem danh sách người dùng trong tổ chức, thêm/xóa 
 
 #### Admin Features
 
-- **FR-051**: Org Admin PHẢI thấy dashboard với overview metrics: total users, documents created, pending signatures
-- **FR-052**: Org Admin PHẢI có thể xem danh sách users trong organization
-- **FR-053**: Org Admin PHẢI có thể thêm user mới vào organization (via invitation)
-- **FR-054**: Org Admin PHẢI có thể gán role (User/Admin) cho members
-- **FR-055**: Org Admin PHẢI có thể xóa user khỏi organization (với confirmation)
-- **FR-056**: Super Admin PHẢI có quyền tương tự Org Admin nhưng cross-organization (giả định UI guard only)
+- **FR-051**: Admin PHẢI thấy dashboard với overview metrics: total users, total documents, pending signatures, documents created this month
+- **FR-052**: Admin PHẢI có thể filter metrics theo date range (last 7 days, this month, this year, custom range)
+- **FR-053**: Metrics PHẢI được fetch từ backend API và update theo polling (every 30-60 seconds khi dashboard active)
+- **FR-054**: Admin dashboard PHẢI có loading states và error handling cho metrics fetch failures
 
 #### UI/UX Requirements
 
@@ -293,7 +290,7 @@ Org Admin có thể xem danh sách người dùng trong tổ chức, thêm/xóa 
 ### Key Entities *(include if feature involves data)*
 
 - **User**: Người dùng của hệ thống
-  - Attributes: id, email, name, avatar, role (User/OrgAdmin/SuperAdmin), organizationId
+  - Attributes: id, email, name, avatar, role (User/Admin)
   - Relationships: Có nhiều Signatures, Có nhiều Documents (as owner hoặc signer)
 
 - **Signature**: Mẫu chữ ký cá nhân của user
@@ -316,9 +313,6 @@ Org Admin có thể xem danh sách người dùng trong tổ chức, thêm/xóa 
   - Attributes: id, documentId, eventType (created/sent/opened/signed/declined), actorId, actorEmail, timestamp, metadata
   - Relationships: Thuộc về một Document
 
-- **Organization**: Tổ chức (nếu multi-tenant)
-  - Attributes: id, name, ownerId, createdAt
-  - Relationships: Có nhiều Users
 
 ## Success Criteria *(mandatory)*
 

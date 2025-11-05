@@ -1,0 +1,126 @@
+{
+  "apiName": "invite-signing",
+  "baseEndpoint": "/api",
+  "description": "Invite signers and signing workflow API",
+  "endpoints": [
+    {
+      "name": "inviteSigners",
+      "method": "POST",
+      "path": "/documents/:documentId/invite",
+      "description": "Invite signers to document (Draft -> Signing)",
+      "request": {
+        "params": {
+          "documentId": "string (UUID)"
+        },
+        "body": {
+          "signers": [
+            {
+              "email": "string (required, unique per document)",
+              "name": "string (required)",
+              "order": "number (required, 1+)"
+            }
+          ],
+          "signingOrder": "string (SEQUENTIAL | PARALLEL)"
+        }
+      },
+      "responses": {
+        "200": {
+          "document": "Document object (status=Signing)",
+          "signers": "Array<Signer> with signingUrl"
+        },
+        "400": "Validation error (missing fields, unassigned fields, duplicate emails)",
+        "404": "Document not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Document", "Signer"]
+      }
+    },
+    {
+      "name": "getSigningSession",
+      "method": "GET",
+      "path": "/signing/:token",
+      "description": "Get signing session by token (public endpoint)",
+      "request": {
+        "params": {
+          "token": "string (UUID from signingUrl)"
+        }
+      },
+      "responses": {
+        "200": {
+          "document": "Document object (read-only)",
+          "signer": "Signer object",
+          "fields": "Array<Field> (only assigned to this signer)",
+          "allSigners": "Array<Signer> (for display order/status)"
+        },
+        "404": "Invalid or expired token",
+        "410": "Already signed or declined"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["SigningSession"]
+      }
+    },
+    {
+      "name": "completeSigning",
+      "method": "POST",
+      "path": "/signing/:token/complete",
+      "description": "Submit signed fields (public endpoint)",
+      "request": {
+        "params": {
+          "token": "string"
+        },
+        "body": {
+          "fieldValues": [
+            {
+              "fieldId": "string (UUID)",
+              "value": "string (signature data URL, date, text)"
+            }
+          ]
+        }
+      },
+      "responses": {
+        "200": {
+          "signer": "Signer object (status=Signed)",
+          "document": "Document object (updated status if all done)"
+        },
+        "400": "Validation error (missing required fields)",
+        "404": "Invalid token",
+        "410": "Already signed or declined"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["SigningSession", "Document", "Signer"]
+      }
+    },
+    {
+      "name": "declineSigning",
+      "method": "POST",
+      "path": "/signing/:token/decline",
+      "description": "Decline to sign (public endpoint)",
+      "request": {
+        "params": {
+          "token": "string"
+        },
+        "body": {
+          "reason": "string (required, min 10 chars)"
+        }
+      },
+      "responses": {
+        "200": {
+          "signer": "Signer object (status=Declined)",
+          "document": "Document object (status=Declined)"
+        },
+        "400": "Validation error (reason too short)",
+        "404": "Invalid token",
+        "410": "Already signed or declined"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["SigningSession", "Document", "Signer"]
+      }
+    }
+  ]
+}
+
