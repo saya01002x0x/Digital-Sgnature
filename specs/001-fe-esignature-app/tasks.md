@@ -26,23 +26,23 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Verify project structure matches plan.md (src/app, src/features, src/shared, src/mocks)
-- [ ] T002 [P] Configure absolute imports (@/) in tsconfig.json and vite.config.ts
-- [ ] T003 [P] Setup i18n configuration in src/i18n/i18n.ts (vi/en namespaces)
-- [ ] T004 [P] Create base translation files in public/locales/en/ and public/locales/vi/ (common.json for each)
-- [ ] T005 [P] Configure Ant Design theme in src/app/providers/ThemeProvider.tsx (light/dark mode)
-- [ ] T006 [P] Setup Tailwind CSS integration in tailwind.config.js (sync colors with Ant Design)
-- [ ] T007 [P] Configure MSW browser worker in src/mocks/browser.ts
-- [ ] T008 [P] Configure MSW server for tests in src/mocks/server.ts
-- [ ] T009 Create base API configuration in src/app/api/baseApi.ts (RTK Query baseQuery with auth interceptor)
-- [ ] T010 [P] Define base API types in src/app/api/baseTypes.ts (ApiResponse, ApiError interfaces)
-- [ ] T011 Configure Redux store in src/app/store.ts (setup middleware, devtools)
-- [ ] T012 [P] Create typed Redux hooks in src/app/hooks.ts (useAppDispatch, useAppSelector)
-- [ ] T013 [P] Setup React Router configuration skeleton in src/app/routes.tsx (public/protected route structure)
-- [ ] T014 [P] Create environment configuration in src/app/config/env.ts (VITE_API_BASE_URL, validation)
-- [ ] T015 [P] Define app constants in src/app/config/constants.ts (API endpoints base, timeout values)
+- [X] T001 Verify project structure matches plan.md (src/app, src/features, src/shared, src/mocks)
+- [X] T002 [P] Configure absolute imports (@/) in tsconfig.json and vite.config.ts
+- [X] T003 [P] Setup i18n configuration in src/i18n/i18n.ts (vi/en namespaces)
+- [X] T004 [P] Create base translation files in public/locales/en/ and public/locales/vi/ (common.json for each)
+- [X] T005 [P] Configure Ant Design theme in src/app/providers/ThemeProvider.tsx (light/dark mode)
+- [X] T006 [P] Setup Tailwind CSS integration in tailwind.config.js (sync colors with Ant Design)
+- [X] T007 [P] Configure MSW browser worker in src/mocks/browser.ts
+- [X] T008 [P] Configure MSW server for tests in src/mocks/server.ts
+- [X] T009 Create base API configuration in src/app/api/baseApi.ts (RTK Query baseQuery with auth interceptor)
+- [X] T010 [P] Define base API types in src/app/api/baseTypes.ts (ApiResponse, ApiError interfaces)
+- [X] T011 Configure Redux store in src/app/store.ts (setup middleware, devtools)
+- [X] T012 [P] Create typed Redux hooks in src/app/hooks.ts (useAppDispatch, useAppSelector)
+- [X] T013 [P] Setup React Router configuration skeleton in src/app/routes.tsx (public/protected route structure)
+- [X] T014 [P] Create environment configuration in src/app/config/env.ts (VITE_API_BASE_URL, validation)
+- [X] T015 [P] Define app constants in src/app/config/constants.ts (API endpoints base, timeout values)
 
-**Checkpoint**: Project infrastructure ready for feature module development
+**Checkpoint**: ✅ Project infrastructure ready for feature module development
 
 ---
 
@@ -52,24 +52,24 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T016 Create AppProviders wrapper in src/app/providers/AppProviders.tsx (Redux, Router, Theme, i18n, Error Boundary)
-- [ ] T017 [P] Implement ErrorBoundary component in src/shared/components/ErrorBoundary.tsx (catch React errors)
-- [ ] T018 [P] Create LoadingSpinner component in src/shared/components/LoadingSpinner.tsx (reusable loading state)
-- [ ] T019 [P] Create SkeletonLoader component in src/shared/components/SkeletonLoader.tsx (Ant Design Skeleton wrapper)
-- [ ] T020 [P] Create EmptyState component in src/shared/components/EmptyState.tsx (no data placeholder)
-- [ ] T021 [P] Implement LanguageSwitcher component in src/shared/components/LanguageSwitcher.tsx (vi/en toggle)
-- [ ] T022 [P] Implement ThemeSwitcher component in src/shared/components/ThemeSwitcher.tsx (light/dark toggle)
-- [ ] T023 [P] Create useDebounce hook in src/shared/hooks/useDebounce.ts (delay input handling)
-- [ ] T024 [P] Create useLocalStorage hook in src/shared/hooks/useLocalStorage.ts (persist theme/language)
-- [ ] T025 [P] Create useMediaQuery hook in src/shared/hooks/useMediaQuery.ts (responsive breakpoints)
-- [ ] T026 [P] Define common TypeScript types in src/shared/types/index.ts (Theme, Language, etc.)
-- [ ] T027 [P] Create common Zod validators in src/shared/utils/validators.ts (email, password schemas)
-- [ ] T028 [P] Create format utilities in src/shared/utils/formatters.ts (date, currency, file size)
-- [ ] T029 [P] Create API helper utilities in src/shared/utils/apiHelpers.ts (error transformation)
-- [ ] T030 Create test utilities in tests/utils/test-utils.tsx (custom render with all providers)
-- [ ] T031 Setup MSW handlers registry in src/mocks/handlers.ts (import all feature handlers)
+- [X] T016 Create AppProviders wrapper in src/app/providers/AppProviders.tsx (Redux, Router, Theme, i18n, Error Boundary)
+- [X] T017 [P] Implement ErrorBoundary component in src/shared/components/ErrorBoundary.tsx (catch React errors)
+- [X] T018 [P] Create LoadingSpinner component in src/shared/components/LoadingSpinner.tsx (reusable loading state)
+- [X] T019 [P] Create SkeletonLoader component in src/shared/components/SkeletonLoader.tsx (Ant Design Skeleton wrapper)
+- [X] T020 [P] Create EmptyState component in src/shared/components/EmptyState.tsx (no data placeholder)
+- [X] T021 [P] Implement LanguageSwitcher component in src/shared/components/LanguageSwitcher.tsx (vi/en toggle)
+- [X] T022 [P] Implement ThemeSwitcher component in src/shared/components/ThemeSwitcher.tsx (light/dark toggle)
+- [X] T023 [P] Create useDebounce hook in src/shared/hooks/useDebounce.ts (delay input handling)
+- [X] T024 [P] Create useLocalStorage hook in src/shared/hooks/useLocalStorage.ts (persist theme/language)
+- [X] T025 [P] Create useMediaQuery hook in src/shared/hooks/useMediaQuery.ts (responsive breakpoints)
+- [X] T026 [P] Define common TypeScript types in src/shared/types/index.ts (Theme, Language, etc.)
+- [X] T027 [P] Create common Zod validators in src/shared/utils/validators.ts (email, password schemas)
+- [X] T028 [P] Create format utilities in src/shared/utils/formatters.ts (date, currency, file size)
+- [X] T029 [P] Create API helper utilities in src/shared/utils/apiHelpers.ts (error transformation)
+- [X] T030 Create test utilities in tests/utils/test-utils.tsx (custom render with all providers)
+- [X] T031 Setup MSW handlers registry in src/mocks/handlers.ts (import all feature handlers)
 
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+**Checkpoint**: ✅ Foundation ready - user story implementation can now begin in parallel
 
 ---
 
