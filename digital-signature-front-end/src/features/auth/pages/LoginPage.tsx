@@ -11,7 +11,7 @@ import { LoginForm } from '../components/LoginForm';
 import { useAppDispatch } from '@/app/hooks';
 import { useLoginMutation } from '../services/auth.api';
 import { setCredentials } from '../authSlice';
-import type { LoginFormValues } from '../types';
+import type { LoginFormData } from '../utils/validators';
 
 const { Title, Text } = Typography;
 
@@ -21,7 +21,7 @@ export const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const [login, { isLoading, error }] = useLoginMutation();
 
-  const handleLogin = async (values: LoginFormValues) => {
+  const handleLogin = async (values: LoginFormData) => {
     try {
       const result = await login(values).unwrap();
       dispatch(setCredentials(result));

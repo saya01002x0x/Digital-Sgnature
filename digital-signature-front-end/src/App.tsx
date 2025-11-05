@@ -1,6 +1,6 @@
 import type React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { Layout } from 'antd';
+import { Layout, App as AntApp } from 'antd';
 import { Header } from '@/shared/components';
 import './App.css';
 
@@ -14,11 +14,13 @@ export const App: React.FC = () => {
   const showHeader = !NO_HEADER_ROUTES.includes(location.pathname);
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      {showHeader && <Header />}
-      <Content style={{ display: 'flex', flexDirection: 'column' }}>
-        <Outlet />
-      </Content>
-    </Layout>
+    <AntApp>
+      <Layout style={{ minHeight: '100vh' }}>
+        {showHeader && <Header />}
+        <Content style={{ display: 'flex', flexDirection: 'column' }}>
+          <Outlet />
+        </Content>
+      </Layout>
+    </AntApp>
   );
 };

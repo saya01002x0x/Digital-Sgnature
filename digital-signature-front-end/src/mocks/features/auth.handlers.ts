@@ -4,6 +4,9 @@
 
 import { http, HttpResponse } from 'msw';
 
+// API Base URL for MSW handlers
+const API_BASE_URL = 'http://localhost:3000';
+
 // Mock user data
 const mockUser = {
   id: '1',
@@ -29,7 +32,7 @@ const mockAdmin = {
 
 export const authHandlers = [
   // Login endpoint
-  http.post('/api/auth/login', async ({ request }) => {
+  http.post(`${API_BASE_URL}/api/auth/login`, async ({ request }) => {
     const body = await request.json() as { email: string; password: string };
     
     // Mock successful login for test user
@@ -66,7 +69,7 @@ export const authHandlers = [
   }),
   
   // Register endpoint
-  http.post('/api/auth/register', async ({ request }) => {
+  http.post(`${API_BASE_URL}/api/auth/register`, async ({ request }) => {
     const body = await request.json() as { email: string; name: string; password: string };
     
     // Check if email already exists
@@ -100,7 +103,7 @@ export const authHandlers = [
   }),
   
   // Get profile endpoint
-  http.get('/api/auth/profile', ({ request }) => {
+  http.get(`${API_BASE_URL}/api/auth/profile`, ({ request }) => {
     const authHeader = request.headers.get('authorization');
     
     if (!authHeader) {
@@ -116,7 +119,7 @@ export const authHandlers = [
   }),
   
   // Update profile endpoint
-  http.put('/api/auth/profile', async ({ request }) => {
+  http.put(`${API_BASE_URL}/api/auth/profile`, async ({ request }) => {
     const body = await request.json() as { name?: string; avatar?: string };
     const authHeader = request.headers.get('authorization');
     
@@ -134,7 +137,7 @@ export const authHandlers = [
   }),
   
   // Forgot password endpoint
-  http.post('/api/auth/forgot-password', async () => {
+  http.post(`${API_BASE_URL}/api/auth/forgot-password`, async () => {
     // Simulate sending reset email
     return HttpResponse.json({
       message: 'Password reset email sent',
@@ -142,7 +145,7 @@ export const authHandlers = [
   }),
   
   // Reset password endpoint
-  http.post('/api/auth/reset-password', async ({ request }) => {
+  http.post(`${API_BASE_URL}/api/auth/reset-password`, async ({ request }) => {
     const body = await request.json() as { token: string; newPassword: string };
     
     // Validate token (mock)
@@ -166,7 +169,7 @@ export const authHandlers = [
   }),
   
   // Logout endpoint
-  http.post('/api/auth/logout', () => {
+  http.post(`${API_BASE_URL}/api/auth/logout`, () => {
     return HttpResponse.json({
       message: 'Logged out successfully',
     });

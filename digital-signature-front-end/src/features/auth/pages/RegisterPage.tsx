@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RegisterForm } from '../components/RegisterForm';
 import { useRegisterMutation } from '../services/auth.api';
-import type { RegisterFormValues } from '../types';
+import type { RegisterFormData } from '../utils/validators';
 
 const { Title, Text } = Typography;
 
@@ -18,7 +18,7 @@ export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [register, { isLoading, error }] = useRegisterMutation();
 
-  const handleRegister = async (values: RegisterFormValues) => {
+  const handleRegister = async (values: RegisterFormData) => {
     try {
       await register({
         email: values.email,

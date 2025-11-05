@@ -1,16 +1,19 @@
 /**
  * RegisterForm Component
  * Form for user registration
+ * Using react-hook-form + Zod for validation
  */
 
 import type React from 'react';
-import { Form, Input, Button, Checkbox, Alert } from 'antd';
+import { Input, Button, Checkbox, Alert, Space } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import type { RegisterFormValues } from '../types';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { registerSchema, type RegisterFormData } from '../utils/validators';
 
 type RegisterFormProps = {
-  onSubmit: (values: RegisterFormValues) => Promise<void>;
+  onSubmit: (values: RegisterFormData) => Promise<void>;
   isLoading?: boolean;
   error?: string | null;
 }
@@ -21,28 +24,25 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   error,
 }) => {
   const { t } = useTranslation();
-  const [form] = Form.useForm();
-
-  const handleSubmit = async (values: RegisterFormValues) => {
-    try {
-      await onSubmit(values);
-    } catch (err) {
-      console.error('Register error:', err);
-    }
-  };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      terms: false,
+    },
+  });
 
   return (
-    <Form
-      form={form}
-      name="register"
-      onFinish={handleSubmit}
-      size="large"
-      layout="vertical"
-      requiredMark={false}
-      scrollToFirstError
-    >
-      {error && (
-        <Form.Item>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+        {error && (
           <Alert
             message={t('auth.registerFailed', 'Registration failed')}
             description={error}
@@ -50,108 +50,138 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             showIcon
             closable
           />
-        </Form.Item>
-      )}
+        )}
 
-      <Form.Item
-        name="name"
-        label={t('auth.fullName', 'Full Name')}
-        rules={[
-          { required: true, message: t('auth.fullNameRequired', 'Full name is required') },
-          { min: 2, message: t('auth.fullNameMin', 'Name must be at least 2 characters') },
-        ]}
-      >
-        <Input
-          prefix={<UserOutlined />}
-          placeholder={t('auth.fullNamePlaceholder', 'Enter your full name')}
-          autoComplete="name"
-        />
-      </Form.Item>
+        {/* Name Field */}
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
+            {t('auth.fullName', 'Full Name')}
+          </label>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                prefix={<UserOutlined />}
+                placeholder={t('auth.fullNamePlaceholder', 'Enter your full name')}
+                autoComplete="name"
+                size="large"
+                status={errors.name ? 'error' : undefined}
+              />
+            )}
+          />
+          {errors.name && (
+            <div style={{ color: '#ff4d4f', marginTop: 4, fontSize: 14 }}>
+              {errors.name.message}
+            </div>
+          )}
+        </div>
 
-      <Form.Item
-        name="email"
-        label={t('auth.email', 'Email')}
-        rules={[
-          { required: true, message: t('auth.emailRequired', 'Email is required') },
-          { type: 'email', message: t('auth.emailInvalid', 'Invalid email address') },
-        ]}
-      >
-        <Input
-          prefix={<MailOutlined />}
-          placeholder={t('auth.emailPlaceholder', 'Enter your email')}
-          autoComplete="email"
-        />
-      </Form.Item>
+        {/* Email Field */}
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
+            {t('auth.email', 'Email')}
+          </label>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                prefix={<MailOutlined />}
+                placeholder={t('auth.emailPlaceholder', 'Enter your email')}
+                autoComplete="email"
+                size="large"
+                status={errors.email ? 'error' : undefined}
+              />
+            )}
+          />
+          {errors.email && (
+            <div style={{ color: '#ff4d4f', marginTop: 4, fontSize: 14 }}>
+              {errors.email.message}
+            </div>
+          )}
+        </div>
 
-      <Form.Item
-        name="password"
-        label={t('auth.password', 'Password')}
-        rules={[
-          { required: true, message: t('auth.passwordRequired', 'Password is required') },
-          { min: 8, message: t('auth.passwordMin', 'Password must be at least 8 characters') },
-          {
-            pattern: /[A-Z]/,
-            message: t('auth.passwordUppercase', 'Password must contain uppercase letter'),
-          },
-          {
-            pattern: /[0-9]/,
-            message: t('auth.passwordNumber', 'Password must contain number'),
-          },
-        ]}
-        hasFeedback
-      >
-        <Input.Password
-          prefix={<LockOutlined />}
-          placeholder={t('auth.passwordPlaceholder', 'Enter your password')}
-          autoComplete="new-password"
-        />
-      </Form.Item>
+        {/* Password Field */}
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
+            {t('auth.password', 'Password')}
+          </label>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input.Password
+                {...field}
+                prefix={<LockOutlined />}
+                placeholder={t('auth.passwordPlaceholder', 'Enter your password')}
+                autoComplete="new-password"
+                size="large"
+                status={errors.password ? 'error' : undefined}
+              />
+            )}
+          />
+          {errors.password && (
+            <div style={{ color: '#ff4d4f', marginTop: 4, fontSize: 14 }}>
+              {errors.password.message}
+            </div>
+          )}
+        </div>
 
-      <Form.Item
-        name="confirmPassword"
-        label={t('auth.confirmPassword', 'Confirm Password')}
-        dependencies={['password']}
-        hasFeedback
-        rules={[
-          { required: true, message: t('auth.confirmPasswordRequired', 'Please confirm your password') },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue('password') === value) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error(t('auth.passwordMismatch', 'Passwords do not match')));
-            },
-          }),
-        ]}
-      >
-        <Input.Password
-          prefix={<LockOutlined />}
-          placeholder={t('auth.confirmPasswordPlaceholder', 'Confirm your password')}
-          autoComplete="new-password"
-        />
-      </Form.Item>
+        {/* Confirm Password Field */}
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
+            {t('auth.confirmPassword', 'Confirm Password')}
+          </label>
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field }) => (
+              <Input.Password
+                {...field}
+                prefix={<LockOutlined />}
+                placeholder={t('auth.confirmPasswordPlaceholder', 'Confirm your password')}
+                autoComplete="new-password"
+                size="large"
+                status={errors.confirmPassword ? 'error' : undefined}
+              />
+            )}
+          />
+          {errors.confirmPassword && (
+            <div style={{ color: '#ff4d4f', marginTop: 4, fontSize: 14 }}>
+              {errors.confirmPassword.message}
+            </div>
+          )}
+        </div>
 
-      <Form.Item
-        name="terms"
-        valuePropName="checked"
-        rules={[
-          {
-            validator: (_, value) =>
-              value
-                ? Promise.resolve()
-                : Promise.reject(new Error(t('auth.termsRequired', 'You must accept the terms and conditions'))),
-          },
-        ]}
-      >
-        <Checkbox>
-          {t('auth.agreeToTerms', 'I agree to the')}{' '}
-          <a href="/terms" target="_blank" rel="noopener noreferrer">
-            {t('auth.termsAndConditions', 'Terms and Conditions')}
-          </a>
-        </Checkbox>
-      </Form.Item>
+        {/* Terms Checkbox */}
+        <div>
+          <Controller
+            name="terms"
+            control={control}
+            render={({ field: { value, onChange, ...field } }) => (
+              <Checkbox
+                {...field}
+                checked={value}
+                onChange={(e) => onChange(e.target.checked)}
+              >
+                {t('auth.agreeToTerms', 'I agree to the')}{' '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer">
+                  {t('auth.termsAndConditions', 'Terms and Conditions')}
+                </a>
+              </Checkbox>
+            )}
+          />
+          {errors.terms && (
+            <div style={{ color: '#ff4d4f', marginTop: 4, fontSize: 14 }}>
+              {errors.terms.message}
+            </div>
+          )}
+        </div>
 
-      <Form.Item>
+        {/* Submit Button */}
         <Button
           type="primary"
           htmlType="submit"
@@ -161,7 +191,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         >
           {t('auth.registerButton', 'Register')}
         </Button>
-      </Form.Item>
-    </Form>
+      </Space>
+    </form>
   );
 };

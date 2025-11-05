@@ -1,16 +1,21 @@
 /**
  * LoginForm Component
  * Form for user login with email and password
+ * Using react-hook-form + Zod for validation
  */
 
 import type React from 'react';
-import { Form, Input, Button, Checkbox, Alert } from 'antd';
+import { Input, Button, Checkbox, Alert, Space } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import type { LoginFormValues } from '../types';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginFormData } from '../utils/validators';
+import { Link } from 'react-router-dom';
+import { APP_ROUTES } from '@/app/config/constants';
 
 type LoginFormProps = {
-  onSubmit: (values: LoginFormValues) => Promise<void>;
+  onSubmit: (values: LoginFormData) => Promise<void>;
   isLoading?: boolean;
   error?: string | null;
 }
@@ -21,29 +26,23 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   error,
 }) => {
   const { t } = useTranslation();
-  const [form] = Form.useForm();
-
-  const handleSubmit = async (values: LoginFormValues) => {
-    try {
-      await onSubmit(values);
-    } catch (err) {
-      // Error is handled by parent component
-      console.error('Login error:', err);
-    }
-  };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      remember: true,
+    },
+  });
 
   return (
-    <Form
-      form={form}
-      name="login"
-      initialValues={{ remember: true }}
-      onFinish={handleSubmit}
-      size="large"
-      layout="vertical"
-      requiredMark={false}
-    >
-      {error && (
-        <Form.Item>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {error && (
           <Alert
             message={t('auth.loginFailed', 'Login failed')}
             description={error}
@@ -51,52 +50,77 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             showIcon
             closable
           />
-        </Form.Item>
-      )}
+        )}
 
-      <Form.Item
-        name="email"
-        label={t('auth.email', 'Email')}
-        rules={[
-          { required: true, message: t('auth.emailRequired', 'Email is required') },
-          { type: 'email', message: t('auth.emailInvalid', 'Invalid email address') },
-        ]}
-      >
-        <Input
-          prefix={<UserOutlined />}
-          placeholder={t('auth.emailPlaceholder', 'Enter your email')}
-          autoComplete="email"
-        />
-      </Form.Item>
+        {/* Email Field */}
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
+            {t('auth.email', 'Email')}
+          </label>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                prefix={<UserOutlined />}
+                placeholder={t('auth.emailPlaceholder', 'Enter your email')}
+                autoComplete="email"
+                size="large"
+                status={errors.email ? 'error' : undefined}
+              />
+            )}
+          />
+          {errors.email && (
+            <div style={{ color: '#ff4d4f', marginTop: 4, fontSize: 14 }}>
+              {errors.email.message}
+            </div>
+          )}
+        </div>
 
-      <Form.Item
-        name="password"
-        label={t('auth.password', 'Password')}
-        rules={[
-          { required: true, message: t('auth.passwordRequired', 'Password is required') },
-        ]}
-      >
-        <Input.Password
-          prefix={<LockOutlined />}
-          placeholder={t('auth.passwordPlaceholder', 'Enter your password')}
-          autoComplete="current-password"
-        />
-      </Form.Item>
+        {/* Password Field */}
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
+            {t('auth.password', 'Password')}
+          </label>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input.Password
+                {...field}
+                prefix={<LockOutlined />}
+                placeholder={t('auth.passwordPlaceholder', 'Enter your password')}
+                autoComplete="current-password"
+                size="large"
+                status={errors.password ? 'error' : undefined}
+              />
+            )}
+          />
+          {errors.password && (
+            <div style={{ color: '#ff4d4f', marginTop: 4, fontSize: 14 }}>
+              {errors.password.message}
+            </div>
+          )}
+        </div>
 
-      <Form.Item>
-        <Form.Item name="remember" valuePropName="checked" noStyle>
-          <Checkbox>{t('auth.rememberMe', 'Remember me')}</Checkbox>
-        </Form.Item>
+        {/* Remember Me & Forgot Password */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Controller
+            name="remember"
+            control={control}
+            render={({ field: { value, ...field } }) => (
+              <Checkbox {...field} checked={value}>
+                {t('auth.rememberMe', 'Remember me')}
+              </Checkbox>
+            )}
+          />
+          <Link to={APP_ROUTES.FORGOT_PASSWORD}>
+            {t('auth.forgotPassword', 'Forgot password?')}
+          </Link>
+        </div>
 
-        <a
-          style={{ float: 'right' }}
-          href="/forgot-password"
-        >
-          {t('auth.forgotPassword', 'Forgot password?')}
-        </a>
-      </Form.Item>
-
-      <Form.Item>
+        {/* Submit Button */}
         <Button
           type="primary"
           htmlType="submit"
@@ -106,7 +130,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         >
           {t('auth.loginButton', 'Login')}
         </Button>
-      </Form.Item>
-    </Form>
+      </Space>
+    </form>
   );
 };
