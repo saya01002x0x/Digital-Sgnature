@@ -1,10 +1,10 @@
-import React from 'react';
+import type React from 'react';
 import { Button, Tooltip } from 'antd';
 import { BulbOutlined, BulbFilled } from '@ant-design/icons';
 import { useTheme } from '@/app/providers/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 
-interface ThemeSwitcherProps {
+type ThemeSwitcherProps = {
   className?: string;
 }
 

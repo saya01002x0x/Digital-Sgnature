@@ -134,9 +134,7 @@ export const authHandlers = [
   }),
   
   // Forgot password endpoint
-  http.post('/api/auth/forgot-password', async ({ request }) => {
-    const body = await request.json() as { email: string };
-    
+  http.post('/api/auth/forgot-password', async () => {
     // Simulate sending reset email
     return HttpResponse.json({
       message: 'Password reset email sent',

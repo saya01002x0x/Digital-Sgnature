@@ -2,7 +2,7 @@
  * Common TypeScript types used across the application
  */
 
-import { Role } from '@/app/config/constants';
+import type { Role } from '@/app/config/constants';
 
 /**
  * User Base Type
@@ -34,12 +34,12 @@ export type LoadingStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 /**
  * Pagination types
  */
-export interface PaginationParams {
+export type PaginationParams = {
   page: number;
   limit: number;
 }
 
-export interface PaginationMeta {
+export type PaginationMeta = {
   currentPage: number;
   totalPages: number;
   totalItems: number;
@@ -48,7 +48,7 @@ export interface PaginationMeta {
   hasPreviousPage: boolean;
 }
 
-export interface PaginatedResponse<T> {
+export type PaginatedResponse<T> = {
   data: T[];
   meta: PaginationMeta;
 }
@@ -58,7 +58,7 @@ export interface PaginatedResponse<T> {
  */
 export type SortOrder = 'asc' | 'desc';
 
-export interface SortParams {
+export type SortParams = {
   sortBy: string;
   sortOrder: SortOrder;
 }
@@ -68,7 +68,7 @@ export interface SortParams {
  */
 export type FilterOperator = 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'contains' | 'in';
 
-export interface FilterParam {
+export type FilterParam = {
   field: string;
   operator: FilterOperator;
   value: unknown;
@@ -77,14 +77,14 @@ export interface FilterParam {
 /**
  * API Response types
  */
-export interface ApiResponse<T = unknown> {
+export type ApiResponse<T = unknown> = {
   success: boolean;
   data?: T;
   message?: string;
   errors?: Record<string, string[]>;
 }
 
-export interface ApiError {
+export type ApiError = {
   status?: number;
   message: string;
   code?: string;
@@ -94,7 +94,7 @@ export interface ApiError {
 /**
  * Form state types
  */
-export interface FormError {
+export type FormError = {
   field: string;
   message: string;
 }
@@ -102,7 +102,7 @@ export interface FormError {
 /**
  * File upload types
  */
-export interface UploadFile {
+export type UploadFile = {
   uid: string;
   name: string;
   status: 'uploading' | 'done' | 'error' | 'removed';
@@ -115,7 +115,7 @@ export interface UploadFile {
 /**
  * Select option type
  */
-export interface SelectOption<T = string> {
+export type SelectOption<T = string> = {
   label: string;
   value: T;
   disabled?: boolean;
@@ -125,7 +125,7 @@ export interface SelectOption<T = string> {
 /**
  * Timestamp types
  */
-export interface Timestamps {
+export type Timestamps = {
   createdAt: string;
   updatedAt: string;
 }
@@ -133,7 +133,7 @@ export interface Timestamps {
 /**
  * Soft delete type
  */
-export interface SoftDelete {
+export type SoftDelete = {
   deletedAt?: string | null;
 }
 
@@ -187,20 +187,20 @@ export type OptionalFields<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, 
 /**
  * Coordinate types for positioning
  */
-export interface Coordinates {
+export type Coordinates = {
   x: number;
   y: number;
 }
 
-export interface Rectangle extends Coordinates {
+export type Rectangle = {
   width: number;
   height: number;
-}
+} & Coordinates
 
 /**
  * Percentage-based positioning (0-100)
  */
-export interface PercentagePosition {
+export type PercentagePosition = {
   x: number; // 0-100
   y: number; // 0-100
   width: number; // 0-100

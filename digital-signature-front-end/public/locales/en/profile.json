@@ -1,0 +1,23 @@
+{
+  "title": "My Profile",
+  "subtitle": "Manage your account information",
+  "information": "Profile Information",
+  "editProfile": "Edit Profile",
+  "name": "Full Name",
+  "email": "Email",
+  "role": "Role",
+  "avatar": "Avatar",
+  "changeAvatar": "Change Avatar",
+  "memberSince": "Member Since",
+  "lastUpdated": "Last Updated",
+  "verified": "Verified",
+  "updateButton": "Update Profile",
+  "updateSuccess": "Profile updated successfully",
+  "updateError": "Failed to update profile",
+  "namePlaceholder": "Enter your name",
+  "nameRequired": "Name is required",
+  "nameMin": "Name must be at least 2 characters",
+  "avatarTypeError": "You can only upload image files!",
+  "avatarSizeError": "Image must be smaller than 2MB!"
+}
+

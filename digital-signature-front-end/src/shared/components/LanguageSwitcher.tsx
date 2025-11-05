@@ -1,10 +1,10 @@
-import React from 'react';
+import type React from 'react';
 import { Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { LOCALES, STORAGE_KEYS } from '@/app/config/constants';
 import { GlobalOutlined } from '@ant-design/icons';
 
-interface LanguageSwitcherProps {
+type LanguageSwitcherProps = {
   className?: string;
 }
 

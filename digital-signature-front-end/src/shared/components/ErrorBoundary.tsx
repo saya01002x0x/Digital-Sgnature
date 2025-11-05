@@ -1,14 +1,16 @@
-import React, { Component, ReactNode, ErrorInfo } from 'react';
+import type { ReactNode, ErrorInfo } from 'react';
+import type React from 'react';
+import { Component } from 'react';
 import { Button, Result } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-interface ErrorBoundaryProps {
+type ErrorBoundaryProps = {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
-interface ErrorBoundaryState {
+type ErrorBoundaryState = {
   hasError: boolean;
   error: Error | null;
 }
@@ -63,7 +65,7 @@ class ErrorBoundaryClass extends Component<ErrorBoundaryProps, ErrorBoundaryStat
   }
 }
 
-interface ErrorFallbackProps {
+type ErrorFallbackProps = {
   error: Error | null;
   onReset: () => void;
 }

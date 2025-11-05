@@ -1,155 +1,112 @@
-import React from 'react';
-import { Form, Input, Button, Card, Typography, Divider } from 'antd';
-import { GoogleOutlined, KeyOutlined } from '@ant-design/icons';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginFormValues, loginSchema } from '../types';
-import { useLoginMutation } from '../api';
-import { useAppDispatch } from '@/app/hooks';
-import { loginStart, loginSuccess, loginFailure } from '../authSlice';
+/**
+ * LoginForm Component
+ * Form for user login with email and password
+ */
+
+import type React from 'react';
+import { Form, Input, Button, Checkbox, Alert } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import type { LoginFormValues } from '../types';
 
-const { Title, Text } = Typography;
+type LoginFormProps = {
+  onSubmit: (values: LoginFormValues) => Promise<void>;
+  isLoading?: boolean;
+  error?: string | null;
+}
 
-export const LoginForm: React.FC = () => {
+export const LoginForm: React.FC<LoginFormProps> = ({
+  onSubmit,
+  isLoading = false,
+  error,
+}) => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
-  const [login, { isLoading }] = useLoginMutation();
-  
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      remember: false,
-    },
-  });
+  const [form] = Form.useForm();
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const handleSubmit = async (values: LoginFormValues) => {
     try {
-      dispatch(loginStart());
-      const result = await login(data).unwrap();
-      dispatch(loginSuccess(result));
-    } catch (error: any) {
-      const errorMessage = error?.data?.message || 'Login failed';
-      dispatch(loginFailure(errorMessage));
-      
-      // Set field errors if any
-      if (error?.data?.errors) {
-        Object.entries(error.data.errors).forEach(([field, messages]) => {
-          if (field in errors) {
-            setError(field as keyof LoginFormValues, {
-              type: 'server',
-              message: Array.isArray(messages) ? messages[0] : messages as string,
-            });
-          }
-        });
-      }
+      await onSubmit(values);
+    } catch (err) {
+      // Error is handled by parent component
+      console.error('Login error:', err);
     }
   };
 
   return (
-    <Card bordered style={{ maxWidth: 500, width: '150%' }}>
-      <div style={{ marginBottom: 32 }}>
-        <Title level={3} style={{ marginBottom: 8 }}>
-          {t('auth.login')}
-        </Title>
-        <Text type="secondary">
-          {t('auth.welcomeBack')}
-        </Text>
-      </div>
-      
-      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-        <Form.Item 
-          label="Email"
-          validateStatus={errors.email ? 'error' : ''} 
-          help={errors.email ? t(errors.email.message as string, { min: 6 }) : ''}
-        >
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <Input
-                placeholder={t('auth.email')}
-                {...field}
-              />
-            )}
+    <Form
+      form={form}
+      name="login"
+      initialValues={{ remember: true }}
+      onFinish={handleSubmit}
+      size="large"
+      layout="vertical"
+      requiredMark={false}
+    >
+      {error && (
+        <Form.Item>
+          <Alert
+            message={t('auth.loginFailed', 'Login failed')}
+            description={error}
+            type="error"
+            showIcon
+            closable
           />
         </Form.Item>
+      )}
 
-        <Form.Item
-          label="Password"
-          validateStatus={errors.password ? 'error' : ''}
-          help={errors.password ? t(errors.password.message as string, { min: 6 }) : ''}
+      <Form.Item
+        name="email"
+        label={t('auth.email', 'Email')}
+        rules={[
+          { required: true, message: t('auth.emailRequired', 'Email is required') },
+          { type: 'email', message: t('auth.emailInvalid', 'Invalid email address') },
+        ]}
+      >
+        <Input
+          prefix={<UserOutlined />}
+          placeholder={t('auth.emailPlaceholder', 'Enter your email')}
+          autoComplete="email"
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="password"
+        label={t('auth.password', 'Password')}
+        rules={[
+          { required: true, message: t('auth.passwordRequired', 'Password is required') },
+        ]}
+      >
+        <Input.Password
+          prefix={<LockOutlined />}
+          placeholder={t('auth.passwordPlaceholder', 'Enter your password')}
+          autoComplete="current-password"
+        />
+      </Form.Item>
+
+      <Form.Item>
+        <Form.Item name="remember" valuePropName="checked" noStyle>
+          <Checkbox>{t('auth.rememberMe', 'Remember me')}</Checkbox>
+        </Form.Item>
+
+        <a
+          style={{ float: 'right' }}
+          href="/forgot-password"
         >
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <Input.Password
-                placeholder={t('auth.password')}
-                {...field}
-              />
-            )}
-          />
-        </Form.Item>
+          {t('auth.forgotPassword', 'Forgot password?')}
+        </a>
+      </Form.Item>
 
-        <div style={{ textAlign: 'right', marginBottom: 16 }}>
-          <Link to="/forgot-password">
-            {t('auth.forgotPassword')}
-          </Link>
-        </div>
-
-        <Form.Item style={{ marginBottom: 16 }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            loading={isLoading}
-          >
-            {t('auth.login')}
-          </Button>
-        </Form.Item>
-
-        <Divider plain style={{ margin: '16px 0', color: '#999', fontSize: '15px' }}>
-          {t('auth.orLoginWith')}
-        </Divider>
-
-        <Form.Item style={{ marginBottom: 8 }}>
-          <Button 
-            block 
-            icon={<GoogleOutlined />}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-          >
-            Google
-          </Button>
-        </Form.Item>
-
-        <Form.Item style={{ marginBottom: 16 }}>
-          <Button 
-            block 
-            icon={<KeyOutlined />}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-          >
-            Passkey
-          </Button>
-        </Form.Item>
-
-        <div style={{ textAlign: 'center' }}>
-          <Text type="secondary">
-            {t('auth.noAccount')}{' '}
-          </Text>
-          <Link to="/register">
-            {t('auth.signUp')}
-          </Link>
-        </div>
-      </Form>
-    </Card>
+      <Form.Item>
+        <Button
+          type="primary"
+          htmlType="submit"
+          block
+          loading={isLoading}
+          size="large"
+        >
+          {t('auth.loginButton', 'Login')}
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };

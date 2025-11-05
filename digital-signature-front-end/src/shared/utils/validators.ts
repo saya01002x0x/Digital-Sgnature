@@ -37,7 +37,7 @@ export const nameSchema = z
 /**
  * Required string schema
  */
-export const requiredStringSchema = (fieldName: string = 'This field') =>
+export const requiredStringSchema = (fieldName = 'This field') =>
   z.string().min(1, `${fieldName} is required`);
 
 /**

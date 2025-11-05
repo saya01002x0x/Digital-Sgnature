@@ -9,7 +9,7 @@ import type { SerializedError } from '@reduxjs/toolkit';
 /**
  * API Error type
  */
-export interface ApiError {
+export type ApiError = {
   status?: number;
   message: string;
   code?: string;
@@ -149,7 +149,7 @@ export const buildQueryString = (params: Record<string, unknown>): string => {
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       if (Array.isArray(value)) {
-        value.forEach((item) => searchParams.append(key, String(item)));
+        value.forEach((item) => { searchParams.append(key, String(item)); });
       } else {
         searchParams.append(key, String(value));
       }
@@ -193,9 +193,9 @@ export const delay = (ms: number): Promise<void> => {
  */
 export const retryAsync = async <T>(
   fn: () => Promise<T>,
-  retries: number = 3,
-  delayMs: number = 1000,
-  backoff: boolean = true
+  retries = 3,
+  delayMs = 1000,
+  backoff = true
 ): Promise<T> => {
   try {
     return await fn();
@@ -246,7 +246,7 @@ export const objectToFormData = (obj: Record<string, unknown>): FormData => {
   Object.entries(obj).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       if (Array.isArray(value)) {
-        value.forEach((item) => formData.append(key, String(item)));
+        value.forEach((item) => { formData.append(key, String(item)); });
       } else if (value instanceof File || value instanceof Blob) {
         formData.append(key, value);
       } else {

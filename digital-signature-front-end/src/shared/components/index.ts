@@ -9,4 +9,5 @@ export { SkeletonLoader } from './SkeletonLoader';
 export { EmptyState } from './EmptyState';
 export { LanguageSwitcher } from './LanguageSwitcher';
 export { ThemeSwitcher } from './ThemeSwitcher';
+export { Header } from './Header';
 

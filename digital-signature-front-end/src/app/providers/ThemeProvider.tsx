@@ -1,18 +1,20 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type React from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { ConfigProvider, theme } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { STORAGE_KEYS } from '@/app/config/constants';
 
 type ThemeMode = 'light' | 'dark';
 
-interface ThemeContextType {
+type ThemeContextType = {
   themeMode: ThemeMode;
   toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-interface ThemeProviderProps {
+type ThemeProviderProps = {
   children: ReactNode;
 }
 

@@ -11,7 +11,7 @@
  */
 export const formatDate = (
   date: string | Date,
-  locale: string = 'en-US',
+  locale = 'en-US',
   options?: Intl.DateTimeFormatOptions
 ): string => {
   try {
@@ -42,7 +42,7 @@ export const formatDate = (
  */
 export const formatDateTime = (
   date: string | Date,
-  locale: string = 'en-US'
+  locale = 'en-US'
 ): string => {
   return formatDate(date, locale, {
     year: 'numeric',
@@ -60,7 +60,7 @@ export const formatDateTime = (
  */
 export const formatRelativeTime = (
   date: string | Date,
-  locale: string = 'en-US'
+  locale = 'en-US'
 ): string => {
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -117,7 +117,7 @@ export const formatRelativeTime = (
  * @param bytes - File size in bytes
  * @param decimals - Number of decimal places (default: 2)
  */
-export const formatFileSize = (bytes: number, decimals: number = 2): string => {
+export const formatFileSize = (bytes: number, decimals = 2): string => {
   if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
@@ -137,8 +137,8 @@ export const formatFileSize = (bytes: number, decimals: number = 2): string => {
  */
 export const formatCurrency = (
   amount: number,
-  currency: string = 'USD',
-  locale: string = 'en-US'
+  currency = 'USD',
+  locale = 'en-US'
 ): string => {
   try {
     return new Intl.NumberFormat(locale, {
@@ -156,7 +156,7 @@ export const formatCurrency = (
  * @param num - Number to format
  * @param locale - Locale code
  */
-export const formatNumber = (num: number, locale: string = 'en-US'): string => {
+export const formatNumber = (num: number, locale = 'en-US'): string => {
   try {
     return new Intl.NumberFormat(locale).format(num);
   } catch (error) {
@@ -170,7 +170,7 @@ export const formatNumber = (num: number, locale: string = 'en-US'): string => {
  * @param value - Value to format (0-1 range)
  * @param decimals - Number of decimal places
  */
-export const formatPercentage = (value: number, decimals: number = 0): string => {
+export const formatPercentage = (value: number, decimals = 0): string => {
   try {
     return `${(value * 100).toFixed(decimals)}%`;
   } catch (error) {
@@ -184,7 +184,7 @@ export const formatPercentage = (value: number, decimals: number = 0): string =>
  * @param text - Text to truncate
  * @param maxLength - Maximum length
  */
-export const truncateText = (text: string, maxLength: number = 50): string => {
+export const truncateText = (text: string, maxLength = 50): string => {
   if (text.length <= maxLength) return text;
   return `${text.slice(0, maxLength)}...`;
 };

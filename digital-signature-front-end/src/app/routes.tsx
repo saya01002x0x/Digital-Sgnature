@@ -1,18 +1,22 @@
-import React, { Suspense, lazy } from 'react';
-import { Navigate, RouteObject } from 'react-router-dom';
+import type React from 'react';
+import { Suspense, lazy } from 'react';
+import type { RouteObject } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { APP_ROUTES } from './config/constants';
-import { UserBase } from '@/shared/types';
+import type { UserBase } from '@/shared/types';
 
 // Lazy-loaded components
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage').then(module => ({ default: module.RegisterPage })));
+const ForgotPasswordPage = lazy(() => import('@/features/auth/pages/ForgotPasswordPage').then(module => ({ default: module.ForgotPasswordPage })));
+const ProfilePage = lazy(() => import('@/features/auth/pages/ProfilePage').then(module => ({ default: module.ProfilePage })));
 const UsersPage = lazy(() => import('@/features/users/pages/UsersPage').then(module => ({ default: module.UsersPage })));
 
 // Loading fallback
 const Loader = () => <div>Loading...</div>;
 
 // Auth guard component
-interface ProtectedRouteProps {
+type ProtectedRouteProps = {
   children: React.ReactNode;
   isAuthenticated: boolean;
   redirectPath?: string;
@@ -31,7 +35,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 };
 
 // Role guard component
-interface RoleGuardProps {
+type RoleGuardProps = {
   children: React.ReactNode;
   userRoles: string[];
   allowedRoles: string[];
@@ -68,6 +72,24 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
     element: (
       <Suspense fallback={<Loader />}>
         {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <RegisterPage />}
+      </Suspense>
+    ),
+  },
+  {
+    path: '/forgot-password',
+    element: (
+      <Suspense fallback={<Loader />}>
+        {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <ForgotPasswordPage />}
+      </Suspense>
+    ),
+  },
+  {
+    path: '/profile',
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <ProfilePage />
+        </ProtectedRoute>
       </Suspense>
     ),
   },

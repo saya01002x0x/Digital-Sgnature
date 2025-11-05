@@ -1,10 +1,11 @@
-import React from 'react';
-import { Skeleton, SkeletonProps } from 'antd';
+import type React from 'react';
+import type { SkeletonProps } from 'antd';
+import { Skeleton } from 'antd';
 
-interface SkeletonLoaderProps extends SkeletonProps {
+type SkeletonLoaderProps = {
   type?: 'default' | 'card' | 'list' | 'form' | 'table';
   rows?: number;
-}
+} & SkeletonProps
 
 /**
  * Wrapper around Ant Design Skeleton with preset types

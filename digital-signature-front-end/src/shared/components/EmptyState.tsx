@@ -1,9 +1,10 @@
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type React from 'react';
 import { Empty, Button } from 'antd';
 import { FileTextOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
-interface EmptyStateProps {
+type EmptyStateProps = {
   image?: ReactNode;
   title?: string;
   description?: string;

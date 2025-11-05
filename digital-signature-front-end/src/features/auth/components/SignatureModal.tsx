@@ -1,9 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
+import type React from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Modal, Tabs, Button, Input, Select } from 'antd';
 import SignatureCanvas from 'react-signature-canvas';
 import { useTranslation } from 'react-i18next';
 
-interface SignatureModalProps {
+type SignatureModalProps = {
   open: boolean;
   onClose: () => void;
   onSave: (signatureData: string) => void;
@@ -140,7 +141,7 @@ export const SignatureModal: React.FC<SignatureModalProps> = ({
       <Input
         placeholder={t('auth.typeYourSignature')}
         value={typedSignature}
-        onChange={(e) => setTypedSignature(e.target.value)}
+        onChange={(e) => { setTypedSignature(e.target.value); }}
         style={{ marginBottom: 16 }}
       />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
