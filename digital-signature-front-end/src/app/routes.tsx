@@ -14,6 +14,8 @@ const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage').the
 const ForgotPasswordPage = lazy(() => import('@/features/auth/pages/ForgotPasswordPage').then(module => ({ default: module.ForgotPasswordPage })));
 const ProfilePage = lazy(() => import('@/features/auth/pages/ProfilePage').then(module => ({ default: module.ProfilePage })));
 const UsersPage = lazy(() => import('@/features/users/pages/UsersPage').then(module => ({ default: module.UsersPage })));
+const SignatureListPage = lazy(() => import('@/features/signature/pages/SignatureListPage').then(module => ({ default: module.SignatureListPage })));
+const CreateSignaturePage = lazy(() => import('@/features/signature/pages/CreateSignaturePage').then(module => ({ default: module.CreateSignaturePage })));
 
 // Loading fallback
 const Loader = () => <div>Loading...</div>;
@@ -105,6 +107,26 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
               <UsersPage />
             </RoleGuard>
           )}
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: APP_ROUTES.SIGNATURES,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <SignatureListPage />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: `${APP_ROUTES.SIGNATURES}/create`,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <CreateSignaturePage />
         </ProtectedRoute>
       </Suspense>
     ),

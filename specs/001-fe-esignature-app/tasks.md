@@ -150,46 +150,46 @@
 
 **Module Structure**:
 
-- [ ] T054 [P] [US1] Create signature module directory structure (pages, components, hooks, services, types, utils, __tests__)
+- [X] T054 [P] [US1] Create signature module directory structure (pages, components, hooks, services, types, utils, __tests__)
 
 **Types**:
 
-- [ ] T055 [P] [US1] Define signature types in src/features/signature/types/index.ts (Signature, SignatureType enum, CreateSignatureRequest)
+- [X] T055 [P] [US1] Define signature types in src/features/signature/types/index.ts (Signature, SignatureType enum, CreateSignatureRequest)
 
 **API Service**:
 
-- [ ] T056 [US1] Implement signature API service in src/features/signature/services/signature.api.ts (listSignatures, createSignature, getSignature, updateSignature, deleteSignature, setDefault)
+- [X] T056 [US1] Implement signature API service in src/features/signature/services/signature.api.ts (listSignatures, createSignature, getSignature, updateSignature, deleteSignature, setDefault)
 
 **Components**:
 
-- [ ] T057 [P] [US1] Create SignatureCanvas component in src/features/signature/components/SignatureCanvas.tsx (draw mode using react-signature-canvas)
-- [ ] T058 [P] [US1] Create SignatureTyped component in src/features/signature/components/SignatureTyped.tsx (type mode with font selection)
-- [ ] T059 [P] [US1] Create SignaturePreview component in src/features/signature/components/SignaturePreview.tsx (display signature image)
-- [ ] T060 [P] [US1] Create SignatureSelector component in src/features/signature/components/SignatureSelector.tsx (select from saved signatures)
+- [X] T057 [P] [US1] Create SignatureCanvas component in src/features/signature/components/SignatureCanvas.tsx (draw mode using react-signature-canvas)
+- [X] T058 [P] [US1] Create SignatureTyped component in src/features/signature/components/SignatureTyped.tsx (type mode with font selection)
+- [X] T059 [P] [US1] Create SignaturePreview component in src/features/signature/components/SignaturePreview.tsx (display signature image)
+- [X] T060 [P] [US1] Create SignatureSelector component in src/features/signature/components/SignatureSelector.tsx (select from saved signatures)
 
 **Hooks**:
 
-- [ ] T061 [US1] Create useSignature hook in src/features/signature/hooks/useSignature.ts (fetch signatures, create, delete, set default)
-- [ ] T062 [US1] Create useSignatureCanvas hook in src/features/signature/hooks/useSignatureCanvas.ts (canvas ref management, clear, save)
+- [X] T061 [US1] Create useSignature hook in src/features/signature/hooks/useSignature.ts (fetch signatures, create, delete, set default)
+- [X] T062 [US1] Create useSignatureCanvas hook in src/features/signature/hooks/useSignatureCanvas.ts (canvas ref management, clear, save)
 
 **Pages**:
 
-- [ ] T063 [US1] Create SignatureListPage in src/features/signature/pages/SignatureListPage.tsx (list all signatures, delete, set default actions)
-- [ ] T064 [US1] Create CreateSignaturePage in src/features/signature/pages/CreateSignaturePage.tsx (tabs for draw/type modes, save signature)
+- [X] T063 [US1] Create SignatureListPage in src/features/signature/pages/SignatureListPage.tsx (list all signatures, delete, set default actions)
+- [X] T064 [US1] Create CreateSignaturePage in src/features/signature/pages/CreateSignaturePage.tsx (tabs for draw/type modes, save signature)
 
 **Utilities**:
 
-- [ ] T065 [P] [US1] Create signature helpers in src/features/signature/utils/signatureHelpers.ts (validate image data, convert formats)
+- [X] T065 [P] [US1] Create signature helpers in src/features/signature/utils/signatureHelpers.ts (validate image data, convert formats)
 
 **Routes**:
 
-- [ ] T066 [US1] Add signature routes to src/app/routes.tsx (/signatures, /signatures/create protected)
+- [X] T066 [US1] Add signature routes to src/app/routes.tsx (/signatures, /signatures/create protected)
 
 **MSW Mocks**:
 
-- [ ] T067 [P] [US1] Create signature MSW handlers in src/mocks/features/signature.handlers.ts (mock all signature endpoints)
+- [X] T067 [P] [US1] Create signature MSW handlers in src/mocks/features/signature.handlers.ts (mock all signature endpoints)
 
-**Tests**:
+**Tests** (SKIPPED per user request):
 
 - [ ] T068 [P] [US1] Unit test SignatureCanvas in src/features/signature/components/__tests__/SignatureCanvas.test.tsx (render, draw simulation, clear, save)
 - [ ] T069 [P] [US1] Unit test SignatureTyped in src/features/signature/components/__tests__/SignatureTyped.test.tsx (type input, font selection)
@@ -198,8 +198,8 @@
 
 **i18n**:
 
-- [ ] T072 [P] [US1] Add signature translations to public/locales/en/signature.json
-- [ ] T073 [P] [US1] Add signature translations to public/locales/vi/signature.json
+- [X] T072 [P] [US1] Add signature translations to public/locales/en/signature.json
+- [X] T073 [P] [US1] Add signature translations to public/locales/vi/signature.json
 
 **Checkpoint**: Signature management complete - users can create, manage, and set default signatures.
 

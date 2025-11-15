@@ -5,12 +5,13 @@
  */
 
 import { authHandlers } from './features/auth.handlers';
+import { signatureHandlers } from './features/signature.handlers';
 
 // Combine all feature handlers
 export const handlers = [
   ...authHandlers,
+  ...signatureHandlers,
   // Add more feature handlers as they are created:
-  // ...signatureHandlers,
   // ...documentsHandlers,
   // ...inviteSigningHandlers,
   // ...adminHandlers,
