@@ -20,6 +20,104 @@
   "fullscreen": "Toàn Màn Hình",
   "pageCount": "Số Trang",
   "editorSubtitle": "Thêm các trường chữ ký vào tài liệu của bạn",
-  "saveAndContinue": "Lưu & Tiếp Tục"
+  "saveAndContinue": "Lưu & Tiếp Tục",
+  "detail": {
+    "error": "Lỗi",
+    "documentNotFound": "Không tìm thấy tài liệu",
+    "loading": "Đang tải tài liệu...",
+    "loadError": "Không thể tải chi tiết tài liệu",
+    "back": "Quay lại Tài liệu",
+    "status": "Trạng thái",
+    "pageCount": "Số Trang",
+    "pages": "trang",
+    "fileSize": "Kích Thước File",
+    "createdAt": "Ngày Tạo",
+    "updatedAt": "Ngày Cập Nhật",
+    "completedAt": "Ngày Hoàn Tất",
+    "declinedAt": "Ngày Từ Chối",
+    "declineReason": "Lý Do Từ Chối",
+    "editDocument": "Sửa Tài Liệu",
+    "inviteSigners": "Mời Người Ký",
+    "download": "Tải Xuống",
+    "signers": {
+      "title": "Người Ký",
+      "name": "Tên",
+      "email": "Email",
+      "order": "Thứ Tự",
+      "status": "Trạng Thái",
+      "signedAt": "Đã Ký Lúc"
+    },
+    "fields": {
+      "title": "Tóm Tắt Các Trường",
+      "total": "Tổng Số Trường",
+      "filled": "Đã Điền"
+    },
+    "timeline": {
+      "title": "Lịch Sử Tài Liệu",
+      "error": "Không thể tải lịch sử"
+    }
+  },
+  "timeline": {
+    "noEvents": "Chưa có sự kiện nào",
+    "loading": "Đang tải lịch sử...",
+    "signerName": "Người Ký",
+    "reason": "Lý Do",
+    "fieldCount": "Trường",
+    "eventType": {
+      "CREATED": "Tài Liệu Được Tạo",
+      "UPDATED": "Tài Liệu Được Cập Nhật",
+      "FIELDS_PLACED": "Đã Đặt Các Trường",
+      "INVITATIONS_SENT": "Đã Gửi Lời Mời",
+      "OPENED": "Tài Liệu Đã Được Mở",
+      "SIGNED": "Tài Liệu Đã Được Ký",
+      "DECLINED": "Tài Liệu Bị Từ Chối",
+      "COMPLETED": "Tài Liệu Hoàn Tất"
+    }
+  },
+  "listPage": {
+    "title": "Tài Liệu Của Tôi",
+    "subtitle": "{{count}} tài liệu",
+    "clearFilters": "Xóa Bộ Lọc",
+    "refresh": "Làm Mới",
+    "createDocument": "Tải Lên Tài Liệu"
+  },
+  "useDocuments": {
+    "deleteSuccess": "Đã xóa tài liệu thành công",
+    "documentNotFound": "Không tìm thấy tài liệu",
+    "deleteNotAllowed": "Không thể xóa tài liệu ở trạng thái hiện tại",
+    "deleteError": "Không thể xóa tài liệu"
+  },
+  "list": {
+    "title": "Tiêu Đề",
+    "pages": "{{count}} trang",
+    "status": "Trạng Thái",
+    "createdAt": "Ngày Tạo",
+    "updatedAt": "Cập Nhật",
+    "actions": "Hành Động",
+    "view": "Xem",
+    "edit": "Sửa",
+    "invite": "Mời",
+    "deleteConfirm": "Xóa Tài Liệu?",
+    "deleteDescription": "Bạn có chắc chắn muốn xóa \"{{title}}\"? Hành động này không thể hoàn tác.",
+    "deleteYes": "Đồng ý, Xóa",
+    "deleteNo": "Hủy",
+    "delete": "Xóa",
+    "totalDocuments": "Tổng {{count}} tài liệu",
+    "noDocuments": "Không tìm thấy tài liệu nào"
+  },
+  "status": {
+    "draft": "Bản Nháp",
+    "signing": "Đang Ký",
+    "done": "Hoàn Tất",
+    "declined": "Đã Từ Chối"
+  },
+  "filters": {
+    "searchPlaceholder": "Tìm kiếm tài liệu...",
+    "statusPlaceholder": "Tất Cả Trạng Thái",
+    "sortCreatedDesc": "Mới Nhất Trước",
+    "sortCreatedAsc": "Cũ Nhất Trước",
+    "sortUpdatedDesc": "Cập Nhật Gần Đây",
+    "sortUpdatedAsc": "Cập Nhật Lâu Nhất"
+  }
 }
 
