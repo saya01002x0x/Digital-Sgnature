@@ -28,17 +28,17 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className={`flex items-center justify-center min-h-[300px] ${className}`}>
+    <div className={className} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300 }}>
       <Empty
         image={image || <FileTextOutlined style={{ fontSize: 64, color: '#d9d9d9' }} />}
         imageStyle={{ height: 80 }}
         description={
-          <div className="text-center">
-            <p className="text-lg font-medium text-gray-700 mb-2">
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: 18, fontWeight: 500, color: '#262626', marginBottom: 8 }}>
               {title || t('common.noData', 'No data available')}
             </p>
             {description && (
-              <p className="text-sm text-gray-500">
+              <p style={{ fontSize: 14, color: '#8c8c8c' }}>
                 {description}
               </p>
             )}

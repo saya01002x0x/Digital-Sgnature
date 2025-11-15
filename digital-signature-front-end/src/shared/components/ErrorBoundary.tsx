@@ -74,17 +74,17 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onReset }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: 16 }}>
       <Result
         status="error"
         title={t('errors.unexpected', 'Something went wrong')}
         subTitle={
-          <div className="space-y-2">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p>{t('errors.unexpectedDescription', 'An unexpected error occurred. Please try again.')}</p>
             {error && import.meta.env.DEV && (
-              <details className="text-left mt-4 p-4 bg-gray-100 rounded">
-                <summary className="cursor-pointer font-medium">Error details (dev mode)</summary>
-                <pre className="mt-2 text-xs overflow-auto">
+              <details style={{ textAlign: 'left', marginTop: 16, padding: 16, background: '#f5f5f5', borderRadius: 4 }}>
+                <summary style={{ cursor: 'pointer', fontWeight: 500 }}>Error details (dev mode)</summary>
+                <pre style={{ marginTop: 8, fontSize: 12, overflow: 'auto' }}>
                   {error.toString()}
                   {error.stack && `\n\n${error.stack}`}
                 </pre>

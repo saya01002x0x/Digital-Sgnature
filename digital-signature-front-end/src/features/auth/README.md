@@ -1,381 +1,197 @@
-# Auth Feature Module
+# Auth Module
 
-## 📝 Mô tả
+**Module Authentication và User Management**
 
-Module xác thực và quản lý người dùng cho ứng dụng E-Signature. Cung cấp đầy đủ chức năng đăng ký, đăng nhập, quản lý profile, và quên mật khẩu.
+Module này chịu trách nhiệm quản lý toàn bộ authentication flow, user profile management, và authorization guard cho ứng dụng E-Signature.
 
-## 🏗️ Cấu trúc
+## 📁 Cấu trúc
 
 ```
 auth/
-├── components/              # React components
-│   ├── LoginForm.tsx       # Form đăng nhập
-│   ├── RegisterForm.tsx    # Form đăng ký
-│   └── ProfileForm.tsx     # Form cập nhật profile
-│
-├── pages/                  # Page components
+├── pages/                  # Auth pages
 │   ├── LoginPage.tsx       # Trang đăng nhập
 │   ├── RegisterPage.tsx    # Trang đăng ký
 │   ├── ForgotPasswordPage.tsx  # Trang quên mật khẩu
 │   └── ProfilePage.tsx     # Trang profile người dùng
-│
+├── components/             # Auth components
+│   ├── LoginForm.tsx       # Form đăng nhập
+│   ├── RegisterForm.tsx    # Form đăng ký
+│   ├── ProfileForm.tsx     # Form cập nhật profile
+│   └── AuthLayout.tsx      # Layout cho auth pages
 ├── hooks/                  # Custom hooks
 │   ├── useAuth.ts          # Hook truy cập auth state
 │   └── useAuthGuard.ts     # Hook bảo vệ routes
-│
 ├── services/               # API services
-│   └── auth.api.ts         # RTK Query endpoints
-│
+│   └── auth.api.ts         # RTK Query auth endpoints
 ├── types/                  # TypeScript types
-│   └── index.ts            # Auth-related types
-│
+│   └── index.ts            # User, Auth types
 ├── utils/                  # Utilities
 │   └── validators.ts       # Zod validation schemas
-│
-├── authSlice.ts            # Redux slice
-└── README.md              # Tài liệu này
+├── authSlice.ts            # Redux slice cho auth state
+└── __tests__/              # Tests
+    ├── authFlow.test.tsx   # Integration tests
+    └── components/
+        └── __tests__/
+            ├── LoginForm.test.tsx
+            └── RegisterForm.test.tsx
 ```
 
-## 🚀 Chức năng chính
+## ✨ Features
 
-### 1. Đăng ký (Register)
-- **File**: `pages/RegisterPage.tsx`, `components/RegisterForm.tsx`
-- **Chức năng**: 
-  - Đăng ký tài khoản mới
-  - Validation: email, password (8+ chars, uppercase, số), xác nhận password
-  - Checkbox đồng ý điều khoản
-- **API**: `POST /api/auth/register`
-- **Redirect**: Sau đăng ký thành công → `/login`
+### Authentication
 
-### 2. Đăng nhập (Login)
-- **File**: `pages/LoginPage.tsx`, `components/LoginForm.tsx`
-- **Chức năng**:
-  - Đăng nhập bằng email/password
-  - Checkbox "Remember me"
-  - Link "Forgot password"
-- **API**: `POST /api/auth/login`
-- **Redux**: Lưu user và token vào store + localStorage
-- **Redirect**: Sau đăng nhập → `/documents`
+- ✅ **Đăng ký tài khoản** - User có thể đăng ký với email, password, và name
+- ✅ **Đăng nhập** - Support remember me, redirect sau khi login
+- ✅ **Đăng xuất** - Clear session và redirect về login
+- ✅ **Quên mật khẩu** - Gửi email reset password
+- ✅ **Reset mật khẩu** - Đặt lại mật khẩu với token
 
-### 3. Quên mật khẩu (Forgot Password)
-- **File**: `pages/ForgotPasswordPage.tsx`
-- **Chức năng**:
-  - Gửi email reset password
-  - Hiển thị thông báo thành công
-- **API**: `POST /api/auth/forgot-password`
+### User Profile
 
-### 4. Profile
-- **File**: `pages/ProfilePage.tsx`, `components/ProfileForm.tsx`
-- **Chức năng**:
-  - Xem thông tin profile (email, role, ngày tạo)
-  - Cập nhật tên và avatar
-  - Upload avatar (preview trước khi lưu)
-- **API**: 
-  - `GET /api/auth/profile`
-  - `PUT /api/auth/profile`
+- ✅ **Xem profile** - Hiển thị thông tin user (name, email, avatar, role)
+- ✅ **Cập nhật profile** - Update name và avatar
+- ✅ **Email verification status** - Hiển thị trạng thái email đã verify
 
-### 5. Đăng xuất (Logout)
-- **File**: `hooks/useAuth.ts`
-- **Chức năng**:
-  - Clear token và user từ Redux + localStorage
-  - Redirect về `/login`
-- **API**: `POST /api/auth/logout`
+### Authorization
 
-## 🎨 Components
+- ✅ **Protected Routes** - Guard routes yêu cầu authentication
+- ✅ **Role-based Access** - Phân quyền theo role (USER, ADMIN)
+- ✅ **Auth Guards** - Custom hooks để protect components
 
-### LoginForm
-Props:
-- `onSubmit: (values: LoginFormValues) => Promise<void>` - Handler khi submit
-- `isLoading?: boolean` - Trạng thái loading
-- `error?: string | null` - Error message
+## 🔧 Usage
 
-### RegisterForm
-Props:
-- `onSubmit: (values: RegisterFormValues) => Promise<void>` - Handler khi submit
-- `isLoading?: boolean` - Trạng thái loading
-- `error?: string | null` - Error message
-
-### ProfileForm
-Props:
-- `user: User` - Thông tin user hiện tại
-- `onSubmit: (values: ProfileFormValues) => Promise<void>` - Handler khi submit
-- `isLoading?: boolean` - Trạng thái loading
-
-## 🔧 Hooks
-
-### useAuth()
-Hook chính để truy cập authentication state và actions.
-
-**Returns:**
-```typescript
-{
-  user: User | null;              // Thông tin user
-  isAuthenticated: boolean;       // Trạng thái đăng nhập
-  token: string | null;          // Auth token
-  error: string | null;          // Error message
-  status: LoadingStatus;         // Loading status
-  isLoading: boolean;            // Combined loading state
-  login: (credentials) => Promise; // Hàm đăng nhập
-  logout: () => Promise;         // Hàm đăng xuất
-}
-```
-
-**Example:**
-```typescript
-const { user, isAuthenticated, login, logout } = useAuth();
-
-if (isAuthenticated) {
-  console.log('User:', user.name);
-}
-```
-
-### useAuthGuard(options)
-Hook để bảo vệ routes và kiểm tra quyền.
-
-**Options:**
-```typescript
-{
-  requireAuth?: boolean;     // Yêu cầu đăng nhập (default: true)
-  requireRole?: UserRole;    // Yêu cầu role cụ thể
-  redirectTo?: string;       // Redirect URL (default: '/login')
-}
-```
-
-**Example:**
-```typescript
-// Trong protected page
-const { isAuthenticated, isAuthorized } = useAuthGuard({
-  requireAuth: true,
-  requireRole: UserRole.Admin,
-});
-```
-
-## 📡 API Endpoints
-
-### RTK Query Hooks
-
-```typescript
-// Login
-const [login] = useLoginMutation();
-await login({ email, password });
-
-// Register
-const [register] = useRegisterMutation();
-await register({ email, password, name });
-
-// Get Profile
-const { data: user } = useGetProfileQuery();
-
-// Update Profile
-const [updateProfile] = useUpdateProfileMutation();
-await updateProfile({ name, avatar });
-
-// Forgot Password
-const [forgotPassword] = useForgotPasswordMutation();
-await forgotPassword({ email });
-
-// Logout
-const [logout] = useLogoutMutation();
-await logout();
-```
-
-## 🔐 Redux State
-
-### Auth Slice
-
-**State:**
-```typescript
-{
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
-  error: string | null;
-}
-```
-
-**Actions:**
-```typescript
-// Set credentials sau khi login
-dispatch(setCredentials({ user, token }));
-
-// Update user info
-dispatch(setUser(updatedUser));
-
-// Logout
-dispatch(logout());
-
-// Set error
-dispatch(setError(message));
-
-// Clear error
-dispatch(clearError());
-```
-
-**Selectors:**
-```typescript
-const user = useAppSelector(selectUser);
-const isAuthenticated = useAppSelector(selectIsAuthenticated);
-const token = useAppSelector(selectAuthToken);
-const error = useAppSelector(selectAuthError);
-const status = useAppSelector(selectAuthStatus);
-```
-
-## ✅ Validation
-
-Validation sử dụng Zod schemas trong `utils/validators.ts`:
-
-- **loginSchema**: Email + password
-- **registerSchema**: Email + password + confirmPassword + name + terms
-- **forgotPasswordSchema**: Email
-- **profileSchema**: Name + avatar (optional)
-
-## 🎯 User Roles
-
-```typescript
-enum UserRole {
-  User = 'USER',    // Người dùng thường
-  Admin = 'ADMIN',  // Quản trị viên
-}
-```
-
-## 🔒 Security
-
-- **Token Storage**: localStorage (key: `AUTH_TOKEN`)
-- **Auto Logout**: Khi token expire hoặc invalid
-- **Protected Routes**: Sử dụng `useAuthGuard` hook
-- **Password Requirements**: 
-  - Tối thiểu 8 ký tự
-  - Ít nhất 1 chữ hoa
-  - Ít nhất 1 số
-
-## 🌐 i18n Keys
-
-Translation keys được sử dụng (namespace: `auth`):
-
-```
-auth.login, auth.register, auth.email, auth.password
-auth.forgotPassword, auth.loginSuccess, auth.registerSuccess
-auth.emailRequired, auth.passwordRequired, auth.passwordMin
-profile.title, profile.name, profile.avatar, profile.updateSuccess
-```
-
-## 🧪 Testing
-
-Tests được đặt trong `__tests__/`:
-- Unit tests cho components
-- Integration tests cho auth flow
-- Mock API với MSW
-
-## 📝 Usage Examples
-
-### 1. Đăng nhập programmatically
+### useAuth Hook
 
 ```typescript
 import { useAuth } from '@/features/auth/hooks/useAuth';
 
 function MyComponent() {
-  const { login } = useAuth();
+  const { user, isAuthenticated, login, logout } = useAuth();
 
-  const handleLogin = async () => {
-    try {
-      await login({
-        email: 'user@example.com',
-        password: 'password123',
-      });
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
-  };
-}
-```
-
-### 2. Bảo vệ route
-
-```typescript
-import { useAuthGuard } from '@/features/auth/hooks/useAuthGuard';
-
-function AdminPage() {
-  useAuthGuard({
-    requireAuth: true,
-    requireRole: UserRole.Admin,
-  });
-
-  return <div>Admin Content</div>;
-}
-```
-
-### 3. Kiểm tra authentication
-
-```typescript
-import { useAuth } from '@/features/auth/hooks/useAuth';
-
-function Header() {
-  const { isAuthenticated, user, logout } = useAuth();
+  if (!isAuthenticated) {
+    return <div>Please login</div>;
+  }
 
   return (
     <div>
-      {isAuthenticated ? (
-        <>
-          <span>Hello, {user?.name}</span>
-          <button onClick={logout}>Logout</button>
-        </>
-      ) : (
-        <Link to="/login">Login</Link>
-      )}
+      <p>Welcome, {user?.name}</p>
+      <button onClick={logout}>Logout</button>
     </div>
   );
 }
 ```
 
-## 🔄 Flow Diagram
+### useAuthGuard Hook
 
+```typescript
+import { useAuthGuard } from '@/features/auth/hooks/useAuthGuard';
+import { UserRole } from '@/features/auth/types';
+
+function AdminPage() {
+  const { isAuthorized } = useAuthGuard({
+    requireAuth: true,
+    requireRole: UserRole.Admin,
+    redirectTo: '/login',
+  });
+
+  if (!isAuthorized) {
+    return null; // Will redirect
+  }
+
+  return <div>Admin Content</div>;
+}
 ```
-┌─────────────┐
-│   Register  │──────┐
-└─────────────┘      │
-                     │
-┌─────────────┐      ▼
-│    Login    │──► [Auth Success] ──► [Set Redux State] ──► [Redirect]
-└─────────────┘      │                    │
-                     │                    │
-┌─────────────┐      │                    ▼
-│   Profile   │◄─────┴──────────── [localStorage]
-└─────────────┘
-       │
-       ▼
-┌─────────────┐
-│   Logout    │──► [Clear State] ──► [Clear localStorage] ──► [Redirect to /login]
-└─────────────┘
+
+### Auth API
+
+```typescript
+import { useLoginMutation, useRegisterMutation } from '@/features/auth/services/auth.api';
+
+function LoginComponent() {
+  const [login, { isLoading }] = useLoginMutation();
+
+  const handleLogin = async (values) => {
+    const result = await login(values).unwrap();
+    // Handle success
+  };
+
+  return <LoginForm onSubmit={handleLogin} isLoading={isLoading} />;
+}
 ```
 
-## 🐛 Troubleshooting
+## 📝 Types
 
-### Token expired
-- Tự động logout và redirect về `/login`
-- Cần implement refresh token nếu cần
+### User
 
-### State không sync
-- Check Redux DevTools
-- Verify localStorage có token không
+```typescript
+type User = {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  role: UserRole;
+  emailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+```
 
-### Form validation lỗi
-- Check console cho Zod errors
-- Verify schema trong `utils/validators.ts`
+### UserRole
 
-## 📚 Dependencies
+```typescript
+enum UserRole {
+  User = 'USER',
+  Admin = 'ADMIN',
+}
+```
 
-- `@reduxjs/toolkit` - Redux state management
-- `react-router-dom` - Routing
-- `antd` - UI components
-- `zod` - Validation
-- `react-i18next` - Internationalization
+## 🧪 Testing
+
+Module này có comprehensive test coverage:
+
+- **Unit Tests**: Components (LoginForm, RegisterForm), Hooks (useAuth)
+- **Integration Tests**: Complete auth flow (register → login → logout)
+- **MSW Mocks**: Mock handlers cho tất cả auth endpoints
+
+Chạy tests:
+
+```bash
+npm test src/features/auth
+```
+
+## 🌐 i18n
+
+Module hỗ trợ đa ngôn ngữ (vi/en):
+
+- **English**: `public/locales/en/auth.json`
+- **Vietnamese**: `public/locales/vi/auth.json`
+
+## 🔐 Security
+
+- ✅ Password validation: Min 8 ký tự, có uppercase và number
+- ✅ Email validation với Zod schemas
+- ✅ Token stored trong localStorage (hoặc httpOnly cookies từ backend)
+- ✅ CSRF protection (backend responsibility)
+- ✅ Input sanitization
+
+## 🎯 User Stories Covered
+
+**US7 - Đăng ký và xác thực người dùng (P1 - MVP)**
+
+- [X] FR-059: Đăng ký với email/password
+- [X] FR-060: Login/Logout
+- [X] FR-061: Profile management
+- [X] FR-062: Forgot password
+- [X] FR-063: Session persistence
 
 ## 🚀 Next Steps
 
-- [ ] Implement email verification
-- [ ] Add two-factor authentication
-- [ ] Implement refresh token
-- [ ] Add social login (Google, Facebook)
-- [ ] Add password strength meter
+Module auth đã hoàn thành và sẵn sàng cho các user stories khác sử dụng. Các modules tiếp theo (Signature, Documents, Invite-Signing) có thể depend vào auth module này.
 
+## 📚 Related Documentation
+
+- [Spec](../../../../specs/001-fe-esignature-app/spec.md)
+- [Plan](../../../../specs/001-fe-esignature-app/plan.md)
+- [Data Model](../../../../specs/001-fe-esignature-app/data-model.md)
+- [Auth API Contract](../../../../specs/001-fe-esignature-app/contracts/auth-api.json)
+- [Tasks](../../../../specs/001-fe-esignature-app/tasks.md)

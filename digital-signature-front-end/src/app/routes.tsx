@@ -8,6 +8,7 @@ import { App } from '@/App';
 
 // Lazy-loaded components
 const HeroPage = lazy(() => import('@/pages/HeroPage').then(module => ({ default: module.HeroPage })));
+const TestCardPage = lazy(() => import('@/pages/TestCardPage').then(module => ({ default: module.TestCardPage })));
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage').then(module => ({ default: module.RegisterPage })));
 const ForgotPasswordPage = lazy(() => import('@/features/auth/pages/ForgotPasswordPage').then(module => ({ default: module.ForgotPasswordPage })));
@@ -113,6 +114,14 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
     element: (
       <Suspense fallback={<Loader />}>
         <HeroPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: '/testcard',
+    element: (
+      <Suspense fallback={<Loader />}>
+        <TestCardPage />
       </Suspense>
     ),
   },

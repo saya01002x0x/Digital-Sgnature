@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import type React from 'react';
-import { createContext, useContext, useState, useEffect } from 'react';
-import { ConfigProvider, theme } from 'antd';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { ConfigProvider, theme as antdTheme } from 'antd';
+import type { ThemeConfig } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { STORAGE_KEYS } from '@/app/config/constants';
 
@@ -10,6 +11,8 @@ type ThemeMode = 'light' | 'dark';
 type ThemeContextType = {
   themeMode: ThemeMode;
   toggleTheme: () => void;
+  primaryColor: string;
+  setPrimaryColor: (color: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -19,50 +22,66 @@ type ThemeProviderProps = {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    // Initialize theme from localStorage or system preference
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) as ThemeMode | null;
+    if (savedTheme) {
+      return savedTheme;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  });
+
+  const [primaryColor, setPrimaryColor] = useState<string>('#1890ff');
   useTranslation();
 
   useEffect(() => {
-    // Get theme from localStorage or use system preference
-    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) as ThemeMode | null;
-    
-    if (savedTheme) {
-      setThemeMode(savedTheme);
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setThemeMode('dark');
-    }
-    
-    // Update body attribute for non-AntD styling
-    document.body.setAttribute('data-theme', themeMode);
+    // Save theme to localStorage when it changes
+    localStorage.setItem(STORAGE_KEYS.THEME, themeMode);
   }, [themeMode]);
 
   const toggleTheme = () => {
-    const newTheme = themeMode === 'light' ? 'dark' : 'light';
-    setThemeMode(newTheme);
-    localStorage.setItem(STORAGE_KEYS.THEME, newTheme);
-    document.body.setAttribute('data-theme', newTheme);
+    setThemeMode(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
-  // Define Ant Design theme settings
-  const antdTheme = {
-    algorithm: themeMode === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
+  // Memoize theme config to prevent unnecessary re-renders
+  const themeConfig: ThemeConfig = useMemo(() => ({
+    algorithm: themeMode === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
     token: {
-      colorPrimary: '#1890ff', // Brand color
-      borderRadius: 4,
+      colorPrimary: primaryColor,
+      borderRadius: 6,
+      fontSize: 14,
     },
-    components: {
-      Layout: {
-        headerBg: themeMode === 'dark' ? '#141414' : '#ffffff',
-        headerColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.85)',
-        headerHeight: 64,
-        headerPadding: '0 24px',
-      },
-    },
-  };
+    // components: {
+    //   Layout: {
+    //     headerBg: themeMode === 'dark' ? '#141414' : '#ffffff',
+    //     headerHeight: 64,
+    //     headerPadding: '0 24px',
+    //   },
+    //   Button: {
+    //     borderRadius: 6,
+    //   },
+    //   Input: {
+    //     borderRadius: 6,
+    //   },
+    //   Card: {
+    //     borderRadius: 8,
+    //   },
+    // },
+  }), [themeMode, primaryColor]);
+
+  const contextValue = useMemo(() => ({
+    themeMode,
+    toggleTheme,
+    primaryColor,
+    setPrimaryColor,
+  }), [themeMode, primaryColor]);
 
   return (
-    <ThemeContext.Provider value={{ themeMode, toggleTheme }}>
-      <ConfigProvider theme={antdTheme} locale={{ locale: 'en-US' }}>
+    <ThemeContext.Provider value={contextValue}>
+      <ConfigProvider theme={themeConfig}>
         {children}
       </ConfigProvider>
     </ThemeContext.Provider>

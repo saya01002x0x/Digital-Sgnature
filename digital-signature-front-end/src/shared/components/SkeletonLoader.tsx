@@ -20,18 +20,18 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   switch (type) {
     case 'card':
       return (
-        <div className="p-4 border border-gray-200 rounded-lg">
+        <div style={{ padding: 16, border: '1px solid #f0f0f0', borderRadius: 8 }}>
           <Skeleton active={active} avatar paragraph={{ rows: 2 }} {...props} />
         </div>
       );
 
     case 'list':
       return (
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {Array.from({ length: rows }).map((_, index) => (
-            <div key={index} className="flex items-center gap-4">
+            <div key={index} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               <Skeleton.Avatar active={active} size="large" />
-              <div className="flex-1">
+              <div style={{ flex: 1 }}>
                 <Skeleton active={active} paragraph={{ rows: 1 }} title={false} />
               </div>
             </div>
@@ -41,7 +41,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
 
     case 'form':
       return (
-        <div className="space-y-6">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {Array.from({ length: rows }).map((_, index) => (
             <div key={index}>
               <Skeleton.Input active={active} block style={{ marginBottom: 8, height: 14, width: 100 }} />
@@ -53,7 +53,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
 
     case 'table':
       return (
-        <div className="space-y-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <Skeleton active={active} paragraph={false} />
           {Array.from({ length: rows }).map((_, index) => (
             <Skeleton key={index} active={active} title={false} paragraph={{ rows: 1 }} />

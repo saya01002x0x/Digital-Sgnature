@@ -83,58 +83,58 @@
 
 **Module Structure**:
 
-- [ ] T032 [P] [US7] Create auth module directory structure (pages, components, hooks, services, types, utils, __tests__)
+- [X] T032 [P] [US7] Create auth module directory structure (pages, components, hooks, services, types, utils, __tests__)
 
 **Types & Validation**:
 
-- [ ] T033 [P] [US7] Define auth types in src/features/auth/types/index.ts (User, LoginRequest, RegisterRequest, UserRole enum)
-- [ ] T034 [P] [US7] Create auth validation schemas in src/features/auth/utils/validators.ts (loginSchema, registerSchema with Zod)
+- [X] T033 [P] [US7] Define auth types in src/features/auth/types/index.ts (User, LoginRequest, RegisterRequest, UserRole enum)
+- [X] T034 [P] [US7] Create auth validation schemas in src/features/auth/utils/validators.ts (loginSchema, registerSchema with Zod)
 
 **API Service (RTK Query)**:
 
-- [ ] T035 [US7] Implement auth API service in src/features/auth/services/auth.api.ts (register, login, logout, getProfile, updateProfile, forgotPassword, resetPassword endpoints)
+- [X] T035 [US7] Implement auth API service in src/features/auth/services/auth.api.ts (register, login, logout, getProfile, updateProfile, forgotPassword, resetPassword endpoints)
 
 **Redux State**:
 
-- [ ] T036 [US7] Create auth slice in src/features/auth/authSlice.ts (user state, isAuthenticated, setUser, logout actions)
+- [X] T036 [US7] Create auth slice in src/features/auth/authSlice.ts (user state, isAuthenticated, setUser, logout actions)
 
 **Components**:
 
-- [ ] T037 [P] [US7] Create LoginForm component in src/features/auth/components/LoginForm.tsx (React Hook Form + Zod validation)
-- [ ] T038 [P] [US7] Create RegisterForm component in src/features/auth/components/RegisterForm.tsx (React Hook Form + Zod validation)
-- [ ] T039 [P] [US7] Create ProfileForm component in src/features/auth/components/ProfileForm.tsx (update name, avatar)
+- [X] T037 [P] [US7] Create LoginForm component in src/features/auth/components/LoginForm.tsx (React Hook Form + Zod validation)
+- [X] T038 [P] [US7] Create RegisterForm component in src/features/auth/components/RegisterForm.tsx (React Hook Form + Zod validation)
+- [X] T039 [P] [US7] Create ProfileForm component in src/features/auth/components/ProfileForm.tsx (update name, avatar)
 
 **Pages**:
 
-- [ ] T040 [P] [US7] Create LoginPage in src/features/auth/pages/LoginPage.tsx (use LoginForm, redirect after success)
-- [ ] T041 [P] [US7] Create RegisterPage in src/features/auth/pages/RegisterPage.tsx (use RegisterForm, redirect to login)
-- [ ] T042 [P] [US7] Create ForgotPasswordPage in src/features/auth/pages/ForgotPasswordPage.tsx (email input, send reset link)
-- [ ] T043 [P] [US7] Create ProfilePage in src/features/auth/pages/ProfilePage.tsx (display user info, use ProfileForm)
+- [X] T040 [P] [US7] Create LoginPage in src/features/auth/pages/LoginPage.tsx (use LoginForm, redirect after success)
+- [X] T041 [P] [US7] Create RegisterPage in src/features/auth/pages/RegisterPage.tsx (use RegisterForm, redirect to login)
+- [X] T042 [P] [US7] Create ForgotPasswordPage in src/features/auth/pages/ForgotPasswordPage.tsx (email input, send reset link)
+- [X] T043 [P] [US7] Create ProfilePage in src/features/auth/pages/ProfilePage.tsx (display user info, use ProfileForm)
 
 **Hooks**:
 
-- [ ] T044 [US7] Create useAuth hook in src/features/auth/hooks/useAuth.ts (access user, isAuthenticated from Redux)
-- [ ] T045 [US7] Create useAuthGuard hook in src/features/auth/hooks/useAuthGuard.ts (redirect if not authenticated)
+- [X] T044 [US7] Create useAuth hook in src/features/auth/hooks/useAuth.ts (access user, isAuthenticated from Redux)
+- [X] T045 [US7] Create useAuthGuard hook in src/features/auth/hooks/useAuthGuard.ts (redirect if not authenticated)
 
 **Routes**:
 
-- [ ] T046 [US7] Add auth routes to src/app/routes.tsx (/login, /register, /forgot-password, /profile protected)
+- [X] T046 [US7] Add auth routes to src/app/routes.tsx (/login, /register, /forgot-password, /profile protected)
 
 **MSW Mocks**:
 
-- [ ] T047 [P] [US7] Create auth MSW handlers in src/mocks/features/auth.handlers.ts (mock all auth endpoints)
+- [X] T047 [P] [US7] Create auth MSW handlers in src/mocks/features/auth.handlers.ts (mock all auth endpoints)
 
 **Tests**:
 
-- [ ] T048 [P] [US7] Unit test LoginForm in src/features/auth/components/__tests__/LoginForm.test.tsx (render, validation, submit)
-- [ ] T049 [P] [US7] Unit test RegisterForm in src/features/auth/components/__tests__/RegisterForm.test.tsx (render, validation, submit)
-- [ ] T050 [P] [US7] Unit test useAuth hook in src/features/auth/hooks/__tests__/useAuth.test.ts (mock Redux)
-- [ ] T051 [US7] Integration test auth flow in src/features/auth/__tests__/authFlow.test.tsx (register → login → logout with MSW)
+- [X] T048 [P] [US7] Unit test LoginForm in src/features/auth/components/__tests__/LoginForm.test.tsx (render, validation, submit)
+- [X] T049 [P] [US7] Unit test RegisterForm in src/features/auth/components/__tests__/RegisterForm.test.tsx (render, validation, submit)
+- [X] T050 [P] [US7] Unit test useAuth hook in src/features/auth/hooks/__tests__/useAuth.test.ts (mock Redux)
+- [X] T051 [US7] Integration test auth flow in src/features/auth/__tests__/authFlow.test.tsx (register → login → logout with MSW)
 
 **i18n**:
 
-- [ ] T052 [P] [US7] Add auth translations to public/locales/en/auth.json (login, register, profile labels/errors)
-- [ ] T053 [P] [US7] Add auth translations to public/locales/vi/auth.json (Vietnamese translations)
+- [X] T052 [P] [US7] Add auth translations to public/locales/en/auth.json (login, register, profile labels/errors)
+- [X] T053 [P] [US7] Add auth translations to public/locales/vi/auth.json (Vietnamese translations)
 
 **Checkpoint**: User authentication flow complete - users can register, login, manage profile, logout. All other user stories depend on this.
 

@@ -24,7 +24,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, descrip
           title={title}
         >
           {description && (
-            <p style={{ marginBottom: 24, color: 'rgba(0, 0, 0, 0.45)' }}>
+            <p style={{ marginBottom: 24}}>
               {description}
             </p>
           )}

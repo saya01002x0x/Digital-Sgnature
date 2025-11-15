@@ -1,8 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { AppProviders } from "@/app/providers/AppProviders";
-import "./styles/globals.css";
-import "./styles/variables.css";
+import "antd/dist/reset.css";
 import "./i18n/i18n";
 
 // Import MSW browser worker for API mocking (development only)
