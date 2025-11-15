@@ -17,7 +17,10 @@ const UsersPage = lazy(() => import('@/features/users/pages/UsersPage').then(mod
 const SignatureListPage = lazy(() => import('@/features/signature/pages/SignatureListPage').then(module => ({ default: module.SignatureListPage })));
 const CreateSignaturePage = lazy(() => import('@/features/signature/pages/CreateSignaturePage').then(module => ({ default: module.CreateSignaturePage })));
 const DocumentEditorPage = lazy(() => import('@/features/documents/pages/DocumentEditorPage').then(module => ({ default: module.DocumentEditorPage })));
+const DocumentListPage = lazy(() => import('@/features/documents/pages/DocumentListPage').then(module => ({ default: module.DocumentListPage })));
+const DocumentDetailPage = lazy(() => import('@/features/documents/pages/DocumentDetailPage').then(module => ({ default: module.DocumentDetailPage })));
 const SigningRoomPage = lazy(() => import('@/features/invite-signing/pages/SigningRoomPage').then(module => ({ default: module.SigningRoomPage })));
+const InviteSignersPage = lazy(() => import('@/features/invite-signing/pages/InviteSignersPage').then(module => ({ default: module.InviteSignersPage })));
 
 // Loading fallback
 const Loader = () => <div>Loading...</div>;
@@ -134,11 +137,41 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
     ),
   },
   {
+    path: APP_ROUTES.DOCUMENTS,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <DocumentListPage />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
     path: `${APP_ROUTES.DOCUMENTS}/editor/:id`,
     element: (
       <Suspense fallback={<Loader />}>
         <ProtectedRoute isAuthenticated={isAuthenticated}>
           <DocumentEditorPage />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: `${APP_ROUTES.DOCUMENTS}/:id`,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <DocumentDetailPage />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: `${APP_ROUTES.DOCUMENTS}/:id/invite`,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <InviteSignersPage />
         </ProtectedRoute>
       </Suspense>
     ),

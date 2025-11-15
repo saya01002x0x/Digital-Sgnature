@@ -87,9 +87,9 @@ export const HeroPage: React.FC = () => {
         <Row justify="center" style={{ textAlign: 'center' }}>
           <Col xs={24} md={20} lg={16}>
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
-              <Tag color="cyan" style={{ fontSize: 14, padding: '4px 16px', border: 'none' }}>
+              {/* <Tag color="cyan" style={{ fontSize: 14, padding: '4px 16px', border: 'none' }}>
                 🎉 Ra mắt tính năng ký số hàng loạt - Tiết kiệm 90% thời gian
-              </Tag>
+              </Tag> */}
               <Title level={1} style={{ color: 'white', fontSize: 56, marginTop: 24, marginBottom: 16 }}>
                 Ký số nhanh chóng<br/>với công nghệ hiện đại
               </Title>

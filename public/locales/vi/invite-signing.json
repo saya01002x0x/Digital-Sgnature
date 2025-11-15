@@ -64,6 +64,80 @@
     "invalidToken": "Link ký không hợp lệ hoặc đã hết hạn.",
     "declineSuccess": "Đã từ chối tài liệu thành công.",
     "declineError": "Không thể từ chối ký. Vui lòng thử lại."
+  },
+  "inviteForm": {
+    "signingOrderLabel": "Thứ Tự Ký",
+    "signersLabel": "Người Ký",
+    "signerNumber": "Người ký #{{number}}",
+    "remove": "Xóa",
+    "nameRequired": "Tên người ký là bắt buộc",
+    "nameMinLength": "Tên phải có ít nhất 2 ký tự",
+    "nameMaxLength": "Tên phải ngắn hơn 100 ký tự",
+    "namePlaceholder": "Nhập họ tên đầy đủ của người ký",
+    "emailRequired": "Email là bắt buộc",
+    "emailInvalid": "Vui lòng nhập email hợp lệ",
+    "emailDuplicate": "Email này đã được thêm",
+    "emailPlaceholder": "Nhập email của người ký",
+    "addSigner": "Thêm Người Ký",
+    "submit": "Tiếp tục gán trường"
+  },
+  "signerList": {
+    "signed": "Đã ký",
+    "pending": "Đang chờ",
+    "declined": "Đã từ chối",
+    "order": "Thứ tự: {{order}}",
+    "signedAt": "Đã ký lúc: {{date}}",
+    "declinedAt": "Đã từ chối lúc: {{date}}",
+    "reason": "Lý do"
+  },
+  "orderSelector": {
+    "sequential": "Ký Tuần Tự",
+    "sequentialDescription": "Người ký phải ký theo thứ tự. Mỗi người sẽ chỉ nhận được link sau khi người trước đó hoàn tất.",
+    "parallel": "Ký Song Song",
+    "parallelDescription": "Tất cả người ký có thể ký cùng lúc. Mọi người đều nhận link ngay lập tức."
+  },
+  "fieldAssignment": {
+    "noFields": "Chưa có trường nào được thêm vào tài liệu này. Vui lòng thêm trường trong trình soạn thảo tài liệu trước.",
+    "signersLegend": "Người Ký",
+    "fields": "trường",
+    "warning": "Cần Gán Trường",
+    "warningDescription": "Vui lòng gán tất cả các trường cho người ký trước khi gửi lời mời.",
+    "fieldsTitle": "Gán Trường Cho Người Ký",
+    "fieldType": "Loại",
+    "page": "Trang",
+    "required": "Bắt buộc",
+    "selectSigner": "Chọn người ký...",
+    "assignedTo": "Đã gán cho {{name}}"
+  },
+  "invitePage": {
+    "loading": "Đang tải tài liệu...",
+    "documentNotFound": "Không Tìm Thấy Tài Liệu",
+    "documentNotFoundDescription": "Tài liệu bạn đang tìm không tồn tại hoặc đã bị xóa.",
+    "backToDocuments": "Quay lại Tài Liệu",
+    "noFields": "Chưa Thêm Trường",
+    "noFieldsDescription": "Tài liệu này chưa có trường nào. Vui lòng thêm trường trước khi mời người ký.",
+    "addFields": "Thêm Trường",
+    "back": "Quay lại",
+    "title": "Mời Người Ký",
+    "step1Title": "Thêm Người Ký",
+    "step1Description": "Nhập thông tin người ký",
+    "step2Title": "Gán Trường",
+    "step2Description": "Gán trường cho người ký",
+    "step1Alert": "Thêm những người sẽ ký tài liệu này. Bạn có thể thêm nhiều người ký và chọn thứ tự ký.",
+    "step2Alert": "Gán mỗi trường cho một người ký. Tất cả các trường phải được gán trước khi gửi lời mời.",
+    "step2AlertDescription": "Mỗi người ký sẽ chỉ nhìn thấy và điền các trường được gán cho họ.",
+    "signersSummary": "Tóm Tắt Người Ký",
+    "signingOrder": "Thứ Tự Ký",
+    "previous": "Quay lại",
+    "sendInvitations": "Gửi Lời Mời"
+  },
+  "useInvite": {
+    "unassignedFields": "{{count}} trường chưa được gán. Vui lòng gán tất cả các trường.",
+    "duplicateEmails": "Email trùng lặp không được phép. Mỗi người ký phải có email riêng.",
+    "success": "Đã mời thành công {{count}} người ký!",
+    "validationError": "Lỗi xác thực. Vui lòng kiểm tra dữ liệu nhập.",
+    "documentNotFound": "Không tìm thấy tài liệu.",
+    "error": "Không thể gửi lời mời. Vui lòng thử lại."
   }
 }
 

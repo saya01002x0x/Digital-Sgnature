@@ -70,7 +70,8 @@
     "vi": "Vietnamese"
   },
   "theme": {
-    "light": "Light",
-    "dark": "Dark"
+    "light": "Switch to light mode",
+    "dark": "Switch to dark mode",
+    "toggle": "Toggle theme"
   }
 }

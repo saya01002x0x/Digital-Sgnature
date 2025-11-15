@@ -160,3 +160,37 @@ export const DEFAULT_FIELD_DIMENSIONS = {
   [FieldType.Text]: { width: 25, height: 5 },
 };
 
+/**
+ * Audit Event Type Enum
+ */
+export enum EventType {
+  Created = 'CREATED',
+  Updated = 'UPDATED',
+  FieldsPlaced = 'FIELDS_PLACED',
+  InvitationsSent = 'INVITATIONS_SENT',
+  Opened = 'OPENED',
+  Signed = 'SIGNED',
+  Declined = 'DECLINED',
+  Completed = 'COMPLETED',
+}
+
+/**
+ * Audit Event Entity
+ */
+export type AuditEvent = {
+  id: string;
+  documentId: string;
+  eventType: EventType;
+  actorId?: string;
+  actorEmail?: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Get Timeline Response
+ */
+export type GetTimelineResponse = {
+  events: AuditEvent[];
+}
+

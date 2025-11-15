@@ -1,6 +1,13 @@
 {
   "app": {
-    "name": "React Boilerplate"
+    "name": "E-Signature"
+  },
+  "nav": {
+    "documents": "Tài liệu",
+    "signatures": "Chữ ký",
+    "admin": "Quản trị",
+    "profile": "Hồ sơ",
+    "logout": "Đăng xuất"
   },
   "common": {
     "loading": "Đang tải...",
@@ -11,7 +18,11 @@
     "edit": "Sửa",
     "delete": "Xóa",
     "confirm": "Xác nhận",
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "or": "HOẶC",
+    "tryAgain": "Thử lại",
+    "goHome": "Về trang chủ",
+    "noData": "Không có dữ liệu"
   },
   "auth": {
     "login": "Đăng nhập",
@@ -59,7 +70,8 @@
     "vi": "Tiếng Việt"
   },
   "theme": {
-    "light": "Sáng",
-    "dark": "Tối"
+    "light": "Chuyển sang chế độ sáng",
+    "dark": "Chuyển sang chế độ tối",
+    "toggle": "Chuyển đổi theme"
   }
 }

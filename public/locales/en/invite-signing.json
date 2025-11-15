@@ -64,6 +64,80 @@
     "invalidToken": "Invalid or expired signing link.",
     "declineSuccess": "Document declined successfully.",
     "declineError": "Failed to decline signing. Please try again."
+  },
+  "inviteForm": {
+    "signingOrderLabel": "Signing Order",
+    "signersLabel": "Signers",
+    "signerNumber": "Signer #{{number}}",
+    "remove": "Remove",
+    "nameRequired": "Signer name is required",
+    "nameMinLength": "Name must be at least 2 characters",
+    "nameMaxLength": "Name must be less than 100 characters",
+    "namePlaceholder": "Enter signer's full name",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "emailDuplicate": "This email is already added",
+    "emailPlaceholder": "Enter signer's email",
+    "addSigner": "Add Signer",
+    "submit": "Continue to Field Assignment"
+  },
+  "signerList": {
+    "signed": "Signed",
+    "pending": "Pending",
+    "declined": "Declined",
+    "order": "Order: {{order}}",
+    "signedAt": "Signed at: {{date}}",
+    "declinedAt": "Declined at: {{date}}",
+    "reason": "Reason"
+  },
+  "orderSelector": {
+    "sequential": "Sequential Signing",
+    "sequentialDescription": "Signers must sign in order. Each signer will receive the link only after the previous signer completes.",
+    "parallel": "Parallel Signing",
+    "parallelDescription": "All signers can sign at the same time. Everyone receives the link immediately."
+  },
+  "fieldAssignment": {
+    "noFields": "No fields have been added to this document. Please add fields in the document editor first.",
+    "signersLegend": "Signers",
+    "fields": "fields",
+    "warning": "Field Assignment Required",
+    "warningDescription": "Please assign all fields to signers before sending invitations.",
+    "fieldsTitle": "Assign Fields to Signers",
+    "fieldType": "Type",
+    "page": "Page",
+    "required": "Required",
+    "selectSigner": "Select signer...",
+    "assignedTo": "Assigned to {{name}}"
+  },
+  "invitePage": {
+    "loading": "Loading document...",
+    "documentNotFound": "Document Not Found",
+    "documentNotFoundDescription": "The document you're looking for doesn't exist or has been deleted.",
+    "backToDocuments": "Back to Documents",
+    "noFields": "No Fields Added",
+    "noFieldsDescription": "This document doesn't have any fields yet. Please add fields before inviting signers.",
+    "addFields": "Add Fields",
+    "back": "Back",
+    "title": "Invite Signers",
+    "step1Title": "Add Signers",
+    "step1Description": "Enter signer information",
+    "step2Title": "Assign Fields",
+    "step2Description": "Assign fields to signers",
+    "step1Alert": "Add signers who will sign this document. You can add multiple signers and choose the signing order.",
+    "step2Alert": "Assign each field to a signer. All fields must be assigned before sending invitations.",
+    "step2AlertDescription": "Each signer will only see and fill the fields assigned to them.",
+    "signersSummary": "Signers Summary",
+    "signingOrder": "Signing Order",
+    "previous": "Previous",
+    "sendInvitations": "Send Invitations"
+  },
+  "useInvite": {
+    "unassignedFields": "{{count}} field(s) are not assigned. Please assign all fields.",
+    "duplicateEmails": "Duplicate emails are not allowed. Each signer must have a unique email.",
+    "success": "Successfully invited {{count}} signer(s)!",
+    "validationError": "Validation error. Please check your input.",
+    "documentNotFound": "Document not found.",
+    "error": "Failed to send invitations. Please try again."
   }
 }
 

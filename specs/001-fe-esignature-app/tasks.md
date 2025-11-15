@@ -340,32 +340,32 @@
 
 **Components**:
 
-- [ ] T109 [P] [US3] Create InviteForm component in src/features/invite-signing/components/InviteForm.tsx (add signers, sequential/parallel selector)
-- [ ] T110 [P] [US3] Create SignerList component in src/features/invite-signing/components/SignerList.tsx (display signers with order, status)
-- [ ] T111 [P] [US3] Create OrderSelector component in src/features/invite-signing/components/OrderSelector.tsx (radio: Sequential/Parallel)
-- [ ] T112 [P] [US3] Create FieldAssignment component in src/features/invite-signing/components/FieldAssignment.tsx (assign fields to signers, color-coding)
+- [X] T109 [P] [US3] Create InviteForm component in src/features/invite-signing/components/InviteForm.tsx (add signers, sequential/parallel selector)
+- [X] T110 [P] [US3] Create SignerList component in src/features/invite-signing/components/SignerList.tsx (display signers with order, status)
+- [X] T111 [P] [US3] Create OrderSelector component in src/features/invite-signing/components/OrderSelector.tsx (radio: Sequential/Parallel)
+- [X] T112 [P] [US3] Create FieldAssignment component in src/features/invite-signing/components/FieldAssignment.tsx (assign fields to signers, color-coding)
 
 **Hooks**:
 
-- [ ] T113 [US3] Create useInvite hook in src/features/invite-signing/hooks/useInvite.ts (add signers, validate unique emails, send invitations)
+- [X] T113 [US3] Create useInvite hook in src/features/invite-signing/hooks/useInvite.ts (add signers, validate unique emails, send invitations)
 
 **Pages**:
 
-- [ ] T114 [US3] Create InviteSignersPage in src/features/invite-signing/pages/InviteSignersPage.tsx (from document editor, invite form, field assignment, send)
+- [X] T114 [US3] Create InviteSignersPage in src/features/invite-signing/pages/InviteSignersPage.tsx (from document editor, invite form, field assignment, send)
 
 **API Service (extend)**:
 
-- [ ] T115 [US3] Add inviteSigners endpoint to src/features/invite-signing/services/invite-signing.api.ts (inviteSigners mutation)
+- [X] T115 [US3] Add inviteSigners endpoint to src/features/invite-signing/services/invite-signing.api.ts (inviteSigners mutation - already exists from Phase 6)
 
 **Routes**:
 
-- [ ] T116 [US3] Add invite route to src/app/routes.tsx (/documents/:id/invite protected)
+- [X] T116 [US3] Add invite route to src/app/routes.tsx (/documents/:id/invite protected)
 
 **MSW Mocks (extend)**:
 
-- [ ] T117 [P] [US3] Add inviteSigners mock handler to src/mocks/features/invite-signing.handlers.ts
+- [X] T117 [P] [US3] Add inviteSigners mock handler to src/mocks/features/invite-signing.handlers.ts (already exists from Phase 6)
 
-**Tests**:
+**Tests** (SKIPPED per user request):
 
 - [ ] T118 [P] [US3] Unit test InviteForm in src/features/invite-signing/components/__tests__/InviteForm.test.tsx (add signers, validate duplicate emails)
 - [ ] T119 [P] [US3] Unit test FieldAssignment in src/features/invite-signing/components/__tests__/FieldAssignment.test.tsx (assign fields, color coding)
@@ -373,8 +373,8 @@
 
 **i18n (extend)**:
 
-- [ ] T121 [P] [US3] Add invite workflow translations to public/locales/en/invite-signing.json
-- [ ] T122 [P] [US3] Add invite workflow translations to public/locales/vi/invite-signing.json
+- [X] T121 [P] [US3] Add invite workflow translations to public/locales/en/invite-signing.json
+- [X] T122 [P] [US3] Add invite workflow translations to public/locales/vi/invite-signing.json
 
 **Checkpoint**: Invite workflow complete - document owners can invite signers and manage signing workflow.
 
@@ -390,27 +390,27 @@
 
 **Components**:
 
-- [ ] T123 [P] [US6] Create DocumentList component in src/features/documents/components/DocumentList.tsx (Ant Design Table with pagination)
-- [ ] T124 [P] [US6] Create DocumentFilters component in src/features/documents/components/DocumentFilters.tsx (status dropdown, search input, sort selector)
-- [ ] T125 [P] [US6] Create StatusBadge component in src/features/documents/components/StatusBadge.tsx (color-coded status badges)
+- [X] T123 [P] [US6] Create DocumentList component in src/features/documents/components/DocumentList.tsx (Ant Design Table with pagination)
+- [X] T124 [P] [US6] Create DocumentFilters component in src/features/documents/components/DocumentFilters.tsx (status dropdown, search input, sort selector)
+- [X] T125 [P] [US6] Create StatusBadge component in src/features/documents/components/StatusBadge.tsx (color-coded status badges)
 
 **Hooks**:
 
-- [ ] T126 [US6] Create useDocuments hook in src/features/documents/hooks/useDocuments.ts (list with filters, search, sort, pagination)
+- [X] T126 [US6] Create useDocuments hook in src/features/documents/hooks/useDocuments.ts (list with filters, search, sort, pagination)
 
 **Pages**:
 
-- [ ] T127 [US6] Create DocumentListPage in src/features/documents/pages/DocumentListPage.tsx (filters + list, navigate to details)
+- [X] T127 [US6] Create DocumentListPage in src/features/documents/pages/DocumentListPage.tsx (filters + list, navigate to details)
 
 **Routes**:
 
-- [ ] T128 [US6] Add documents list route to src/app/routes.tsx (/documents protected)
+- [X] T128 [US6] Add documents list route to src/app/routes.tsx (/documents protected)
 
 **MSW Mocks (extend)**:
 
-- [ ] T129 [P] [US6] Extend documents handlers in src/mocks/features/documents.handlers.ts (list with query params)
+- [X] T129 [P] [US6] Extend documents handlers in src/mocks/features/documents.handlers.ts (list with query params)
 
-**Tests**:
+**Tests** (SKIPPED per user request):
 
 - [ ] T130 [P] [US6] Unit test DocumentFilters in src/features/documents/components/__tests__/DocumentFilters.test.tsx (change filters, search input)
 - [ ] T131 [P] [US6] Unit test DocumentList in src/features/documents/components/__tests__/DocumentList.test.tsx (render rows, pagination)
@@ -418,8 +418,8 @@
 
 **i18n (extend)**:
 
-- [ ] T133 [P] [US6] Add document list translations to public/locales/en/documents.json (filters, statuses)
-- [ ] T134 [P] [US6] Add document list translations to public/locales/vi/documents.json
+- [X] T133 [P] [US6] Add document list translations to public/locales/en/documents.json (filters, statuses)
+- [X] T134 [P] [US6] Add document list translations to public/locales/vi/documents.json
 
 **Checkpoint**: Document management complete - users can efficiently find and manage their documents.
 
@@ -435,35 +435,35 @@
 
 **Components**:
 
-- [ ] T135 [US5] Create Timeline component in src/features/documents/components/Timeline.tsx (Ant Design Timeline, display AuditEvents newest-first)
+- [X] T135 [US5] Create Timeline component in src/features/documents/components/Timeline.tsx (Ant Design Timeline, display AuditEvents newest-first)
 
 **API Service (extend)**:
 
-- [ ] T136 [US5] Add getTimeline endpoint to src/features/documents/services/documents.api.ts (getDocumentTimeline query with polling)
+- [X] T136 [US5] Add getTimeline endpoint to src/features/documents/services/documents.api.ts (getDocumentTimeline query with polling)
 
 **Pages**:
 
-- [ ] T137 [US5] Create DocumentDetailPage in src/features/documents/pages/DocumentDetailPage.tsx (document info + timeline + signers status)
+- [X] T137 [US5] Create DocumentDetailPage in src/features/documents/pages/DocumentDetailPage.tsx (document info + timeline + signers status)
 
 **Routes**:
 
-- [ ] T138 [US5] Add document detail route to src/app/routes.tsx (/documents/:id protected)
+- [X] T138 [US5] Add document detail route to src/app/routes.tsx (/documents/:id protected)
 
 **MSW Mocks (extend)**:
 
-- [ ] T139 [P] [US5] Add getTimeline mock handler to src/mocks/features/documents.handlers.ts
+- [X] T139 [P] [US5] Add getTimeline mock handler to src/mocks/features/documents.handlers.ts
 
-**Tests**:
+**Tests** (SKIPPED per user request):
 
 - [ ] T140 [P] [US5] Unit test Timeline in src/features/documents/components/__tests__/Timeline.test.tsx (render events, newest first order)
 - [ ] T141 [US5] Integration test document detail with timeline in src/features/documents/__tests__/detailFlow.test.tsx (fetch document + timeline with MSW, polling simulation)
 
 **i18n (extend)**:
 
-- [ ] T142 [P] [US5] Add timeline/audit translations to public/locales/en/documents.json (event types)
-- [ ] T143 [P] [US5] Add timeline/audit translations to public/locales/vi/documents.json
+- [X] T142 [P] [US5] Add timeline/audit translations to public/locales/en/documents.json (event types)
+- [X] T143 [P] [US5] Add timeline/audit translations to public/locales/vi/documents.json
 
-**Checkpoint**: Audit trail complete - users can track document lifecycle and events.
+**Checkpoint**: ✅ Audit trail complete - users can track document lifecycle and events.
 
 ---
 

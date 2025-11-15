@@ -16,7 +16,7 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Auth', 'Users', 'Signature', 'Document', 'Field', 'SigningSession', 'Signer'],
+  tagTypes: ['Auth', 'Users', 'Signature', 'Document', 'Field', 'SigningSession', 'Signer', 'AuditEvent'],
   endpoints: () => ({}),
 });
 

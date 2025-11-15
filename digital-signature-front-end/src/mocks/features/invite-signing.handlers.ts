@@ -10,11 +10,10 @@ import type {
   DeclineResponse,
   InviteSignersResponse,
   Signer,
-  SignerStatus,
-  SigningOrder,
 } from '@/features/invite-signing/types';
-import type { Document, Field, FieldType } from '@/features/documents/types';
-import { DocumentStatus } from '@/features/documents/types';
+import { SignerStatus } from '@/features/invite-signing/types';
+import type { Document, Field } from '@/features/documents/types';
+import { DocumentStatus, FieldType } from '@/features/documents/types';
 
 const API_BASE_URL = 'http://localhost:3000/api';
 
@@ -23,9 +22,10 @@ const mockDocument: Document = {
   id: 'doc-1',
   title: 'Employment Contract.pdf',
   fileUrl: '/mock-pdfs/contract.pdf',
-  status: DocumentStatus.SIGNING,
+  fileSize: 1024000,
+  status: DocumentStatus.Signing,
   pageCount: 5,
-  createdBy: 'user-1',
+  ownerId: 'user-1',
   createdAt: '2025-11-10T10:00:00Z',
   updatedAt: '2025-11-10T10:00:00Z',
 };
@@ -59,15 +59,14 @@ const mockFields: Field[] = [
   {
     id: 'field-1',
     documentId: 'doc-1',
-    type: 'SIGNATURE' as FieldType,
-    label: 'Employee Signature',
-    page: 1,
-    x: 20,
-    y: 30,
+    type: FieldType.Signature,
+    pageNumber: 1,
+    positionX: 20,
+    positionY: 30,
     width: 30,
     height: 8,
-    assignedTo: 'signer-1',
-    required: true,
+    signerId: 'signer-1',
+    isRequired: true,
     value: undefined,
     createdAt: '2025-11-10T10:00:00Z',
     updatedAt: '2025-11-10T10:00:00Z',
@@ -75,15 +74,14 @@ const mockFields: Field[] = [
   {
     id: 'field-2',
     documentId: 'doc-1',
-    type: 'DATE' as FieldType,
-    label: 'Date',
-    page: 1,
-    x: 60,
-    y: 30,
+    type: FieldType.Date,
+    pageNumber: 1,
+    positionX: 60,
+    positionY: 30,
     width: 20,
     height: 6,
-    assignedTo: 'signer-1',
-    required: true,
+    signerId: 'signer-1',
+    isRequired: true,
     value: undefined,
     createdAt: '2025-11-10T10:00:00Z',
     updatedAt: '2025-11-10T10:00:00Z',
@@ -91,15 +89,14 @@ const mockFields: Field[] = [
   {
     id: 'field-3',
     documentId: 'doc-1',
-    type: 'SIGNATURE' as FieldType,
-    label: 'Employer Signature',
-    page: 1,
-    x: 20,
-    y: 50,
+    type: FieldType.Signature,
+    pageNumber: 1,
+    positionX: 20,
+    positionY: 50,
     width: 30,
     height: 8,
-    assignedTo: 'signer-2',
-    required: true,
+    signerId: 'signer-2',
+    isRequired: true,
     value: undefined,
     createdAt: '2025-11-10T10:00:00Z',
     updatedAt: '2025-11-10T10:00:00Z',
@@ -112,11 +109,11 @@ const signingState = new Map<string, { signer: Signer; fields: Field[] }>();
 // Initialize mock sessions
 signingState.set('token-john-123', {
   signer: mockSigners[0],
-  fields: mockFields.filter((f) => f.assignedTo === 'signer-1'),
+  fields: mockFields.filter((f) => f.signerId === 'signer-1'),
 });
 signingState.set('token-jane-456', {
   signer: mockSigners[1],
-  fields: mockFields.filter((f) => f.assignedTo === 'signer-2'),
+  fields: mockFields.filter((f) => f.signerId === 'signer-2'),
 });
 
 export const inviteSigningHandlers = [
@@ -180,7 +177,7 @@ export const inviteSigningHandlers = [
     const { fieldValues } = body as any;
 
     // Validate all required fields are filled
-    const requiredFields = session.fields.filter((f) => f.required);
+    const requiredFields = session.fields.filter((f) => f.isRequired);
     const providedFieldIds = fieldValues.map((fv: any) => fv.fieldId);
     const allFilled = requiredFields.every((f) => providedFieldIds.includes(f.id));
 
@@ -210,7 +207,7 @@ export const inviteSigningHandlers = [
 
     const updatedDocument: Document = {
       ...mockDocument,
-      status: allSigned ? DocumentStatus.DONE : DocumentStatus.SIGNING,
+      status: allSigned ? DocumentStatus.Done : DocumentStatus.Signing,
       updatedAt: new Date().toISOString(),
     };
 
@@ -273,7 +270,7 @@ export const inviteSigningHandlers = [
     // Document status becomes DECLINED when someone declines
     const updatedDocument: Document = {
       ...mockDocument,
-      status: DocumentStatus.DECLINED,
+      status: DocumentStatus.Declined,
       updatedAt: new Date().toISOString(),
     };
 
@@ -289,7 +286,7 @@ export const inviteSigningHandlers = [
   http.post(`${API_BASE_URL}/documents/:documentId/invite`, async ({ params, request }) => {
     const { documentId } = params;
     const body = await request.json();
-    const { signers, signingOrder } = body as any;
+    const { signers } = body as any;
 
     // Validate signers
     if (!signers || signers.length === 0) {
@@ -320,7 +317,7 @@ export const inviteSigningHandlers = [
     const updatedDocument: Document = {
       ...mockDocument,
       id: documentId as string,
-      status: DocumentStatus.SIGNING,
+      status: DocumentStatus.Signing,
       updatedAt: new Date().toISOString(),
     };
 

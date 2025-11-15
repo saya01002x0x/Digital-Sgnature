@@ -17,6 +17,7 @@ import type {
   CreateFieldResponse,
   UpdateFieldRequest,
   UpdateFieldResponse,
+  GetTimelineResponse,
 } from '../types';
 
 export const documentsApi = baseApi.injectEndpoints({
@@ -101,6 +102,18 @@ export const documentsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Field', 'Document'],
     }),
+
+    // Get document timeline (audit trail)
+    getDocumentTimeline: builder.query<GetTimelineResponse, string>({
+      query: (documentId) => `/api/documents/${documentId}/timeline`,
+      providesTags: (_result, _error, documentId) => [
+        { type: 'Document', id: documentId },
+        'AuditEvent',
+      ],
+      // Enable polling for real-time updates (every 10 seconds)
+      // Can be overridden in component with pollingInterval option
+      keepUnusedDataFor: 60, // Keep cached for 1 minute
+    }),
   }),
 });
 
@@ -113,5 +126,6 @@ export const {
   useCreateFieldMutation,
   useUpdateFieldMutation,
   useDeleteFieldMutation,
+  useGetDocumentTimelineQuery,
 } = documentsApi;
 

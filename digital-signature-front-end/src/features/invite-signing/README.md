@@ -2,35 +2,38 @@
 
 ## Overview
 
-Module **invite-signing** quản lý quy trình mời người ký và phòng ký tài liệu (Signing Room). Module này bao gồm:
-
-- **Signing Room (Public)**: Người ký nhận link công khai, mở tài liệu, điền/ký các trường được assign, và hoàn tất hoặc từ chối ký.
-- **Invite Workflow (Protected - Phase 7)**: Chủ tài liệu mời nhiều người ký, assign fields, chọn thứ tự ký (sequential/parallel).
+Module **invite-signing** quản lý quy trình mời người ký và phòng ký tài liệu (Signing Room). Module này bao gồm cả Phase 6 (Signing Room) và Phase 7 (Invite Workflow).
 
 ## Architecture
 
 ```
 invite-signing/
 ├── pages/
-│   └── SigningRoomPage.tsx          # Public signing room page
+│   ├── SigningRoomPage.tsx           # Public signing room page (Phase 6)
+│   └── InviteSignersPage.tsx         # Protected invite page (Phase 7)
 ├── components/
-│   ├── SigningView.tsx              # PDF viewer + fillable fields
-│   ├── DeclineDialog.tsx            # Modal to decline signing
-│   └── CompleteDialog.tsx           # Confirmation modal
+│   ├── SigningView.tsx               # PDF viewer + fillable fields (Phase 6)
+│   ├── DeclineDialog.tsx             # Modal to decline signing (Phase 6)
+│   ├── CompleteDialog.tsx            # Confirmation modal (Phase 6)
+│   ├── InviteForm.tsx                # Add signers form (Phase 7)
+│   ├── SignerList.tsx                # Display signers list (Phase 7)
+│   ├── OrderSelector.tsx             # Sequential/Parallel selector (Phase 7)
+│   └── FieldAssignment.tsx           # Assign fields to signers (Phase 7)
 ├── hooks/
-│   └── useSigning.ts                # Signing workflow logic
+│   ├── useSigning.ts                 # Signing workflow logic (Phase 6)
+│   └── useInvite.ts                  # Invite workflow logic (Phase 7)
 ├── services/
-│   └── invite-signing.api.ts        # RTK Query API
+│   └── invite-signing.api.ts         # RTK Query API
 ├── types/
-│   └── index.ts                     # TypeScript types
-└── utils/                           # (Reserved for future utilities)
+│   └── index.ts                      # TypeScript types
+└── utils/                            # (Reserved for future utilities)
 ```
 
 ## Key Features
 
-### Phase 6 (Implemented)
+### Phase 6: Signing Room (Public Access) ✅
 
-#### 1. **Signing Room (Public Access)**
+#### 1. **Signing Room**
 - **Route**: `/signing/:token` (public, no authentication required)
 - **Features**:
   - Load signing session by token
@@ -40,10 +43,7 @@ invite-signing/
   - Real-time validation
 
 #### 2. **Components**
-- **SigningView**: Three-panel layout
-  - Left: Document info & signers list
-  - Middle: PDF viewer
-  - Right: Fields to fill
+- **SigningView**: Three-panel layout (document info, PDF viewer, fields)
 - **DeclineDialog**: Modal with reason input (min 10 chars)
 - **CompleteDialog**: Confirmation modal before submitting
 
@@ -52,9 +52,41 @@ invite-signing/
 - `POST /api/signing/:token/complete` - Complete signing
 - `POST /api/signing/:token/decline` - Decline signing
 
-### Phase 7 (To Be Implemented)
-- Invite workflow UI (add signers, assign fields, send invitations)
-- `POST /api/documents/:documentId/invite` endpoint integration
+### Phase 7: Invite Workflow (Protected) ✅
+
+#### 1. **Invite Signers**
+- **Route**: `/documents/:id/invite` (protected, authentication required)
+- **Features**:
+  - Add multiple signers (name + email)
+  - Validate unique emails
+  - Choose signing order (Sequential/Parallel)
+  - Assign fields to each signer
+  - Color-coded field assignment
+  - Two-step wizard (Add Signers → Assign Fields)
+
+#### 2. **Components**
+- **InviteForm**: Form with dynamic signer inputs
+  - Add/remove signers
+  - Duplicate email validation
+  - Signing order selector
+  
+- **SignerList**: Display signers with status
+  - Order indicator
+  - Status badges (Pending/Signed/Declined)
+  - Timestamps
+  
+- **OrderSelector**: Radio selector
+  - Sequential: Signers sign in order
+  - Parallel: All sign simultaneously
+  
+- **FieldAssignment**: Assign fields
+  - Color-coded signers (8 colors)
+  - Field type indicators
+  - Required field badges
+  - Real-time assignment tracking
+
+#### 3. **API Endpoint (Protected)**
+- `POST /api/documents/:documentId/invite` - Invite signers
 
 ## Types
 
@@ -64,6 +96,11 @@ enum SignerStatus {
   PENDING = 'PENDING',
   SIGNED = 'SIGNED',
   DECLINED = 'DECLINED',
+}
+
+enum SigningOrder {
+  SEQUENTIAL = 'SEQUENTIAL',
+  PARALLEL = 'PARALLEL',
 }
 
 interface Signer {
@@ -85,6 +122,15 @@ interface SigningSession {
   fields: Field[];        // Only assigned to this signer
   allSigners: Signer[];   // All signers (for display)
 }
+
+interface InviteFormValues {
+  signers: {
+    email: string;
+    name: string;
+    order: number;
+  }[];
+  signingOrder: SigningOrder;
+}
 ```
 
 ## API Service
@@ -93,14 +139,14 @@ interface SigningSession {
 Module sử dụng `baseApi.injectEndpoints()` để tích hợp với central API configuration.
 
 **Hooks**:
-- `useGetSigningSessionQuery(token)` - Fetch session
-- `useCompleteSigningMutation()` - Submit signed fields
-- `useDeclineSigningMutation()` - Decline with reason
-- `useInviteSignersMutation()` - (Phase 7) Invite signers
+- `useGetSigningSessionQuery(token)` - Fetch session (Phase 6)
+- `useCompleteSigningMutation()` - Submit signed fields (Phase 6)
+- `useDeclineSigningMutation()` - Decline with reason (Phase 6)
+- `useInviteSignersMutation()` - Invite signers (Phase 7)
 
-## Usage Example
+## Usage Examples
 
-### Signing Room Page
+### Phase 6: Signing Room
 ```typescript
 import { useParams } from 'react-router-dom';
 import { useSigning } from '@/features/invite-signing/hooks/useSigning';
@@ -118,14 +164,29 @@ const {
 // Render SigningView with session data
 ```
 
-### Field Value Handling
+### Phase 7: Invite Workflow
 ```typescript
-// Update field value
-handleFieldChange('field-id-1', 'signature-data-url');
+import { useInvite } from '@/features/invite-signing/hooks/useInvite';
 
-// Check if all fields filled
-if (allFieldsFilled) {
-  await handleCompleteSigning();
+const {
+  assignedFields,
+  handleAssignField,
+  isReadyToSend,
+  handleSendInvitations,
+  isSending,
+} = useInvite(documentId, fields);
+
+// Step 1: Add signers with InviteForm
+const handleFormSubmit = (values: InviteFormValues) => {
+  // Values contain signers + signing order
+};
+
+// Step 2: Assign fields with FieldAssignment
+handleAssignField(fieldId, signerEmail);
+
+// Step 3: Send invitations
+if (isReadyToSend) {
+  await handleSendInvitations(formValues);
 }
 ```
 
@@ -135,12 +196,18 @@ if (allFieldsFilled) {
 
 **Languages**: English (`en`), Vietnamese (`vi`)
 
-**Keys**:
-- `signingRoom.*` - Signing room UI
-- `signingView.*` - PDF viewer & fields
-- `declineDialog.*` - Decline modal
-- `completeDialog.*` - Complete modal
-- `useSigning.*` - Hook messages
+**Key Categories**:
+- `signingRoom.*` - Signing room UI (Phase 6)
+- `signingView.*` - PDF viewer & fields (Phase 6)
+- `declineDialog.*` - Decline modal (Phase 6)
+- `completeDialog.*` - Complete modal (Phase 6)
+- `useSigning.*` - Phase 6 hook messages
+- `inviteForm.*` - Invite form (Phase 7)
+- `signerList.*` - Signer list (Phase 7)
+- `orderSelector.*` - Order selector (Phase 7)
+- `fieldAssignment.*` - Field assignment (Phase 7)
+- `invitePage.*` - Invite page (Phase 7)
+- `useInvite.*` - Phase 7 hook messages
 
 ## MSW Mocks
 
@@ -150,33 +217,98 @@ if (allFieldsFilled) {
 - 3 mock fields: 2 signature fields, 1 date field
 - In-memory state for session management
 
-**Mock Tokens**:
+**Mock Tokens** (Phase 6):
 - `token-john-123` → Signer 1 (John Doe)
 - `token-jane-456` → Signer 2 (Jane Smith)
 
-**Test Flow**:
-1. Navigate to `/signing/token-john-123`
-2. Fill assigned fields (signature + date)
-3. Click "Complete Signing"
-4. Verify success message and status update
+**Mock Endpoints**:
+- Phase 6: Signing session, complete, decline
+- Phase 7: Invite signers (validates emails, creates signers)
+
+## Testing Flows
+
+### Phase 6: Signing Flow
+```bash
+# 1. Navigate to signing room
+http://localhost:5173/signing/token-john-123
+
+# 2. Fill assigned fields
+# 3. Click "Complete Signing" or "Decline"
+```
+
+### Phase 7: Invite Flow
+```bash
+# 1. Navigate from document editor
+http://localhost:5173/documents/doc-1/invite
+
+# 2. Add signers (name + email)
+# 3. Choose signing order (Sequential/Parallel)
+# 4. Assign fields to each signer
+# 5. Send invitations
+```
 
 ## Error Handling
 
 ### HTTP Status Codes
-- `404` - Invalid or expired token
-- `410` - Already signed or declined
-- `400` - Validation error (missing fields, reason too short)
+- `400` - Validation error (duplicate emails, unassigned fields, missing data)
+- `404` - Document/token not found
+- `410` - Already signed or declined (Phase 6)
+- `401` - Not authenticated (Phase 7 only)
 
-### User-Friendly Messages
-All errors display user-friendly messages via `message.error()` with i18n support.
+### Validation Rules
+- **Unique emails**: Each signer must have unique email per document
+- **All fields assigned**: Cannot send invitations with unassigned fields
+- **Signer info**: Name (2-100 chars) + valid email required
+- **Decline reason**: Min 10 chars, max 500 chars (Phase 6)
 
-## Testing
+## Workflows
 
-**Status**: Tests skipped per user request (Phase 6)
+### Complete Signing Workflow
 
-**Planned Tests** (if needed):
-- Unit: SigningView, DeclineDialog, CompleteDialog
-- Integration: Full signing flow with MSW
+```
+Owner Creates Document
+  ↓
+Adds Fields (Phase 5)
+  ↓
+Invites Signers (Phase 7)
+  ├─ Add signers
+  ├─ Choose order (Sequential/Parallel)
+  └─ Assign fields
+  ↓
+System generates signing links
+  ↓
+Signers receive emails with links
+  ↓
+Signers open Signing Room (Phase 6)
+  ├─ View document
+  ├─ Fill assigned fields
+  └─ Complete or Decline
+  ↓
+System updates document status
+  ├─ All signed → DONE
+  └─ Any declined → DECLINED
+```
+
+### Sequential vs Parallel Signing
+
+**Sequential**:
+```
+Signer 1 receives link → Signs → Signer 2 receives link → Signs → Done
+```
+
+**Parallel**:
+```
+All signers receive link simultaneously → All sign independently → Done
+```
+
+## Security Considerations
+
+- **Public endpoints** (Phase 6): Token-based access only
+- **Protected endpoints** (Phase 7): Authentication required
+- **Token validation**: Backend validates token expiry
+- **Input sanitization**: All user inputs sanitized
+- **Email validation**: Unique emails enforced
+- **Field assignment**: Signers only see their assigned fields
 
 ## Dependencies
 
@@ -187,44 +319,35 @@ All errors display user-friendly messages via `message.error()` with i18n suppor
 - `@/shared/types` - Common types
 
 ### External
-- Ant Design - UI components (Modal, Form, Input, Alert, etc.)
+- Ant Design - UI components (Form, Modal, Steps, Select, etc.)
 - React Router - Routing & URL params
 - react-i18next - Internationalization
 - dayjs - Date handling
 
-## Future Enhancements (Phase 7)
+## Future Enhancements
 
-1. **Invite Workflow**:
-   - Add signers form
-   - Field assignment UI
-   - Sequential vs Parallel selector
-   - Send invitations
-
-2. **Advanced Features**:
-   - Email notifications
-   - Reminder system
-   - Signing order enforcement (sequential)
-   - Signature templates
-
-## Security Considerations
-
-- **Public endpoints**: Signing room endpoints are public (token-based access)
-- **Token validation**: Backend validates token expiry and ownership
-- **No authentication required**: Signers don't need accounts
-- **Input sanitization**: All user inputs (reason, field values) must be sanitized
-- **CORS**: Ensure backend allows public access to signing endpoints
+1. **Email Notifications**: Actual email sending with templates
+2. **Reminder System**: Auto-reminders for pending signers
+3. **Sequential Enforcement**: Lock signing order for sequential mode
+4. **Signer Templates**: Save frequently used signer groups
+5. **Bulk Invite**: Import signers from CSV
+6. **Custom Messages**: Add personal message to invitations
+7. **Access Expiry**: Set expiration time for signing links
 
 ## Notes
 
-- Signing room is **fully public** - no authentication required
-- Token serves as access control mechanism
-- Each signer gets unique token in `signingUrl`
-- Document status changes to `DONE` when all signers complete
-- Document status changes to `DECLINED` when any signer declines
-- MSW handlers simulate backend logic for development
+- **Phase 6** (Signing Room): Fully public, no auth required
+- **Phase 7** (Invite Workflow): Protected, requires authentication
+- API endpoint and MSW handler for invitations already exist from Phase 6
+- SignerList component created in Phase 7 can be used in both phases
+- Color palette supports up to 8 signers with unique colors
+- Tests skipped per user request (can be added later if needed)
 
 ---
 
-**Status**: ✅ Phase 6 Complete (Signing Room)  
-**Next**: Phase 7 - Invite Workflow UI
+**Status**: ✅ Phase 6 & 7 Complete  
+**Routes**: 
+- `/signing/:token` (public)
+- `/documents/:id/invite` (protected)
 
+**Next**: Phase 8 - Document List & Search

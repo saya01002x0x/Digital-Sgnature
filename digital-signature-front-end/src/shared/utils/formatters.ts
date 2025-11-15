@@ -54,6 +54,38 @@ export const formatDateTime = (
 };
 
 /**
+ * Format timestamp with full date and time
+ * @param timestamp - ISO timestamp string or Date object
+ * @param locale - Locale code ('vi' or 'en')
+ */
+export const formatTimestamp = (
+  timestamp: string | Date,
+  locale: 'vi' | 'en' = 'en'
+): string => {
+  try {
+    const dateObj = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+    
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid date';
+    }
+
+    const localeCode = locale === 'vi' ? 'vi-VN' : 'en-US';
+    
+    return new Intl.DateTimeFormat(localeCode, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }).format(dateObj);
+  } catch (error) {
+    console.error('Error formatting timestamp:', error);
+    return 'Invalid date';
+  }
+};
+
+/**
  * Format a date as relative time (e.g., "2 hours ago")
  * @param date - Date string or Date object
  * @param locale - Locale code
