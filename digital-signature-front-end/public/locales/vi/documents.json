@@ -1,0 +1,25 @@
+{
+  "uploadText": "Nhấp hoặc kéo file PDF vào đây để tải lên",
+  "uploadHint": "Chỉ hỗ trợ file PDF duy nhất. Kích thước tối đa: 10MB",
+  "uploadError": "Tải lên thất bại",
+  "loadError": "Không thể tải tài liệu",
+  "signature": "Chữ Ký",
+  "initials": "Ký Tắt",
+  "date": "Ngày Tháng",
+  "text": "Văn Bản",
+  "addFields": "Thêm Trường",
+  "clickToAdd": "Nhấp vào loại trường, sau đó nhấp vào tài liệu để đặt",
+  "clickToPlace": "Nhấp vào tài liệu để đặt trường",
+  "fieldAdded": "Đã thêm trường thành công",
+  "fieldAddError": "Không thể thêm trường",
+  "fieldDeleted": "Đã xóa trường thành công",
+  "fieldDeleteError": "Không thể xóa trường",
+  "deleteField": "Xóa trường này?",
+  "zoomIn": "Phóng To",
+  "zoomOut": "Thu Nhỏ",
+  "fullscreen": "Toàn Màn Hình",
+  "pageCount": "Số Trang",
+  "editorSubtitle": "Thêm các trường chữ ký vào tài liệu của bạn",
+  "saveAndContinue": "Lưu & Tiếp Tục"
+}
+

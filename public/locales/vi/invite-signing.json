@@ -1,0 +1,69 @@
+{
+  "signingRoom": {
+    "title": "Phòng Ký",
+    "loading": "Đang tải phiên ký...",
+    "invalidToken": "Link Không Hợp Lệ hoặc Đã Hết Hạn",
+    "invalidTokenDescription": "Link ký này không hợp lệ hoặc đã hết hạn. Vui lòng liên hệ người gửi tài liệu để nhận link mới.",
+    "backToHome": "Về Trang Chủ",
+    "completed": "Đã Ký Thành Công!",
+    "completedDescription": "Cảm ơn bạn! Bạn đã ký tài liệu thành công. Chủ sở hữu tài liệu đã được thông báo.",
+    "declined": "Đã Từ Chối Ký",
+    "declinedDescription": "Bạn đã từ chối ký tài liệu này. Chủ sở hữu tài liệu đã được thông báo.",
+    "welcomeMessage": "Xin chào, {{name}}!",
+    "instructions": "Vui lòng xem xét tài liệu và điền tất cả các trường bắt buộc bên dưới. Nhấn 'Hoàn Tất Ký' khi hoàn thành, hoặc 'Từ Chối' nếu bạn không muốn ký.",
+    "complete": "Hoàn Tất Ký",
+    "decline": "Từ Chối Ký"
+  },
+  "signingView": {
+    "documentInfo": "Thông Tin Tài Liệu",
+    "title": "Tiêu đề",
+    "status": "Trạng thái",
+    "signers": "Người Ký",
+    "signed": "Đã ký",
+    "pending": "Đang chờ",
+    "declined": "Đã từ chối",
+    "fieldsToFill": "Các Trường Cần Điền",
+    "noFields": "Không có trường nào được gán cho bạn.",
+    "fillAllFields": "Vui lòng điền tất cả các trường bắt buộc trước khi hoàn tất.",
+    "requiredFields": "Tất cả các trường được đánh dấu đều là bắt buộc.",
+    "signatureField": "Chữ ký",
+    "textField": "Văn bản",
+    "dateField": "Ngày tháng",
+    "enterText": "Nhập văn bản..."
+  },
+  "declineDialog": {
+    "title": "Từ Chối Ký",
+    "warning": "Bạn có chắc muốn từ chối không?",
+    "warningDescription": "Hành động này không thể hoàn tác. Chủ sở hữu tài liệu sẽ được thông báo về quyết định của bạn.",
+    "reasonLabel": "Lý Do Từ Chối",
+    "reasonPlaceholder": "Vui lòng cung cấp lý do từ chối ký tài liệu này...",
+    "reasonRequired": "Vui lòng cung cấp lý do",
+    "reasonMinLength": "Lý do phải có ít nhất 10 ký tự",
+    "reasonMaxLength": "Lý do phải ngắn hơn 500 ký tự",
+    "note": "Lưu ý: Lý do của bạn sẽ được chia sẻ với chủ sở hữu tài liệu.",
+    "confirm": "Xác Nhận Từ Chối",
+    "cancel": "Hủy"
+  },
+  "completeDialog": {
+    "title": "Hoàn Tất Ký",
+    "warning": "Sẵn sàng hoàn tất?",
+    "warningDescription": "Vui lòng kiểm tra lại tất cả các trường trước khi gửi. Hành động này không thể hoàn tác.",
+    "documentLabel": "Tài liệu",
+    "signerLabel": "Người ký",
+    "fieldsLabel": "Các Trường Đã Hoàn Thành",
+    "fieldsCount": "{{count}} trường",
+    "finalNote": "Bằng cách nhấn 'Xác Nhận', bạn đồng ý rằng chữ ký của bạn có giá trị pháp lý.",
+    "confirm": "Xác Nhận & Ký",
+    "cancel": "Hủy"
+  },
+  "useSigning": {
+    "fillAllFieldsError": "Vui lòng điền tất cả các trường bắt buộc",
+    "completeSuccess": "Đã ký tài liệu thành công!",
+    "completeError": "Không thể hoàn tất ký. Vui lòng thử lại.",
+    "alreadyCompleted": "Tài liệu này đã được ký hoặc từ chối.",
+    "invalidToken": "Link ký không hợp lệ hoặc đã hết hạn.",
+    "declineSuccess": "Đã từ chối tài liệu thành công.",
+    "declineError": "Không thể từ chối ký. Vui lòng thử lại."
+  }
+}
+

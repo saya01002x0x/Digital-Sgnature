@@ -1,0 +1,69 @@
+{
+  "signingRoom": {
+    "title": "Signing Room",
+    "loading": "Loading signing session...",
+    "invalidToken": "Invalid or Expired Link",
+    "invalidTokenDescription": "This signing link is invalid or has expired. Please contact the document sender for a new link.",
+    "backToHome": "Back to Home",
+    "completed": "Signing Completed!",
+    "completedDescription": "Thank you! You have successfully signed the document. The document owner has been notified.",
+    "declined": "Signing Declined",
+    "declinedDescription": "You have declined to sign this document. The document owner has been notified.",
+    "welcomeMessage": "Welcome, {{name}}!",
+    "instructions": "Please review the document and fill in all required fields below. Click 'Complete Signing' when you're done, or 'Decline' if you do not wish to sign.",
+    "complete": "Complete Signing",
+    "decline": "Decline to Sign"
+  },
+  "signingView": {
+    "documentInfo": "Document Information",
+    "title": "Title",
+    "status": "Status",
+    "signers": "Signers",
+    "signed": "Signed",
+    "pending": "Pending",
+    "declined": "Declined",
+    "fieldsToFill": "Fields to Fill",
+    "noFields": "No fields assigned to you.",
+    "fillAllFields": "Please fill in all required fields before completing.",
+    "requiredFields": "All fields marked are required.",
+    "signatureField": "Signature",
+    "textField": "Text",
+    "dateField": "Date",
+    "enterText": "Enter text..."
+  },
+  "declineDialog": {
+    "title": "Decline to Sign",
+    "warning": "Are you sure you want to decline?",
+    "warningDescription": "This action cannot be undone. The document owner will be notified of your decision.",
+    "reasonLabel": "Reason for Declining",
+    "reasonPlaceholder": "Please provide a reason for declining to sign this document...",
+    "reasonRequired": "Please provide a reason",
+    "reasonMinLength": "Reason must be at least 10 characters",
+    "reasonMaxLength": "Reason must be less than 500 characters",
+    "note": "Note: Your reason will be shared with the document owner.",
+    "confirm": "Confirm Decline",
+    "cancel": "Cancel"
+  },
+  "completeDialog": {
+    "title": "Complete Signing",
+    "warning": "Ready to complete?",
+    "warningDescription": "Please review all fields before submitting. This action cannot be undone.",
+    "documentLabel": "Document",
+    "signerLabel": "Signer",
+    "fieldsLabel": "Fields Completed",
+    "fieldsCount": "{{count}} field(s)",
+    "finalNote": "By clicking 'Confirm', you agree that your signature is legally binding.",
+    "confirm": "Confirm & Sign",
+    "cancel": "Cancel"
+  },
+  "useSigning": {
+    "fillAllFieldsError": "Please fill in all required fields",
+    "completeSuccess": "Document signed successfully!",
+    "completeError": "Failed to complete signing. Please try again.",
+    "alreadyCompleted": "This document has already been signed or declined.",
+    "invalidToken": "Invalid or expired signing link.",
+    "declineSuccess": "Document declined successfully.",
+    "declineError": "Failed to decline signing. Please try again."
+  }
+}
+

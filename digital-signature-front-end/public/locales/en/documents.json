@@ -1,0 +1,25 @@
+{
+  "uploadText": "Click or drag PDF file to this area to upload",
+  "uploadHint": "Support for a single PDF file. Max size: 10MB",
+  "uploadError": "Upload failed",
+  "loadError": "Failed to load document",
+  "signature": "Signature",
+  "initials": "Initials",
+  "date": "Date",
+  "text": "Text",
+  "addFields": "Add Fields",
+  "clickToAdd": "Click a field type, then click on the document to place it",
+  "clickToPlace": "Click on the document to place the field",
+  "fieldAdded": "Field added successfully",
+  "fieldAddError": "Failed to add field",
+  "fieldDeleted": "Field deleted successfully",
+  "fieldDeleteError": "Failed to delete field",
+  "deleteField": "Delete this field?",
+  "zoomIn": "Zoom In",
+  "zoomOut": "Zoom Out",
+  "fullscreen": "Fullscreen",
+  "pageCount": "Pages",
+  "editorSubtitle": "Add signature fields to your document",
+  "saveAndContinue": "Save & Continue"
+}
+

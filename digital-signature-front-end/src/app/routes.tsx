@@ -16,6 +16,8 @@ const ProfilePage = lazy(() => import('@/features/auth/pages/ProfilePage').then(
 const UsersPage = lazy(() => import('@/features/users/pages/UsersPage').then(module => ({ default: module.UsersPage })));
 const SignatureListPage = lazy(() => import('@/features/signature/pages/SignatureListPage').then(module => ({ default: module.SignatureListPage })));
 const CreateSignaturePage = lazy(() => import('@/features/signature/pages/CreateSignaturePage').then(module => ({ default: module.CreateSignaturePage })));
+const DocumentEditorPage = lazy(() => import('@/features/documents/pages/DocumentEditorPage').then(module => ({ default: module.DocumentEditorPage })));
+const SigningRoomPage = lazy(() => import('@/features/invite-signing/pages/SigningRoomPage').then(module => ({ default: module.SigningRoomPage })));
 
 // Loading fallback
 const Loader = () => <div>Loading...</div>;
@@ -128,6 +130,24 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
         <ProtectedRoute isAuthenticated={isAuthenticated}>
           <CreateSignaturePage />
         </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: `${APP_ROUTES.DOCUMENTS}/editor/:id`,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <DocumentEditorPage />
+        </ProtectedRoute>
+      </Suspense>
+    ),
+  },
+  {
+    path: '/signing/:token',
+    element: (
+      <Suspense fallback={<Loader />}>
+        <SigningRoomPage />
       </Suspense>
     ),
   },
