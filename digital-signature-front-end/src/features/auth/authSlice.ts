@@ -8,8 +8,19 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { AuthState, User } from './types/index';
 import { STORAGE_KEYS } from '@/app/config/constants';
 
+// Helper function to get user from localStorage
+const getUserFromStorage = (): User | null => {
+  try {
+    const userJson = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+    return userJson ? JSON.parse(userJson) : null;
+  } catch (error) {
+    console.error('Error parsing user from localStorage:', error);
+    return null;
+  }
+};
+
 const initialState: AuthState = {
-  user: null,
+  user: getUserFromStorage(),
   token: localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN),
   isAuthenticated: !!localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN),
   status: 'idle',
@@ -27,9 +38,11 @@ const authSlice = createSlice({
       state.status = 'succeeded';
       state.error = null;
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(action.payload.user));
     },
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(action.payload));
     },
     logout: (state) => {
       state.user = null;
@@ -38,6 +51,7 @@ const authSlice = createSlice({
       state.status = 'idle';
       state.error = null;
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
     },
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;

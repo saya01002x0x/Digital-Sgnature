@@ -52,7 +52,7 @@ export const InviteForm: React.FC<InviteFormProps> = ({
   const hasIncompleteSigner = () => {
     const signers = form.getFieldValue('signers') || [];
     return signers.some(
-      (s: any) => (s && (s.name || s.email) && (!s.name || !s.email))
+      (s: any) => s && ((s.name && !s.email) || (!s.name && s.email))
     );
   };
 
@@ -68,11 +68,11 @@ export const InviteForm: React.FC<InviteFormProps> = ({
       return;
     }
 
-    addFn();
+    addFn({ email: '', name: '' });
   };
 
-  // Add current user as signer (reuse empty slot if available)
-  const handleAddMyself = (addFn: (defaultValue?: any) => void, removeFn: (index: number) => void) => {
+  // Add current user as signer
+  const handleAddMyself = (addFn: (defaultValue?: any) => void) => {
     if (!user) {
       message.error(t('inviteForm.userNotFound', 'User not found'));
       return;
@@ -85,23 +85,21 @@ export const InviteForm: React.FC<InviteFormProps> = ({
       (s: any) => s?.email === user.email
     );
     if (isAlreadyAdded) {
-      message.warning(t('inviteForm.emailDuplicate'));
+      message.warning(t('inviteForm.emailDuplicate', 'Email đã tồn tại trong danh sách'));
       return;
     }
 
-    // If there's an entirely empty signer slot, remove it first then add new one
+    // Check if there's an entirely empty slot (both name and email are empty)
     const emptyIndex = signers.findIndex(
-      (s: any) => (!s?.name || s?.name === '') && (!s?.email || s?.email === '')
+      (s: any) => !s || ((!s.name || s.name.trim() === '') && (!s.email || s.email.trim() === ''))
     );
 
     if (emptyIndex !== -1) {
-      // Remove empty slot
-      removeFn(emptyIndex);
-      // Add new signer with user info (will be added at the end)
-      setTimeout(() => {
-        addFn({ email: user.email, name: user.name });
-        message.success(t('inviteForm.addedMyself', 'Added yourself to signers'));
-      }, 0);
+      // Update the empty slot with user info
+      const updatedSigners = [...signers];
+      updatedSigners[emptyIndex] = { email: user.email, name: user.name };
+      form.setFieldsValue({ signers: updatedSigners });
+      message.success(t('inviteForm.addedMyself', 'Đã thêm bạn vào danh sách người ký'));
       return;
     }
 
@@ -118,18 +116,20 @@ export const InviteForm: React.FC<InviteFormProps> = ({
 
     // Otherwise add new signer with current user info
     addFn({ email: user.email, name: user.name });
-    message.success(t('inviteForm.addedMyself', 'Added yourself to signers'));
+    message.success(t('inviteForm.addedMyself', 'Đã thêm bạn vào danh sách người ký'));
   };
 
   // Validate unique emails
   const validateUniqueEmail = (_: any, value: string, index: number) => {
+    if (!value) return Promise.resolve();
+    
     const signers = form.getFieldValue('signers') || [];
     const duplicateIndex = signers.findIndex(
       (s: any, i: number) => i !== index && s?.email === value
     );
 
     if (duplicateIndex !== -1) {
-      return Promise.reject(new Error(t('inviteForm.emailDuplicate')));
+      return Promise.reject(new Error(t('inviteForm.emailDuplicate', 'Email đã tồn tại trong danh sách')));
     }
     return Promise.resolve();
   };
@@ -237,7 +237,7 @@ export const InviteForm: React.FC<InviteFormProps> = ({
                   </Button>
                   <Button
                     type="default"
-                    onClick={() => handleAddMyself(add, remove)}
+                    onClick={() => handleAddMyself(add)}
                     block
                     icon={<UserAddOutlined />}
                     size="large"
@@ -266,4 +266,3 @@ export const InviteForm: React.FC<InviteFormProps> = ({
     </Card>
   );
 };
-
