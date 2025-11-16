@@ -1,18 +1,17 @@
 import type React from 'react';
 import { useState, useEffect } from 'react';
-import { Menu, Row, Col, Popover, Avatar, Dropdown, Space, Button } from 'antd';
-import { MenuOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Menu, Row, Col, Popover, Avatar, Space, Button } from 'antd';
+import { MenuOutlined, UserOutlined, LogoutOutlined, GlobalOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { LanguageSwitcherButton } from './LanguageSwitcherButton';
-import { APP_ROUTES } from '@/app/config/constants';
+import { APP_ROUTES, LOCALES, STORAGE_KEYS } from '@/app/config/constants';
 import classNames from 'classnames';
 import type { MenuProps } from 'antd';
 import '../styles/header.css';
 
 export const Header: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
@@ -22,6 +21,13 @@ export const Header: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   const isLandingPage = location.pathname === '/';
+
+  // Language toggle function
+  const toggleLanguage = () => {
+    const newLang = i18n.language === LOCALES.VI ? LOCALES.EN : LOCALES.VI;
+    i18n.changeLanguage(newLang);
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, newLang);
+  };
 
   // Detect mobile
   useEffect(() => {
@@ -62,7 +68,7 @@ export const Header: React.FC = () => {
   const menuMode = isMobile ? 'inline' : 'horizontal';
 
   // Menu items khi CHƯA đăng nhập
-  const guestMenuItems = [
+  const guestMenuItems: MenuProps['items'] = [
     {
       key: 'home',
       label: t('nav.home', 'Trang chủ'),
@@ -88,10 +94,16 @@ export const Header: React.FC = () => {
       label: t('nav.about', 'Về chúng tôi'),
       onClick: () => navigate('/#about'),
     },
+    {
+      key: 'language',
+      label: i18n.language === LOCALES.VI ? 'Tiếng Việt' : 'English',
+      icon: <GlobalOutlined />,
+      onClick: toggleLanguage,
+    },
   ];
 
   // Menu items khi ĐÃ đăng nhập
-  const authMenuItems = [
+  const authMenuItems: MenuProps['items'] = [
     {
       key: '/',
       label: t('nav.home', 'Trang chủ'),
@@ -112,29 +124,50 @@ export const Header: React.FC = () => {
       label: t('nav.admin', 'Admin'),
       onClick: () => navigate('/admin'),
     }] : []),
+    {
+      key: 'profile',
+      label: (
+        <Space>
+          {user?.avatar && (
+            <Avatar
+              src={user.avatar}
+              size="small"
+              style={{ marginRight: -4 }}
+            />
+          )}
+          {!isMobile && <span>{user?.name || t('nav.profile', 'Profile')}</span>}
+          {isMobile && !user?.avatar && <UserOutlined />}
+        </Space>
+      ),
+      icon: !user?.avatar && !isMobile ? <UserOutlined /> : undefined,
+      children: [
+        {
+          key: 'profile-detail',
+          icon: <UserOutlined />,
+          label: t('nav.profile', 'Profile'),
+          onClick: () => navigate('/profile'),
+        },
+        {
+          type: 'divider',
+        },
+        {
+          key: 'logout',
+          icon: <LogoutOutlined />,
+          label: t('nav.logout', 'Đăng xuất'),
+          danger: true,
+          onClick: logout,
+        },
+      ],
+    },
+    {
+      key: 'language',
+      label: i18n.language === LOCALES.VI ? 'Tiếng Việt' : 'English',
+      icon: <GlobalOutlined />,
+      onClick: toggleLanguage,
+    },
   ];
 
   const menuItems = isAuthenticated ? authMenuItems : guestMenuItems;
-
-  // User dropdown menu items
-  const userMenuItems: MenuProps['items'] = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: t('nav.profile', 'Profile'),
-      onClick: () => navigate('/profile'),
-    },
-    {
-      type: 'divider',
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: t('nav.logout', 'Đăng xuất'),
-      danger: true,
-      onClick: logout,
-    },
-  ];
 
   const handleMenuVisibleChange = (visible: boolean) => {
     setMenuVisible(visible);
@@ -150,41 +183,28 @@ export const Header: React.FC = () => {
       items={menuItems}
       style={{ background: 'transparent' }}
     />,
-    <div key="mobile-actions" style={{ padding: '8px 16px', borderTop: '1px solid #f0f0f0' }}>
-      <Space direction="vertical" style={{ width: '100%' }}>
-        <LanguageSwitcherButton />
-        {!isAuthenticated && (
-          <>
-            <Button 
-              block
-              onClick={() => navigate(APP_ROUTES.LOGIN)}
-            >
-              {t('auth.login', 'Đăng nhập')}
-            </Button>
-            <Button 
-              type="primary"
-              block
-              onClick={() => navigate(APP_ROUTES.REGISTER)}
-            >
-              {t('auth.register', 'Đăng ký')}
-            </Button>
-          </>
-        )}
-        {isAuthenticated && user && (
-          <Space>
-            <Avatar
-              src={user.avatar}
-              icon={!user.avatar && <UserOutlined />}
-              style={{ backgroundColor: '#1890ff' }}
-            />
-            <span>{user.name}</span>
-          </Space>
-        )}
-      </Space>
-    </div>
-  ];
+    !isAuthenticated && (
+      <div key="mobile-actions" style={{ padding: '8px 16px', borderTop: '1px solid #f0f0f0' }}>
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Button 
+            block
+            onClick={() => navigate(APP_ROUTES.LOGIN)}
+          >
+            {t('auth.login', 'Đăng nhập')}
+          </Button>
+          <Button 
+            type="primary"
+            block
+            onClick={() => navigate(APP_ROUTES.REGISTER)}
+          >
+            {t('auth.register', 'Đăng ký')}
+          </Button>
+        </Space>
+      </div>
+    ),
+  ].filter(Boolean);
 
-  // Auth buttons for guest users
+  // Auth buttons for guest users (desktop only)
   const authButtons = !isAuthenticated && (
     <Space key="auth-buttons" size="small" style={{ marginLeft: 16 }}>
       <Button 
@@ -205,31 +225,6 @@ export const Header: React.FC = () => {
         {t('auth.register', 'Đăng ký')}
       </Button>
     </Space>
-  );
-
-  // Avatar dropdown for authenticated users
-  const userAvatar = isAuthenticated && user && (
-    <Dropdown 
-      key="user-dropdown"
-      menu={{ items: userMenuItems }} 
-      placement="bottomRight"
-      arrow
-    >
-      <Space style={{ cursor: 'pointer', marginLeft: 16 }}>
-        <Avatar
-          src={user.avatar}
-          icon={!user.avatar && <UserOutlined />}
-          style={{ backgroundColor: '#1890ff' }}
-        />
-        {!isMobile && (
-          <span style={{ 
-            color: isFirstScreen && isLandingPage ? '#fff' : undefined 
-          }}>
-            {user.name}
-          </span>
-        )}
-      </Space>
-    </Dropdown>
   );
 
   return (
@@ -280,8 +275,6 @@ export const Header: React.FC = () => {
                 }}
               />
                 {authButtons}
-                {userAvatar}
-                <LanguageSwitcherButton />
               </div>
             ) : null}
         </Col>

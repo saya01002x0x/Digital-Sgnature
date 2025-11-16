@@ -73,6 +73,52 @@
   border-color: var(--primary-color, #1890ff);
 }
 
+/* Submenu dropdown styles */
+.ant-menu-submenu-popup {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.ant-menu-submenu-popup .ant-menu {
+  background: #fff;
+  border-radius: 4px;
+}
+
+.ant-menu-submenu-popup .ant-menu-item,
+.ant-menu-submenu-popup .ant-menu-submenu-title {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.ant-menu-submenu-popup .ant-menu-item:hover,
+.ant-menu-submenu-popup .ant-menu-submenu-title:hover {
+  background: #f5f5f5;
+  color: var(--primary-color, #1890ff);
+}
+
+.ant-menu-submenu-popup .ant-menu-item-danger {
+  color: #ff4d4f;
+}
+
+.ant-menu-submenu-popup .ant-menu-item-danger:hover {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+/* Profile menu item with avatar */
+#nav li.ant-menu-submenu {
+  padding: 0 12px;
+}
+
+#nav li.ant-menu-submenu .ant-avatar {
+  margin-right: 8px;
+}
+
+/* Language menu icon */
+#nav li .anticon-global {
+  margin-right: 8px;
+}
+
 /* Responsive */
 @media (max-width: 767px) {
   #header {

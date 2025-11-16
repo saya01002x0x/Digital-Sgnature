@@ -226,16 +226,52 @@ body:has(.landing-page) #header.home-nav-white {
   border-bottom-color: #f0f0f0 !important;
 }
 
-/* Text colors for landing page header */
+/* Text colors for landing page header (transparent state) */
 body:has(.landing-page) #header:not(.home-nav-white) #logo span,
 body:has(.landing-page) #header:not(.home-nav-white) #nav li,
+body:has(.landing-page) #header:not(.home-nav-white) #nav .ant-menu-item,
+body:has(.landing-page) #header:not(.home-nav-white) #nav .ant-menu-submenu-title,
 body:has(.landing-page) #header:not(.home-nav-white) .header-lang-button {
   color: #fff !important;
   border-color: #fff !important;
 }
 
+/* Hover effects for transparent header */
+body:has(.landing-page) #header:not(.home-nav-white) #nav .ant-menu-item:hover,
+body:has(.landing-page) #header:not(.home-nav-white) #nav .ant-menu-submenu-title:hover,
 body:has(.landing-page) #header:not(.home-nav-white) .header-lang-button:hover {
   background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+/* Auth buttons on transparent header */
+body:has(.landing-page) #header:not(.home-nav-white) button {
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+body:has(.landing-page) #header:not(.home-nav-white) button.ant-btn-primary {
+  color: #fff !important;
+  background: rgba(24, 144, 255, 0.8) !important;
+  border-color: rgba(24, 144, 255, 0.8) !important;
+}
+
+body:has(.landing-page) #header:not(.home-nav-white) button.ant-btn-primary:hover {
+  background: rgba(24, 144, 255, 1) !important;
+}
+
+/* Submenu dropdown always has white background regardless of header state */
+body:has(.landing-page) .ant-menu-submenu-popup {
+  background: #fff !important;
+}
+
+body:has(.landing-page) .ant-menu-submenu-popup .ant-menu {
+  background: #fff !important;
+}
+
+body:has(.landing-page) .ant-menu-submenu-popup .ant-menu-item,
+body:has(.landing-page) .ant-menu-submenu-popup .ant-menu-submenu-title {
+  color: rgba(0, 0, 0, 0.85) !important;
 }
 
 #logo {
