@@ -133,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({ onCollapse }) => {
 
       {/* Right Section - Theme, Language, User Menu */}
       <Space size="middle">
-        <ThemeSwitcher />
+        {/* <ThemeSwitcher /> */}
         <LanguageSwitcher />
 
         {isAuthenticated && user ? (

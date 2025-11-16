@@ -22,17 +22,8 @@ type ThemeProviderProps = {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
-    // Initialize theme from localStorage or system preference
-    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) as ThemeMode | null;
-    if (savedTheme) {
-      return savedTheme;
-    }
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    return 'light';
-  });
+  // TEMPORARILY DISABLED: Force light mode only
+  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
 
   const [primaryColor, setPrimaryColor] = useState<string>('#1890ff');
   useTranslation();

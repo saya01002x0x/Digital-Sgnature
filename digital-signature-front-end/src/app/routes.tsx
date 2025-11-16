@@ -7,7 +7,7 @@ import type { UserBase } from '@/shared/types';
 import { App } from '@/App';
 
 // Lazy-loaded components
-const HeroPage = lazy(() => import('@/pages/HeroPage').then(module => ({ default: module.HeroPage })));
+const LandingPage = lazy(() => import('@/pages/landing/LandingPage'));
 const TestCardPage = lazy(() => import('@/pages/TestCardPage').then(module => ({ default: module.TestCardPage })));
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage').then(module => ({ default: module.RegisterPage })));
@@ -188,7 +188,7 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
     path: APP_ROUTES.HOME,
     element: (
       <Suspense fallback={<Loader />}>
-        <HeroPage />
+        <LandingPage />
       </Suspense>
     ),
   },
