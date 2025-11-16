@@ -570,3 +570,48 @@ footer .bottom-bar .translate-button {
   }
 }
 
+/* ===== Header Avatar & User Menu Styles ===== */
+#header .ant-space {
+  color: inherit;
+}
+
+#header.home-nav-white .ant-space span {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+#header:not(.home-nav-white) .ant-space span {
+  color: #fff;
+}
+
+/* Avatar in header */
+#header .ant-avatar {
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+#header.home-nav-white .ant-avatar {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+#header:not(.home-nav-white) .ant-avatar {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Dropdown menu from header */
+.ant-dropdown-menu {
+  min-width: 160px;
+}
+
+.ant-dropdown-menu-item .anticon {
+  margin-right: 8px;
+}
+
+/* ===== Language Switcher Button Alignment ===== */
+.header-lang-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 80px !important;
+  margin-left: 8px !important;
+}
+

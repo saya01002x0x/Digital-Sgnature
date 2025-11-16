@@ -1,13 +1,13 @@
 /**
  * LandingPage - Main Landing Page Component
- * Tổng hợp tất cả sections: Header, Banner, Page1-4, Footer
+ * Tổng hợp tất cả sections: Banner, Page1-4, Footer
  * Dựa trên template Ant Design 2.x landing page
+ * Header được handle bởi App.tsx (unified header)
  */
 
 import React from 'react';
 // @ts-ignore - enquire-js không có types
 import { enquireScreen } from 'enquire-js';
-import { LandingHeader } from './components/LandingHeader';
 import { Banner } from './sections/Banner';
 import { Page1 } from './sections/Page1';
 import { Page2 } from './sections/Page2';
@@ -22,13 +22,11 @@ enquireScreen((b: boolean) => {
 });
 
 type LandingPageState = {
-  isFirstScreen: boolean;
   isMobile: boolean;
 }
 
 class LandingPage extends React.PureComponent<{}, LandingPageState> {
   state: LandingPageState = {
-    isFirstScreen: true,
     isMobile,
   };
 
@@ -43,20 +41,14 @@ class LandingPage extends React.PureComponent<{}, LandingPageState> {
     document.title = 'E-Signature - Nền tảng ký số điện tử hiện đại';
   }
 
+  // Dummy function để Banner không bị lỗi
   onEnterChange = (mode: string) => {
-    this.setState({
-      isFirstScreen: mode === 'enter',
-    });
+    // No-op - isFirstScreen giờ được handle trong Header component
   }
 
   render() {
     return (
       <div className="landing-page">
-        <LandingHeader 
-          key="header" 
-          isFirstScreen={this.state.isFirstScreen} 
-          isMobile={this.state.isMobile} 
-        />
         <Banner 
           key="banner" 
           onEnterChange={this.onEnterChange} 
