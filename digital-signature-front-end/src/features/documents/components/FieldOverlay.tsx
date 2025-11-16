@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Button, Popconfirm, Typography } from 'antd';
-import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { Field } from '../types';
 import { getFieldColor, getFieldLabel, percentToPixel } from '../utils/fieldHelpers';
@@ -20,6 +20,8 @@ type FieldOverlayProps = {
   onFieldClick?: (field: Field) => void;
   onFieldDelete?: (fieldId: string) => void;
   selectedFieldId?: string;
+  fieldValues?: Record<string, string>; // For showing signature preview in signing view
+  showDeleteButton?: boolean; // Control delete button visibility
 }
 
 export const FieldOverlay: React.FC<FieldOverlayProps> = ({
@@ -30,6 +32,8 @@ export const FieldOverlay: React.FC<FieldOverlayProps> = ({
   onFieldClick,
   onFieldDelete,
   selectedFieldId,
+  fieldValues,
+  showDeleteButton = true,
 }) => {
   const { t } = useTranslation();
 
@@ -48,6 +52,8 @@ export const FieldOverlay: React.FC<FieldOverlayProps> = ({
         const height = percentToPixel(field.height, containerHeight);
         const isSelected = field.id === selectedFieldId;
         const color = getFieldColor(field.type);
+        const fieldValue = fieldValues?.[field.id];
+        const hasSignature = fieldValue && fieldValue.length > 0;
 
         return (
           <div
@@ -59,13 +65,14 @@ export const FieldOverlay: React.FC<FieldOverlayProps> = ({
               width: `${width}px`,
               height: `${height}px`,
               border: `2px ${isSelected ? 'solid' : 'dashed'} ${color}`,
-              backgroundColor: `${color}20`,
+              backgroundColor: hasSignature ? 'rgba(255, 255, 255, 0.95)' : `${color}20`,
               borderRadius: 4,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               transition: 'all 0.2s',
+              overflow: 'hidden',
             }}
             onClick={() => onFieldClick?.(field)}
           >
@@ -74,33 +81,68 @@ export const FieldOverlay: React.FC<FieldOverlayProps> = ({
               flexDirection: 'column',
               alignItems: 'center',
               gap: 4,
+              width: '100%',
+              height: '100%',
+              position: 'relative',
             }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: 500,
-                  color,
-                  textAlign: 'center',
-                }}
-              >
-                {getFieldLabel(field.type)}
-              </Text>
-              {isSelected && (
+              {hasSignature ? (
+                // Show signature preview
+                <img
+                  src={fieldValue}
+                  alt="Signature preview"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    padding: 4,
+                  }}
+                />
+              ) : (
+                // Show field label
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color,
+                    textAlign: 'center',
+                  }}
+                >
+                  {getFieldLabel(field.type)}
+                </Text>
+              )}
+              
+              {/* Delete button - only show if enabled */}
+              {showDeleteButton && onFieldDelete && (
                 <Popconfirm
                   title={t('documents.deleteField', 'Delete this field?')}
-                  onConfirm={() => onFieldDelete?.(field.id)}
+                  onConfirm={() => {
+                    onFieldDelete(field.id);
+                  }}
                   okText={t('common.yes', 'Yes')}
                   cancelText={t('common.no', 'No')}
                 >
                   <Button
-                    type="primary"
+                    type="text"
                     danger
                     size="small"
                     icon={<DeleteOutlined />}
                     onClick={(e) => e.stopPropagation()}
-                  >
-                    {t('common.delete', 'Delete')}
-                  </Button>
+                    style={{
+                      position: 'absolute',
+                      top: 2,
+                      right: 2,
+                      minWidth: 'auto',
+                      width: 24,
+                      height: 24,
+                      padding: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      border: '1px solid #ff4d4f',
+                      borderRadius: 4,
+                    }}
+                  />
                 </Popconfirm>
               )}
             </div>

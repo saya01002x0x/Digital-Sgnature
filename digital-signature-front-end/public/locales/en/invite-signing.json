@@ -71,6 +71,9 @@
     "emailInvalid": "Invalid email address",
     "emailPlaceholder": "Enter signer's email",
     "addSigner": "Add Signer",
+    "addMyself": "Add Myself",
+    "addedMyself": "Added yourself to the signers list",
+    "userNotFound": "User information not found",
     "submit": "Continue to Assign Fields"
   },
   "signingRoom": {

@@ -71,6 +71,9 @@
     "emailInvalid": "Địa chỉ email không hợp lệ",
     "emailPlaceholder": "Nhập email người ký",
     "addSigner": "Thêm Người Ký",
+    "addMyself": "Thêm Chính Mình",
+    "addedMyself": "Đã thêm chính bạn vào danh sách người ký",
+    "userNotFound": "Không tìm thấy thông tin người dùng",
     "submit": "Tiếp tục Gán Trường"
   },
   "signingRoom": {

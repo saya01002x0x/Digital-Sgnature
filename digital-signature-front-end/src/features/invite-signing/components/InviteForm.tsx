@@ -4,9 +4,10 @@
  */
 
 import React from 'react';
-import { Form, Input, Button, Space, Typography, Card } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Space, Typography, Card, message } from 'antd';
+import { PlusOutlined, DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import type { InviteFormValues } from '../types';
 import { SigningOrder } from '../types';
 import { OrderSelector } from './OrderSelector';
@@ -25,6 +26,7 @@ export const InviteForm: React.FC<InviteFormProps> = ({
   initialValues,
 }) => {
   const { t } = useTranslation('invite-signing');
+  const { user } = useAuth();
   const [form] = Form.useForm<InviteFormValues>();
 
   const handleSubmit = async () => {
@@ -44,6 +46,29 @@ export const InviteForm: React.FC<InviteFormProps> = ({
     } catch (error) {
       console.error('Validation failed:', error);
     }
+  };
+
+  // Add current user as signer
+  const handleAddMyself = () => {
+    if (!user) {
+      message.error(t('inviteForm.userNotFound', 'User not found'));
+      return;
+    }
+
+    const signers = form.getFieldValue('signers') || [];
+    const isAlreadyAdded = signers.some(
+      (s: any) => s?.email === user.email
+    );
+
+    if (isAlreadyAdded) {
+      message.warning(t('inviteForm.emailDuplicate'));
+      return;
+    }
+
+    // Add user to signers list
+    const newSigners = [...signers, { email: user.email, name: user.name }];
+    form.setFieldsValue({ signers: newSigners });
+    message.success(t('inviteForm.addedMyself', 'Added yourself to signers'));
   };
 
   // Validate unique emails
@@ -150,16 +175,26 @@ export const InviteForm: React.FC<InviteFormProps> = ({
                   </Card>
                 ))}
 
-                <Button
-                  type="dashed"
-                  onClick={() => add()}
-                  block
-                  icon={<PlusOutlined />}
-                  size="large"
-                  style={{ marginTop: 8 }}
-                >
-                  {t('inviteForm.addSigner')}
-                </Button>
+                <Space direction="vertical" style={{ width: '100%', marginTop: 8 }}>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                    size="large"
+                  >
+                    {t('inviteForm.addSigner')}
+                  </Button>
+                  <Button
+                    type="default"
+                    onClick={handleAddMyself}
+                    block
+                    icon={<UserAddOutlined />}
+                    size="large"
+                  >
+                    {t('inviteForm.addMyself')}
+                  </Button>
+                </Space>
               </>
             )}
           </Form.List>

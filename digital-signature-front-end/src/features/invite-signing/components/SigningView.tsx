@@ -3,18 +3,19 @@
  * Display PDF document with fillable fields for signer
  */
 
-import React, { useState } from 'react';
-import { Card, Space, Button, Typography, Tag, Input, DatePicker, Alert } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
+import { Card, Space, Typography, Tag, Alert } from 'antd';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import type { SigningSession, FieldValue } from '../types';
+import type { SigningSession } from '../types';
 import type { Field } from '@/features/documents/types';
 import { FieldType } from '@/features/documents/types';
 import { PDFViewer } from '@/features/documents/components/PDFViewer';
+import { FieldOverlay } from '@/features/documents/components/FieldOverlay';
 import { SignatureSelector } from '@/features/signature/components/SignatureSelector';
-import dayjs from 'dayjs';
+import { useListSignaturesQuery } from '@/features/signature/services/signature.api';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 type SigningViewProps = {
   session: SigningSession;
@@ -29,8 +30,62 @@ export const SigningView: React.FC<SigningViewProps> = ({
 }) => {
   const { t } = useTranslation('invite-signing');
   const [selectedFieldId, setSelectedFieldId] = useState<string | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { data: signatures = [] } = useListSignaturesQuery();
 
   const { document, signer, fields, allSigners } = session;
+
+  // Update container dimensions
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const pdfContainer = containerRef.current.querySelector('#pdf-container');
+        if (pdfContainer) {
+          setContainerDimensions({
+            width: pdfContainer.clientWidth,
+            height: pdfContainer.clientHeight,
+          });
+        }
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    
+    // Multiple delays to catch PDF rendering at different stages
+    const timers = [
+      setTimeout(updateDimensions, 300),
+      setTimeout(updateDimensions, 600),
+      setTimeout(updateDimensions, 1000),
+    ];
+
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+      timers.forEach(timer => clearTimeout(timer));
+    };
+  }, []);
+
+  // Update dimensions when field values change (signature added)
+  useEffect(() => {
+    if (containerRef.current) {
+      const pdfContainer = containerRef.current.querySelector('#pdf-container');
+      if (pdfContainer) {
+        setContainerDimensions({
+          width: pdfContainer.clientWidth,
+          height: pdfContainer.clientHeight,
+        });
+      }
+    }
+  }, [fieldValues]);
+
+  // Helper to find signatureId from imageData
+  const findSignatureIdByImageData = (imageData: string | undefined): string | undefined => {
+    if (!imageData) return undefined;
+    const signature = signatures.find(s => s.imageData === imageData);
+    return signature?.id;
+  };
 
   // Check if all required fields are filled
   const allFieldsFilled = fields.every((field) => {
@@ -42,8 +97,9 @@ export const SigningView: React.FC<SigningViewProps> = ({
     const isSelected = selectedFieldId === field.id;
 
     switch (field.type) {
-      case FieldType.SIGNATURE:
-      case FieldType.INITIAL:
+      case FieldType.Signature:
+      case FieldType.Initials:
+        const signatureId = findSignatureIdByImageData(value);
         return (
           <Card
             size="small"
@@ -53,10 +109,15 @@ export const SigningView: React.FC<SigningViewProps> = ({
             }}
           >
             <Space direction="vertical" style={{ width: '100%' }}>
-              <Text strong>{field.label || t('signingView.signatureField')}</Text>
+              <Text strong>{t('signingView.signatureField')}</Text>
               <SignatureSelector
-                onSelect={(signature) => onFieldChange(field.id, signature.imageData)}
-                selectedSignatureId={undefined}
+                value={signatureId}
+                onChange={(_, signature) => {
+                  if (signature?.imageData) {
+                    onFieldChange(field.id, signature.imageData);
+                  }
+                }}
+                placeholder={t('signature.selectSignature', 'Select a signature')}
               />
               {value && (
                 <div style={{ marginTop: 8 }}>
@@ -67,51 +128,6 @@ export const SigningView: React.FC<SigningViewProps> = ({
                   />
                 </div>
               )}
-            </Space>
-          </Card>
-        );
-
-      case FieldType.TEXT:
-        return (
-          <Card
-            size="small"
-            style={{
-              border: isSelected ? '2px solid #1890ff' : '1px solid #d9d9d9',
-              marginBottom: 16,
-            }}
-          >
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Text strong>{field.label || t('signingView.textField')}</Text>
-              <Input
-                placeholder={t('signingView.enterText')}
-                value={value}
-                onChange={(e) => onFieldChange(field.id, e.target.value)}
-                onFocus={() => setSelectedFieldId(field.id)}
-                onBlur={() => setSelectedFieldId(undefined)}
-              />
-            </Space>
-          </Card>
-        );
-
-      case FieldType.DATE:
-        return (
-          <Card
-            size="small"
-            style={{
-              border: isSelected ? '2px solid #1890ff' : '1px solid #d9d9d9',
-              marginBottom: 16,
-            }}
-          >
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Text strong>{field.label || t('signingView.dateField')}</Text>
-              <DatePicker
-                style={{ width: '100%' }}
-                value={value ? dayjs(value) : null}
-                onChange={(date) => onFieldChange(field.id, date ? date.toISOString() : '')}
-                onFocus={() => setSelectedFieldId(field.id)}
-                onBlur={() => setSelectedFieldId(undefined)}
-                format="DD/MM/YYYY"
-              />
             </Space>
           </Card>
         );
@@ -184,10 +200,40 @@ export const SigningView: React.FC<SigningViewProps> = ({
         </Space>
       </div>
 
-      {/* Middle Panel - PDF Viewer */}
-      <div style={{ flex: 1, overflow: 'auto' }}>
+      {/* Middle Panel - PDF Viewer with Field Overlay */}
+      <div ref={containerRef} style={{ flex: 1, overflow: 'auto' }}>
         <Card>
-          <PDFViewer pdfUrl={document.fileUrl} />
+          <div style={{ position: 'relative' }}>
+            <PDFViewer 
+              fileUrl={document.fileUrl} 
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+            
+            {/* Field Overlay - Show where to sign */}
+            {containerDimensions.width > 0 && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  pointerEvents: 'none',
+                }}
+              >
+                <FieldOverlay
+                  fields={fields}
+                  pageNumber={currentPage}
+                  containerWidth={containerDimensions.width}
+                  containerHeight={containerDimensions.height}
+                  onFieldClick={(field) => setSelectedFieldId(field.id)}
+                  selectedFieldId={selectedFieldId}
+                  fieldValues={fieldValues}
+                  showDeleteButton={false}
+                />
+              </div>
+            )}
+          </div>
         </Card>
       </div>
 

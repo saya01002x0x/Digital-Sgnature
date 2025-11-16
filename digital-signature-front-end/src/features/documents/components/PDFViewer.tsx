@@ -28,12 +28,14 @@ type PDFViewerProps = {
   fileUrl: string;
   pageCount?: number;
   onLoad?: () => void;
+  onPageChange?: (pageNumber: number) => void;
   style?: React.CSSProperties;
 }
 
 export const PDFViewer: React.FC<PDFViewerProps> = ({
   fileUrl,
   onLoad,
+  onPageChange,
   style,
 }) => {
   const { t } = useTranslation();
@@ -65,11 +67,19 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
   };
 
   const handlePreviousPage = () => {
-    setPageNumber(prev => Math.max(prev - 1, 1));
+    setPageNumber(prev => {
+      const newPage = Math.max(prev - 1, 1);
+      onPageChange?.(newPage);
+      return newPage;
+    });
   };
 
   const handleNextPage = () => {
-    setPageNumber(prev => Math.min(prev + 1, numPages));
+    setPageNumber(prev => {
+      const newPage = Math.min(prev + 1, numPages);
+      onPageChange?.(newPage);
+      return newPage;
+    });
   };
 
   const handleFullscreen = () => {

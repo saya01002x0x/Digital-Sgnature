@@ -38,9 +38,6 @@ export const FieldToolbar: React.FC<FieldToolbarProps> = ({
 
   const fieldTypes = [
     { type: FieldType.Signature, label: t('documents.signature', 'Signature') },
-    { type: FieldType.Initials, label: t('documents.initials', 'Initials') },
-    { type: FieldType.Date, label: t('documents.date', 'Date') },
-    { type: FieldType.Text, label: t('documents.text', 'Text') },
   ];
 
   return (
