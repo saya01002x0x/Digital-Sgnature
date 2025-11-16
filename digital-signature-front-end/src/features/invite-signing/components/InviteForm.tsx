@@ -48,26 +48,76 @@ export const InviteForm: React.FC<InviteFormProps> = ({
     }
   };
 
-  // Add current user as signer
-  const handleAddMyself = () => {
+  // Check if any existing signer is incomplete (missing name or email)
+  const hasIncompleteSigner = () => {
+    const signers = form.getFieldValue('signers') || [];
+    return signers.some(
+      (s: any) => (s && (s.name || s.email) && (!s.name || !s.email))
+    );
+  };
+
+  // Add a new empty signer (only when all existing signers are complete)
+  const handleAddSigner = (addFn: (defaultValue?: any) => void) => {
+    if (hasIncompleteSigner()) {
+      message.warning(
+        t(
+          'inviteForm.completeExistingFirst',
+          'Vui lòng điền đầy đủ thông tin các người ký hiện tại trước khi thêm người mới',
+        ),
+      );
+      return;
+    }
+
+    addFn();
+  };
+
+  // Add current user as signer (reuse empty slot if available)
+  const handleAddMyself = (addFn: (defaultValue?: any) => void, removeFn: (index: number) => void) => {
     if (!user) {
       message.error(t('inviteForm.userNotFound', 'User not found'));
       return;
     }
 
     const signers = form.getFieldValue('signers') || [];
+
+    // Prevent duplicate email
     const isAlreadyAdded = signers.some(
       (s: any) => s?.email === user.email
     );
-
     if (isAlreadyAdded) {
       message.warning(t('inviteForm.emailDuplicate'));
       return;
     }
 
-    // Add user to signers list
-    const newSigners = [...signers, { email: user.email, name: user.name }];
-    form.setFieldsValue({ signers: newSigners });
+    // If there's an entirely empty signer slot, remove it first then add new one
+    const emptyIndex = signers.findIndex(
+      (s: any) => (!s?.name || s?.name === '') && (!s?.email || s?.email === '')
+    );
+
+    if (emptyIndex !== -1) {
+      // Remove empty slot
+      removeFn(emptyIndex);
+      // Add new signer with user info (will be added at the end)
+      setTimeout(() => {
+        addFn({ email: user.email, name: user.name });
+        message.success(t('inviteForm.addedMyself', 'Added yourself to signers'));
+      }, 0);
+      return;
+    }
+
+    // If there are partially filled signers, block adding new one
+    if (hasIncompleteSigner()) {
+      message.warning(
+        t(
+          'inviteForm.completeExistingFirst',
+          'Vui lòng điền đầy đủ thông tin các người ký hiện tại trước khi thêm người mới',
+        ),
+      );
+      return;
+    }
+
+    // Otherwise add new signer with current user info
+    addFn({ email: user.email, name: user.name });
     message.success(t('inviteForm.addedMyself', 'Added yourself to signers'));
   };
 
@@ -178,7 +228,7 @@ export const InviteForm: React.FC<InviteFormProps> = ({
                 <Space direction="vertical" style={{ width: '100%', marginTop: 8 }}>
                   <Button
                     type="dashed"
-                    onClick={() => add()}
+                    onClick={() => handleAddSigner(add)}
                     block
                     icon={<PlusOutlined />}
                     size="large"
@@ -187,7 +237,7 @@ export const InviteForm: React.FC<InviteFormProps> = ({
                   </Button>
                   <Button
                     type="default"
-                    onClick={handleAddMyself}
+                    onClick={() => handleAddMyself(add, remove)}
                     block
                     icon={<UserAddOutlined />}
                     size="large"

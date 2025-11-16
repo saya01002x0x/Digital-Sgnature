@@ -73,6 +73,7 @@ export const FieldOverlay: React.FC<FieldOverlayProps> = ({
               justifyContent: 'center',
               transition: 'all 0.2s',
               overflow: 'hidden',
+              pointerEvents: 'auto',
             }}
             onClick={() => onFieldClick?.(field)}
           >
@@ -141,6 +142,7 @@ export const FieldOverlay: React.FC<FieldOverlayProps> = ({
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
                       border: '1px solid #ff4d4f',
                       borderRadius: 4,
+                      pointerEvents: 'auto',
                     }}
                   />
                 </Popconfirm>
