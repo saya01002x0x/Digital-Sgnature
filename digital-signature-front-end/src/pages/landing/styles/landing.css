@@ -213,37 +213,29 @@ html, body {
   width: 100%;
 }
 
-/* ===== Header Styles ===== */
-#header {
-  position: fixed;
-  z-index: 999;
-  background: rgba(0, 0, 0, 0.25);
-  border-bottom: 1px solid transparent;
-  transition: border 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955), background 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955);
-  height: var(--header-height);
-  padding: 0 48px;
-  width: 100%;
+/* ===== Header Styles OVERRIDE for Landing Page ===== */
+/* Override default header styles khi ở landing page */
+body:has(.landing-page) #header:not(.home-nav-white) {
+  background: rgba(0, 0, 0, 0.25) !important;
+  border-bottom: 1px solid transparent !important;
+  box-shadow: none !important;
 }
 
-#header.home-nav-bottom {
-  background: rgba(255, 255, 255, 0.9);
-  border-bottom-color: #ebedee;
+body:has(.landing-page) #header.home-nav-white {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-color: #f0f0f0 !important;
 }
 
-#header.home-nav-bottom .search {
-  border-left-color: #ebedee;
+/* Text colors for landing page header */
+body:has(.landing-page) #header:not(.home-nav-white) #logo span,
+body:has(.landing-page) #header:not(.home-nav-white) #nav li,
+body:has(.landing-page) #header:not(.home-nav-white) .header-lang-button {
+  color: #fff !important;
+  border-color: #fff !important;
 }
 
-#header.home-nav-bottom a {
-  color: var(--text-color);
-}
-
-#header .header-link {
-  color: var(--text-color);
-}
-
-#header .ant-menu-item-active .header-link {
-  color: var(--primary-color);
+body:has(.landing-page) #header:not(.home-nav-white) .header-lang-button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 #logo {

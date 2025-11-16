@@ -1,0 +1,93 @@
+/* ===== Global Header Styles ===== */
+/* Styles này apply cho header trên TẤT CẢ pages */
+
+#header {
+  position: fixed;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  height: 80px;
+  padding: 0 48px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Logo styles */
+#logo {
+  float: left;
+  height: 80px;
+  line-height: 80px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#logo img {
+  height: 40px;
+  width: 40px;
+}
+
+#logo span {
+  font-size: 16px;
+  font-family: 'Raleway', 'Hiragino Sans GB', sans-serif;
+  text-transform: uppercase;
+  color: #1890ff;
+  font-weight: 600;
+}
+
+/* Nav menu */
+#nav {
+  border: 0;
+  float: right;
+  font-size: 14px;
+  font-family: 'Lato', var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto);
+}
+
+#nav li {
+  height: 80px;
+  line-height: 80px;
+  min-width: 72px;
+  text-align: center;
+  border-bottom-width: 3px;
+}
+
+#nav li.ant-menu-item-selected a {
+  color: var(--primary-color, #1890ff);
+  font-weight: bold;
+}
+
+/* Nav menu items color */
+#nav li {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+/* Language button default state */
+.header-lang-button {
+  color: rgba(0, 0, 0, 0.85);
+  border-color: #d9d9d9;
+}
+
+.header-lang-button:hover {
+  color: var(--primary-color, #1890ff);
+  border-color: var(--primary-color, #1890ff);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  #header {
+    padding: 0 24px;
+    height: 64px;
+  }
+  
+  #logo {
+    height: 64px;
+    line-height: 64px;
+  }
+  
+  #nav li {
+    height: 64px;
+    line-height: 64px;
+  }
+}
+

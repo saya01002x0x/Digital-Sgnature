@@ -18,6 +18,7 @@ import {
   Spin,
   Divider,
   Table,
+  message,
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -27,6 +28,8 @@ import {
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useGetDocumentQuery, useGetDocumentTimelineQuery } from '../services/documents.api';
+import { useSelfSignDocumentMutation } from '@/features/invite-signing/services/invite-signing.api';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { Timeline } from '../components/Timeline';
 import { StatusBadge } from '../components/StatusBadge';
 import { DocumentStatus } from '../types';
@@ -39,6 +42,7 @@ export const DocumentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation('documents');
+  const { user } = useAuth();
 
   // Fetch document with fields and signers
   const {
@@ -56,6 +60,9 @@ export const DocumentDetailPage: React.FC = () => {
     skip: !id,
     pollingInterval: 10000, // Poll every 10 seconds for real-time updates
   });
+
+  // Self sign mutation
+  const [selfSign, { isLoading: isSelfSigning }] = useSelfSignDocumentMutation();
 
   if (!id) {
     return (
@@ -99,6 +106,16 @@ export const DocumentDetailPage: React.FC = () => {
 
   const handleInvite = () => {
     navigate(`/documents/${id}/invite`);
+  };
+
+  const handleSelfSign = async () => {
+    try {
+      const result = await selfSign(id!).unwrap();
+      message.success(t('detail.selfSignSuccess'));
+      navigate(result.signingUrl);
+    } catch (error) {
+      message.error(t('detail.selfSignError'));
+    }
   };
 
   // Signers table columns
@@ -149,6 +166,7 @@ export const DocumentDetailPage: React.FC = () => {
 
   const canEdit = document.status === DocumentStatus.Draft;
   const canInvite = document.status === DocumentStatus.Draft && fields.length > 0;
+  const isOwnerSigner = signers.some((s) => s.email === user?.email);
 
   return (
     <div style={{ padding: '24px' }}>
@@ -206,10 +224,20 @@ export const DocumentDetailPage: React.FC = () => {
                     {t('detail.editDocument')}
                   </Button>
                 )}
-                {canInvite && (
-                  <Button type="default" icon={<SendOutlined />} onClick={handleInvite}>
-                    {t('detail.inviteSigners')}
-                  </Button>
+                {canInvite && !isOwnerSigner && (
+                  <>
+                    <Button type="default" icon={<SendOutlined />} onClick={handleInvite}>
+                      {t('detail.inviteSigners')}
+                    </Button>
+                    <Button 
+                      type="primary" 
+                      icon={<EditOutlined />} 
+                      onClick={handleSelfSign}
+                      loading={isSelfSigning}
+                    >
+                      {t('detail.selfSign')}
+                    </Button>
+                  </>
                 )}
                 <Button icon={<DownloadOutlined />}>{t('detail.download')}</Button>
               </Space>

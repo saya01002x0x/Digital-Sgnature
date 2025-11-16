@@ -74,16 +74,16 @@ export const DocumentFilters: React.FC<DocumentFiltersProps> = ({
           allowClear
           suffixIcon={<FilterOutlined />}
         >
-          <Option value={DocumentStatus.DRAFT}>
+          <Option value={DocumentStatus.Draft}>
             {t('status.draft')}
           </Option>
-          <Option value={DocumentStatus.SIGNING}>
+          <Option value={DocumentStatus.Signing}>
             {t('status.signing')}
           </Option>
-          <Option value={DocumentStatus.DONE}>
+          <Option value={DocumentStatus.Done}>
             {t('status.done')}
           </Option>
-          <Option value={DocumentStatus.DECLINED}>
+          <Option value={DocumentStatus.Declined}>
             {t('status.declined')}
           </Option>
         </Select>

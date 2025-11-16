@@ -35,3 +35,6 @@ repomix-output.xml
 
 .cursor/
 .specify/
+
+# Test PDF files
+public/doc.pdf

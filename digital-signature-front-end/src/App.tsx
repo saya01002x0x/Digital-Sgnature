@@ -14,18 +14,13 @@ export const App: React.FC = () => {
     <AntApp>
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <UnifiedHeader />
-        <div style={{ flex: 1 }}>
+        <div style={{ 
+          flex: 1,
+          // Thêm padding-top cho các pages không phải landing (vì header fixed)
+          paddingTop: isLandingPage ? 0 : '80px'
+        }}>
           <Outlet />
         </div>
-        {!isLandingPage && (
-          <footer style={{ 
-            textAlign: 'center', 
-            padding: '24px 50px',
-            background: '#f0f2f5'
-          }}>
-            E-Signature ©{new Date().getFullYear()} - Nền tảng ký số điện tử
-          </footer>
-        )}
       </div>
     </AntApp>
   );

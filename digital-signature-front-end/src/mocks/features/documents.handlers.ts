@@ -13,7 +13,7 @@ const mockDocuments: Document[] = [
   {
     id: 'doc-1',
     title: 'Employment Contract 2024.pdf',
-    fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    fileUrl: '/doc.pdf',
     fileSize: 1024000,
     pageCount: 5,
     status: 'DRAFT' as DocumentStatus,
@@ -24,7 +24,7 @@ const mockDocuments: Document[] = [
   {
     id: 'doc-2',
     title: 'NDA Agreement.pdf',
-    fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    fileUrl: '/doc.pdf',
     fileSize: 512000,
     pageCount: 3,
     status: 'SIGNING' as DocumentStatus,
@@ -35,7 +35,7 @@ const mockDocuments: Document[] = [
   {
     id: 'doc-3',
     title: 'Service Agreement - Q1 2024.pdf',
-    fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    fileUrl: '/doc.pdf',
     fileSize: 2048000,
     pageCount: 8,
     status: 'DONE' as DocumentStatus,
@@ -46,7 +46,7 @@ const mockDocuments: Document[] = [
   {
     id: 'doc-4',
     title: 'Partnership Agreement.pdf',
-    fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    fileUrl: '/doc.pdf',
     fileSize: 768000,
     pageCount: 4,
     status: 'DECLINED' as DocumentStatus,
@@ -57,7 +57,7 @@ const mockDocuments: Document[] = [
   {
     id: 'doc-5',
     title: 'Consulting Contract - John Doe.pdf',
-    fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    fileUrl: '/doc.pdf',
     fileSize: 1536000,
     pageCount: 6,
     status: 'SIGNING' as DocumentStatus,
@@ -347,7 +347,7 @@ export const documentsHandlers = [
     const newDocument: Document = {
       id: `doc-${Date.now()}`,
       title: title as string,
-      fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+      fileUrl: '/doc.pdf',
       fileSize: 1024000,
       pageCount: 3,
       status: 'DRAFT' as DocumentStatus,

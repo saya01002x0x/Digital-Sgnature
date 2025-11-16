@@ -12,6 +12,7 @@ import type {
   DeclineResponse,
   InviteSignersRequest,
   InviteSignersResponse,
+  Signer,
 } from '../types';
 
 export const inviteSigningApi = baseApi.injectEndpoints({
@@ -60,6 +61,18 @@ export const inviteSigningApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Document', 'Signer'],
     }),
+
+    // Self Sign Document (PROTECTED endpoint)
+    selfSignDocument: builder.mutation<
+      { signingUrl: string; signer: Signer },
+      string // documentId
+    >({
+      query: (documentId) => ({
+        url: `/api/documents/${documentId}/self-sign`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Document', 'Signer'],
+    }),
   }),
 });
 
@@ -68,5 +81,6 @@ export const {
   useCompleteSigningMutation,
   useDeclineSigningMutation,
   useInviteSignersMutation,
+  useSelfSignDocumentMutation,
 } = inviteSigningApi;
 

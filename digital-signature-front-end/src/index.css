@@ -70,9 +70,14 @@ h1, h2, h3, h4, h5, h6 {
   background: #fff;
 }
 
-/* Landing page không cần padding */
-.landing-page + * {
-  padding: 0;
+/* Landing page không cần padding-top vì fullscreen design */
+.landing-page {
+  padding-top: 0 !important;
+}
+
+/* Non-landing pages cần padding để không bị che bởi fixed header */
+body > #root > div > div:not(.landing-page) {
+  min-height: calc(100vh - 80px);
 }
 
 /* ===== Responsive Adjustments ===== */

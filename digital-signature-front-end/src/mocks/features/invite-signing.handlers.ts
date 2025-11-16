@@ -21,7 +21,7 @@ const API_BASE_URL = 'http://localhost:3000/api';
 const mockDocument: Document = {
   id: 'doc-1',
   title: 'Employment Contract.pdf',
-  fileUrl: '/mock-pdfs/contract.pdf',
+  fileUrl: '/doc.pdf',
   fileSize: 1024000,
   status: DocumentStatus.Signing,
   pageCount: 5,
@@ -324,6 +324,57 @@ export const inviteSigningHandlers = [
     const response: InviteSignersResponse = {
       document: updatedDocument,
       signers: newSigners,
+    };
+
+    return HttpResponse.json(response);
+  }),
+
+  // POST /api/documents/:documentId/self-sign - Self sign document (PROTECTED)
+  http.post(`${API_BASE_URL}/documents/:documentId/self-sign`, async ({ params, request }) => {
+    const { documentId } = params;
+    const authHeader = request.headers.get('authorization');
+    
+    if (!authHeader) {
+      return HttpResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Mock owner email (trong thực tế sẽ lấy từ JWT token)
+    const ownerEmail = 'owner@example.com';
+    const ownerName = 'Document Owner';
+
+    // Tạo signing token
+    const timestamp = Date.now();
+    const signingToken = `token-self-${timestamp}`;
+
+    // Tạo signer cho owner
+    const ownerSigner: Signer = {
+      id: `signer-self-${timestamp}`,
+      documentId: documentId as string,
+      email: ownerEmail,
+      name: ownerName,
+      order: 1,
+      status: SignerStatus.PENDING,
+      signingUrl: `/signing/${signingToken}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Mock fields - trong thực tế sẽ lấy từ database
+    // Tự động gán tất cả fields cho owner
+    const documentFields: Field[] = mockFields.map(field => ({
+      ...field,
+      signerId: ownerSigner.id,
+    }));
+
+    // Initialize signing session
+    signingState.set(signingToken, {
+      signer: ownerSigner,
+      fields: documentFields,
+    });
+
+    const response = {
+      signingUrl: ownerSigner.signingUrl,
+      signer: ownerSigner,
     };
 
     return HttpResponse.json(response);

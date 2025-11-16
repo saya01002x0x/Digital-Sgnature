@@ -94,7 +94,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
           </Button>
 
           {/* Edit (only for DRAFT) */}
-          {record.status === DocumentStatus.DRAFT && (
+          {record.status === DocumentStatus.Draft && (
             <Button
               type="link"
               icon={<EditOutlined />}
@@ -106,7 +106,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({
           )}
 
           {/* Invite Signers (only for DRAFT) */}
-          {record.status === DocumentStatus.DRAFT && (
+          {record.status === DocumentStatus.Draft && (
             <Button
               type="link"
               icon={<SendOutlined />}
@@ -118,8 +118,8 @@ export const DocumentList: React.FC<DocumentListProps> = ({
           )}
 
           {/* Delete (only for DRAFT or DECLINED) */}
-          {(record.status === DocumentStatus.DRAFT ||
-            record.status === DocumentStatus.DECLINED) && (
+          {(record.status === DocumentStatus.Draft ||
+            record.status === DocumentStatus.Declined) && (
             <Popconfirm
               title={t('list.deleteConfirm')}
               description={t('list.deleteDescription', { title: record.title })}
@@ -151,6 +151,10 @@ export const DocumentList: React.FC<DocumentListProps> = ({
         showSizeChanger: true,
         showTotal: (total) => t('list.totalDocuments', { count: total }),
         onChange: onPageChange,
+        style: {
+          marginTop: 16,
+          marginBottom: 0,
+        },
       }
     : false;
 

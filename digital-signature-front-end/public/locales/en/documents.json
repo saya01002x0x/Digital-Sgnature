@@ -38,6 +38,9 @@
     "declineReason": "Decline Reason",
     "editDocument": "Edit Document",
     "inviteSigners": "Invite Signers",
+    "selfSign": "Self Sign",
+    "selfSignSuccess": "Signing session created for you",
+    "selfSignError": "Failed to create signing session",
     "download": "Download",
     "signers": {
       "title": "Signers",

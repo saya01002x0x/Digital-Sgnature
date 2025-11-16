@@ -1,11 +1,3 @@
-/**
- * Unified Header Component
- * Header thống nhất cho toàn bộ app với design từ Landing template
- * - Transparent → white effect ở landing page
- * - Menu items thay đổi theo authentication status
- * - Avatar user dropdown khi đã đăng nhập
- */
-
 import type React from 'react';
 import { useState, useEffect } from 'react';
 import { Menu, Row, Col, Popover, Avatar, Dropdown, Space, Button } from 'antd';
@@ -17,6 +9,7 @@ import { LanguageSwitcherButton } from './LanguageSwitcherButton';
 import { APP_ROUTES } from '@/app/config/constants';
 import classNames from 'classnames';
 import type { MenuProps } from 'antd';
+import '../styles/header.css';
 
 export const Header: React.FC = () => {
   const { t } = useTranslation();

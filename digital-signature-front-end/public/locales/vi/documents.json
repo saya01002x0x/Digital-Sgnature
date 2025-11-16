@@ -38,6 +38,9 @@
     "declineReason": "Lý Do Từ Chối",
     "editDocument": "Sửa Tài Liệu",
     "inviteSigners": "Mời Người Ký",
+    "selfSign": "Tự ký tài liệu",
+    "selfSignSuccess": "Đã tạo phiên ký cho bạn",
+    "selfSignError": "Không thể tạo phiên ký",
     "download": "Tải Xuống",
     "signers": {
       "title": "Người Ký",
