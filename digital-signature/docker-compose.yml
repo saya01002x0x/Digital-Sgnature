@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_miiao29
+    restart: always
+    environment:
+      POSTGRES_DB: miiao29
+      POSTGRES_USER: miiao29
+      POSTGRES_PASSWORD: miiao29
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
