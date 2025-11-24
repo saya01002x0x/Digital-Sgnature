@@ -15,9 +15,9 @@ export const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
-  
+
   const [menuVisible, setMenuVisible] = useState(false);
-  const [isFirstScreen, setIsFirstScreen] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   const isLandingPage = location.pathname === '/';
@@ -34,35 +34,32 @@ export const Header: React.FC = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Detect scroll for transparent effect (chỉ ở landing page)
+  // Detect scroll for glass effect
   useEffect(() => {
-    if (!isLandingPage) {
-      setIsFirstScreen(false);
-      return;
-    }
-
     const handleScroll = () => {
-      // Banner section height là 100vh, threshold ~90% của banner
-      const scrollThreshold = window.innerHeight * 0.9;
-      setIsFirstScreen(window.scrollY < scrollThreshold);
+      const offset = window.scrollY;
+      if (offset > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
     };
 
-    handleScroll(); // Check initial position
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isLandingPage]);
+  }, []);
 
   const headerClassName = classNames({
-    clearfix: true,
-    'home-nav-white': !isFirstScreen || !isLandingPage,
+    scrolled: scrolled || !isLandingPage,
   });
 
   const menuMode = isMobile ? 'inline' : 'horizontal';
@@ -175,26 +172,28 @@ export const Header: React.FC = () => {
 
   // Menu content for mobile popover
   const mobileMenuContent = [
-    <Menu 
-      mode="inline" 
+    <Menu
+      mode="inline"
       selectedKeys={[location.pathname]}
-      id="nav" 
+      id="nav"
       key="nav"
       items={menuItems}
-      style={{ background: 'transparent' }}
+      style={{ background: 'transparent', border: 'none' }}
     />,
     !isAuthenticated && (
-      <div key="mobile-actions" style={{ padding: '8px 16px', borderTop: '1px solid #f0f0f0' }}>
+      <div key="mobile-actions" style={{ padding: '16px', borderTop: '1px solid #f0f0f0' }}>
         <Space direction="vertical" style={{ width: '100%' }}>
-          <Button 
+          <Button
             block
+            className="auth-btn auth-btn-login"
             onClick={() => navigate(APP_ROUTES.LOGIN)}
           >
             {t('auth.login', 'Đăng nhập')}
           </Button>
-          <Button 
+          <Button
             type="primary"
             block
+            className="auth-btn auth-btn-register"
             onClick={() => navigate(APP_ROUTES.REGISTER)}
           >
             {t('auth.register', 'Đăng ký')}
@@ -206,79 +205,71 @@ export const Header: React.FC = () => {
 
   // Auth buttons for guest users (desktop only)
   const authButtons = !isAuthenticated && (
-    <Space key="auth-buttons" size="small" style={{ marginLeft: 16 }}>
-      <Button 
-        size="small"
+    <div className="auth-buttons-container">
+      <Button
+        className="auth-btn auth-btn-login"
         onClick={() => navigate(APP_ROUTES.LOGIN)}
-        style={{ 
-          color: isFirstScreen && isLandingPage ? '#fff' : undefined,
-          borderColor: isFirstScreen && isLandingPage ? '#fff' : undefined 
-        }}
       >
         {t('auth.login', 'Đăng nhập')}
       </Button>
-      <Button 
+      <Button
         type="primary"
-        size="small"
+        className="auth-btn auth-btn-register"
         onClick={() => navigate(APP_ROUTES.REGISTER)}
       >
         {t('auth.register', 'Đăng ký')}
       </Button>
-    </Space>
+    </div>
   );
 
   return (
     <header id="header" className={headerClassName}>
-      {menuMode === 'inline' ? (
-        <Popover
-          overlayClassName="popover-menu"
-          placement="bottomRight"
-          content={mobileMenuContent}
-          trigger="click"
-          open={menuVisible}
-          onOpenChange={handleMenuVisibleChange}
-        >
-          <MenuOutlined
-            className="nav-phone-icon"
-            style={{ 
-              fontSize: 24, 
-              color: isFirstScreen && isLandingPage ? '#fff' : '#666', 
-              cursor: 'pointer' 
-            }}
-          />
-        </Popover>
-      ) : null}
-      
-      <Row>
-        <Col lg={4} md={5} sm={24} xs={24}>
-          <a id="logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-            <img 
-              alt="logo" 
-              src="https://t.alipayobjects.com/images/rmsweb/T1B9hfXcdvXXXXXXXX.svg" 
-            />
-            <span>E-Signature</span>
-          </a>
-        </Col>
-        <Col lg={20} md={19} sm={0} xs={0}>
-            {menuMode === 'horizontal' ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
-              <Menu
-                mode="horizontal"
-                selectedKeys={[location.pathname]}
-                id="nav"
-                items={menuItems}
-                style={{
-                  background: 'transparent',
-                  flex: 1,
-                  justifyContent: 'flex-end',
-                  border: 'none'
-                }}
+      <div style={{ maxWidth: 1200, margin: '0 auto', height: '100%' }}>
+        <Row style={{ height: '100%', alignItems: 'center' }}>
+          <Col flex="200px">
+            <a id="logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+              <img
+                alt="logo"
+                src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
               />
+              <span>E-Signature</span>
+            </a>
+          </Col>
+          <Col flex="auto" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {menuMode === 'horizontal' ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Menu
+                  mode="horizontal"
+                  selectedKeys={[location.pathname]}
+                  id="nav"
+                  items={menuItems}
+                  disabledOverflow
+                />
                 {authButtons}
               </div>
-            ) : null}
-        </Col>
-      </Row>
+            ) : (
+              <Popover
+                overlayClassName="popover-menu"
+                placement="bottomRight"
+                content={mobileMenuContent}
+                trigger="click"
+                open={menuVisible}
+                onOpenChange={handleMenuVisibleChange}
+                arrow={false}
+              >
+                <MenuOutlined
+                  className="nav-phone-icon"
+                  style={{
+                    fontSize: 24,
+                    color: '#333',
+                    cursor: 'pointer'
+                  }}
+                />
+              </Popover>
+            )}
+          </Col>
+        </Row>
+      </div>
     </header>
   );
 };
