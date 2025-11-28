@@ -3,6 +3,7 @@ export const APP_ROUTES = {
   LOGIN: '/login',
   REGISTER: '/register',
   USERS: '/users',
+  DEMO: '/demo',
   NOT_FOUND: '*',
 };
 

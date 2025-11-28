@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import sis.hust.edu.vn.digital_signature.repository.user.UserRepository;
 
 import java.io.IOException;
 
@@ -20,6 +21,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
+    private final UserContext userContext;
 
     @Override
     protected void doFilterInternal(
@@ -42,6 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (jwtService.isTokenValid(token)) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                userRepository.findByUsername(username).ifPresent(userContext::setCurrentUser);
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(

@@ -4,8 +4,10 @@ import { STORAGE_KEYS } from '@/app/config/constants';
 import { RootState } from '../store';
 import { loginSuccess } from '@/features/auth/authSlice';
 
+const API_BASE_URL = env.VITE_API_URL?.trim() || 'http://localhost:5555';
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: env.VITE_API_URL,
+  baseUrl: API_BASE_URL,
   prepareHeaders: (headers, { getState }) => {
     const state = getState() as RootState;
     const token = state.auth?.token || localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);

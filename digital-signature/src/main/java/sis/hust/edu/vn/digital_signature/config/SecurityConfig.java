@@ -3,6 +3,7 @@ package sis.hust.edu.vn.digital_signature.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -43,11 +44,12 @@ public class SecurityConfig {
                         )
                 )
                         .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/files/**").permitAll()
+                                .requestMatchers("/api/auth/**", "/api/api/auth/**").permitAll()
+                                .requestMatchers("/api/files/**", "/api/api/files/**").permitAll()
                                 .requestMatchers("/login", "/register").permitAll()
                                 .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .anyRequest().authenticated()
                         )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,6 +1,7 @@
 package sis.hust.edu.vn.digital_signature.exception;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalExceptionHandler {
 
     @Value("${frontend.url:http://localhost:5556}")
@@ -38,7 +40,7 @@ public class GlobalExceptionHandler {
         });
 
         Response<Map<String, String>> response = Response.<Map<String, String>>builder()
-                .status(400)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .message("Validation failed")
                 .data(errors)
                 .build();
@@ -51,17 +53,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Response<Object>> handleEntityNotFoundException(
             EntityNotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Response.error(404, ex.getMessage()));
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Response<Object>> handleBusinessException(
             BusinessException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Response.error(400, ex.getMessage()));
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(AuthenticationException.class)
@@ -105,33 +103,39 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Response<Object>> handleAccessDeniedException(
             AccessDeniedException ex) {
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(Response.error(403, "Access denied: " + ex.getMessage()));
+        return buildError(HttpStatus.FORBIDDEN, "Access denied: " + ex.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Response<Object>> handleIllegalArgumentException(
             IllegalArgumentException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Response.error(400, ex.getMessage()));
+        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Response<Object>> handleRuntimeException(
             RuntimeException ex) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Response.error(500, ex.getMessage()));
+        log.error("Runtime exception occurred", ex);
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response<Object>> handleGenericException(
             Exception ex) {
+        log.error("Unexpected exception occurred", ex);
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+    }
+
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<Response<Object>> handleAllThrowable(Throwable ex) {
+        log.error("Unhandled throwable caught", ex);
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+    }
+
+    private ResponseEntity<Response<Object>> buildError(HttpStatus status, String message) {
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Response.error(500, "An unexpected error occurred"));
+                .status(status)
+                .body(Response.error(status.value(), message));
     }
 }
 

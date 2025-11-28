@@ -124,7 +124,7 @@ export const RegisterForm: React.FC = () => {
     try {
       const result = await verifyOtp({
         username: data.username,
-        email: data.email,
+        email: data.email, 
         password: data.password,
         fullName: data.fullName,
         phone: data.phone || undefined,

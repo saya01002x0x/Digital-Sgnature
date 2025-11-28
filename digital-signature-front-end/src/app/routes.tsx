@@ -8,6 +8,7 @@ const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage').then(modu
 const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage').then(module => ({ default: module.RegisterPage })));
 const UsersPage = lazy(() => import('@/features/users/pages/UsersPage').then(module => ({ default: module.UsersPage })));
 const HomePage = lazy(() => import('@/pages/HomePage').then(module => ({ default: module.HomePage })));
+const DemoPage = lazy(() => import('@/pages/DemoPage').then(module => ({ default: module.DemoPage })));
 
 // Loading fallback
 const Loader = () => <div>Loading...</div>;
@@ -95,6 +96,14 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
     element: (
       <Suspense fallback={<Loader />}>
         {isAuthenticated ? <HomePage /> : <Navigate to={APP_ROUTES.LOGIN} replace />}
+      </Suspense>
+    ),
+  },
+  {
+    path: APP_ROUTES.DEMO,
+    element: (
+      <Suspense fallback={<Loader />}>
+        {isAuthenticated ? <DemoPage /> : <Navigate to={APP_ROUTES.LOGIN} replace />}
       </Suspense>
     ),
   },
