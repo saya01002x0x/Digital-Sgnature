@@ -84,7 +84,7 @@ export const HomePage: React.FC = () => {
                 <Text><strong>Họ và tên:</strong> {user?.fullName}</Text>
                 {user?.phone && <Text><strong>Số điện thoại:</strong> {user?.phone}</Text>}
                 {user?.address && <Text><strong>Địa chỉ:</strong> {user?.address}</Text>}
-                <Text><strong>Vai trò:</strong> {user?.role === 'admin' || user?.role === 'ADMIN' ? 'Quản trị viên' : 'Người dùng'}</Text>
+                <Text><strong>Vai trò:</strong> {user?.role === 'admin' ? 'Quản trị viên' : 'Người dùng'}</Text>
               </Space>
             </Card>
           </Space>
