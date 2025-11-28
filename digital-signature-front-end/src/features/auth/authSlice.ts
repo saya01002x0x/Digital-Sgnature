@@ -2,12 +2,17 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthState, AuthUser } from './types';
 import { STORAGE_KEYS } from '@/app/config/constants';
 
-const initialState: AuthState = {
-  user: null,
-  token: localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN),
-  status: 'idle',
-  error: null,
+const getInitialState = (): AuthState => {
+  const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+  return {
+    user: null,
+    token: token,
+    status: 'idle',
+    error: null,
+  };
 };
+
+const initialState: AuthState = getInitialState();
 
 const authSlice = createSlice({
   name: 'auth',
@@ -17,11 +22,14 @@ const authSlice = createSlice({
       state.status = 'loading';
       state.error = null;
     },
-    loginSuccess: (state, action: PayloadAction<{ user: AuthUser; token: string }>) => {
+    loginSuccess: (state, action: PayloadAction<{ user: AuthUser; token: string; refreshToken?: string }>) => {
       state.status = 'succeeded';
       state.user = action.payload.user;
       state.token = action.payload.token;
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
+      if (action.payload.refreshToken) {
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, action.payload.refreshToken);
+      }
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.status = 'failed';
@@ -32,6 +40,7 @@ const authSlice = createSlice({
       state.token = null;
       state.status = 'idle';
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
     },
     updateUser: (state, action: PayloadAction<Partial<AuthUser>>) => {
       if (state.user) {

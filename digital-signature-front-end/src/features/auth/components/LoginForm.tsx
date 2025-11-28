@@ -4,17 +4,20 @@ import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginFormValues, loginSchema } from '../types';
-import { useLoginMutation } from '../api';
+import { useLoginMutation, authApi } from '../api';
 import { useAppDispatch } from '@/app/hooks';
 import { loginStart, loginSuccess, loginFailure } from '../authSlice';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '@/app/config/constants';
+import '../styles/auth.css';
 
 const { Title } = Typography;
 
 export const LoginForm: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [login, { isLoading }] = useLoginMutation();
   
   const {
@@ -35,12 +38,25 @@ export const LoginForm: React.FC = () => {
     try {
       dispatch(loginStart());
       const result = await login(data).unwrap();
-      dispatch(loginSuccess(result));
+      
+      const profileResult = await dispatch(
+        authApi.endpoints.getProfile.initiate(undefined, { forceRefetch: true })
+      );
+      
+      if ('data' in profileResult && profileResult.data) {
+        dispatch(loginSuccess({
+          ...result,
+          user: profileResult.data,
+        }));
+        navigate(APP_ROUTES.HOME);
+      } else {
+        dispatch(loginSuccess(result));
+        navigate(APP_ROUTES.HOME);
+      }
     } catch (error: any) {
       const errorMessage = error?.data?.message || 'Login failed';
       dispatch(loginFailure(errorMessage));
       
-      // Set field errors if any
       if (error?.data?.errors) {
         Object.entries(error.data.errors).forEach(([field, messages]) => {
           if (field in errors) {
@@ -55,23 +71,18 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    // Thêm các class Tailwind vào Card để thay đổi nền, bo góc, và đổ bóng
-    // Lưu ý: Ant Design Card đã có nền trắng và đổ bóng mặc định,
-    // các class Tailwind này sẽ cố gắng ghi đè hoặc bổ sung.
-    // bg-gray-900: Đổi màu nền của Card thành xám đậm (Ant Design mặc định là trắng/tối)
-    // shadow-2xl: Tăng độ đậm của đổ bóng
-    // rounded-lg: Làm bo góc của Card mềm mại hơn (Ant Design mặc định là 4px)
-    // p-8: Thêm padding bên trong Card
-    <Card className="login-form-card bg-gray-300 shadow-2xl rounded-lg p-8" bordered={false}>
-      {/* Thêm class Tailwind vào Title để thay đổi màu chữ và margin-bottom */}
-      {/* text-white: Đổi màu chữ thành trắng */}
-      {/* mb-6: Thêm margin-bottom 1.5rem (24px) */}
-      <Title level={2} className="text-center text-white mb-6">
+    <Card className="auth-form-card" bordered={false} style={{ position: 'relative' }}>
+      <div className="group-badge">Nhóm 5</div>
+      <div className="decorative-shapes">
+        <div className="shape shape-1"></div>
+        <div className="shape shape-2"></div>
+        <div className="shape shape-3"></div>
+      </div>
+      <Title level={2} className="text-center">
         {t('auth.login')}
       </Title>
       
-      {/* Không thêm nhiều class Tailwind vào Form trực tiếp để tránh ảnh hưởng đến layout của Ant Design */}
-      <Form layout="vertical" onFinish={handleSubmit(onSubmit)} className="login-form">
+      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
         <Form.Item 
           validateStatus={errors.email ? 'error' : ''} 
           help={errors.email ? t(errors.email.message as string, { min: 6 }) : ''}
@@ -81,13 +92,10 @@ export const LoginForm: React.FC = () => {
             control={control}
             render={({ field }) => (
               <Input
-                prefix={<MailOutlined />}
+                prefix={<MailOutlined style={{ color: '#667eea' }} />}
                 placeholder={t('auth.email')}
                 size="large"
                 {...field}
-                // Thêm class Tailwind vào Input để tùy chỉnh nhẹ (ví dụ: focus border)
-                // focus:border-blue-500: Khi input được focus, đổi màu border thành xanh
-                className="focus:border-blue-500"
               />
             )}
           />
@@ -102,36 +110,30 @@ export const LoginForm: React.FC = () => {
             control={control}
             render={({ field }) => (
               <Input.Password
-                prefix={<LockOutlined />}
+                prefix={<LockOutlined style={{ color: '#667eea' }} />}
                 placeholder={t('auth.password')}
                 size="large"
                 {...field}
-                // focus:border-blue-500: Khi input được focus, đổi màu border thành xanh
-                className="focus:border-blue-500"
               />
             )}
           />
         </Form.Item>
 
         <Form.Item>
-          {/* Thêm một class Tailwind nhỏ vào Row để đảm bảo khoảng cách bên ngoài */}
-          {/* mb-4: margin-bottom 1rem (16px) */}
-          <Row justify="space-between" align="middle" className="mb-4">
+          <Row justify="space-between" align="middle">
             <Col>
               <Controller
                 name="remember"
                 control={control}
                 render={({ field }) => (
                   <Checkbox checked={field.value} onChange={field.onChange}>
-                    {/* text-gray-300: Đổi màu chữ của Checkbox label thành xám nhạt */}
-                    <span className="text-gray-300">{t('auth.rememberMe')}</span>
+                    {t('auth.rememberMe')}
                   </Checkbox>
                 )}
               />
             </Col>
             <Col>
-              {/* text-blue-400: Đổi màu chữ của Link thành xanh nhạt */}
-              <Link to="/forgot-password" className="text-blue-400 hover:underline">
+              <Link to="/forgot-password" className="auth-link">
                 {t('auth.forgotPassword')}
               </Link>
             </Col>
@@ -145,25 +147,14 @@ export const LoginForm: React.FC = () => {
             size="large"
             block
             loading={isLoading}
-            // Thêm class Tailwind để tùy chỉnh Button của Ant Design
-            // bg-blue-600: Đổi màu nền button (có thể ghi đè primary color của AntD)
-            // hover:bg-blue-700: Đổi màu khi hover
-            // text-white: Đảm bảo chữ trắng
-            // font-semibold: Chữ đậm hơn
-            className="bg-blue-600 hover:bg-blue-700 text-dark font-semibold"
           >
             {t('auth.login')}
           </Button>
         </Form.Item>
 
-        {/* Thêm class Tailwind vào div này để tùy chỉnh giao diện */}
-        {/* mt-6: margin-top 1.5rem (24px) */}
-        {/* text-center: căn giữa chữ */}
-        {/* text-gray-400: Đổi màu chữ thành xám */}
-        <div className="mt-6 text-center text-gray-400">
+        <div className="auth-footer-text">
           <span>{t('auth.noAccount')} </span>
-          {/* text-blue-300: Đổi màu chữ của Link thành xanh nhạt */}
-          <Link to="/register" className="text-blue-300 hover:underline">
+          <Link to="/register" className="auth-link">
             {t('auth.signUp')}
           </Link>
         </div>

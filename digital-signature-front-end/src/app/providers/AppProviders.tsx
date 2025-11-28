@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { StyleProvider } from '@ant-design/cssinjs';
 import { ConfigProvider } from 'antd';
@@ -7,6 +7,7 @@ import { store } from '../store';
 import { ThemeProvider } from './ThemeProvider';
 import { routes } from '../routes';
 import { ErrorBoundary } from 'react-error-boundary';
+import { selectIsAuthenticated, selectUser } from '@/features/auth/authSlice';
 
 interface AppProvidersProps {
   children?: ReactNode;
@@ -22,13 +23,16 @@ const ErrorFallback = () => {
   );
 };
 
-export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
-  // In a real app, you would get this from your auth state
-  const isAuthenticated = false;
-  const user = undefined;
+const AppRouter: React.FC = () => {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
   
-  // Create router with routes
-  const router = createBrowserRouter(routes(isAuthenticated, user));
+  const router = createBrowserRouter(routes(isAuthenticated, user || undefined));
+  
+  return <RouterProvider router={router} />;
+};
+
+export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -36,7 +40,7 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
         <StyleProvider layer>
           <ConfigProvider>
             <ThemeProvider>
-              <RouterProvider router={router} />
+              <AppRouter />
               {children}
             </ThemeProvider>
           </ConfigProvider>

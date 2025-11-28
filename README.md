@@ -1,4 +1,5 @@
-1. Vai trò
+## Vai trò
+
 - Hà Ngọc Huy: FE
 - Dương Đăng Quang: FE
 - Hoàng Chí Thanh: FE
@@ -6,40 +7,116 @@
 - Hoàng Nhật Minh: BE
 - Nguyễn Chiêu Văn: BE (leader)
 
-2. Công cụ
-- FE: React + Redux + ant design
-- BE: Java Spring
+## Thông tin Ports
 
-3. Database: Postgres 
-- Sử dụng superbase
-- Mỗi bảng chỉ sử dụng với 1 mục đích
-- Tên bảng là danh từ và viết hoa, có tiền tố là TBL_
-Ví dụ: TBL_ADMIN (danh sách bảng admin)
+- **Backend:** `5555` - API Server
+- **Frontend:** `5556` - Web Application
+- **Database:** `5432` - PostgreSQL
 
-4. Request + Repo trả về API dạng Json
+## Yêu cầu hệ thống
 
-5. Tạo nhánh của mình trên nhánh được giao có dạng: feature/back-end-vannc
-- Khi push code lên phải có dạng <fix/modify/update/remove>[vannc]: nội dung
-- Ví dụ: </.fix/.>[vannc]: sửa code login
-- Phải pull code từ main về nếu leader bảo hoặc mỗi lần trước khi làm hay sau khi làm phải pull code mới nếu có
+- Java 17+
+- Node.js 20+
+- Maven 3.6+
+- PostgreSQL (chạy qua Docker)
 
-6. Chỉ được push lên nhánh của mình và tạo Pull request cho leader duyệt
+## Hướng dẫn Build
 
-7. Tài khoản:
-- admin: vannc 
-- user: 
-- pass: 123456a@
-- Không có form đăng ký, admin có chức năng tạo user
-- Hoặc có form đăng ký nhưng admin duyệt
+### Build Backend
 
-8. Nếu có ý kiến, ý tưởng hoàn thiện đề tài thì cần hỏi qua leader trước
+```bash
+cd digital-signature
+mvn clean package -DskipTests
+```
 
-9. Tên biến không cần sử dụng tiếng anh, dùng tiếng việt không dấu nếu cần
+JAR file sẽ được tạo tại: `target/digital-signature-0.0.1-SNAPSHOT.jar`
 
-10. Link tài liệu: https://www.youtube.com/playlist?list=PLgYFT7gUQL8GUoIDh1p8FDXCmImzVVbRi
+### Build Frontend
 
-11. Đối với BE không được phép sửa file pom, nếu có thêm thì phải hỏi ý kiến của leader
+```bash
+cd digital-signature-front-end
+npm install
+npm run build
+```
 
-12. BE và FE làm việc trong groupId sis.hust.edu.vn.digital_signature, không tạo thư mục hay package bừa bãi
+Build files sẽ được tạo tại: `dist/`
 
-13. Vì có những người đang đi làm có thể bị trùng nên BE sẽ có port là 5555, FE sẽ có port là 5556
+### Build cả Backend và Frontend
+
+```bash
+# Build Backend
+cd digital-signature
+mvn clean package -DskipTests
+
+# Build Frontend
+cd ../digital-signature-front-end
+npm install
+npm run build
+```
+
+## Hướng dẫn Chạy
+
+### Chạy Backend
+
+```bash
+cd digital-signature
+java -jar target/digital-signature-0.0.1-SNAPSHOT.jar
+```
+
+Backend sẽ chạy tại: `http://localhost:5555`
+
+### Chạy Frontend (Development)
+
+```bash
+cd digital-signature-front-end
+npm install
+npm run dev
+```
+
+Frontend sẽ chạy tại: `http://localhost:5556`
+
+### Chạy Frontend (Production)
+
+Sử dụng web server để serve files trong thư mục `dist/`, hoặc sử dụng Docker với Nginx như đã cấu hình trong `docker-compose.yml`
+
+Frontend sẽ chạy tại: `http://localhost:5556`
+
+## Hướng dẫn Build go-live với Docker Compose (chỉ được phép build khi code không lỗi)
+
+### Yêu cầu
+
+- Docker (tải docker là đủ)
+- Docker Compose
+
+### Chạy Docker Compose
+
+```bash
+docker-compose up --build -d
+```
+
+Lệnh này sẽ build và start tất cả services (backend, frontend, database) ở chế độ background.
+
+### Cơ chế Auto-Update Database
+
+Hệ thống đã được cấu hình để **tự động cập nhật database schema** mỗi khi backend khởi động:
+
+- **Hibernate DDL Auto:** `update` - Tự động tạo/cập nhật bảng khi có thay đổi entity
+- **Backend sẽ chờ database healthy** trước khi start
+- **Mỗi lần backend restart**, Hibernate sẽ kiểm tra và cập nhật schema nếu có thay đổi
+
+### Đảm bảo hoạt động trên mọi máy
+
+- **Docker Compose** tự động quản lý dependencies và thứ tự khởi động
+- **Health checks** đảm bảo services sẵn sàng trước khi service khác start
+- **Restart policy:** `unless-stopped` - Tự động restart khi máy khởi động lại
+- **Volume persistence:** Database data được lưu trong Docker volume, không mất khi container restart
+
+### Kiểm tra Services
+
+Sau khi chạy, các services sẽ có sẵn tại:
+
+- **Frontend:** `http://localhost:5556` (link trang chủ)
+- **Backend API:** `http://localhost:5555/api`
+- **Backend Health Check:** `http://localhost:5555/actuator/health`
+- **Swagger UI:** `http://localhost:5555/swagger-ui.html`
+- **Database:** `localhost:5432`

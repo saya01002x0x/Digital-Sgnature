@@ -8,6 +8,7 @@ export const APP_ROUTES = {
 
 export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
+  REFRESH_TOKEN: 'refresh_token',
   THEME: 'theme',
   LANGUAGE: 'language',
 };

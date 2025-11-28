@@ -1,0 +1,90 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: digital-signature-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_INTERNAL_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - digital-signature-network
+
+  backend:
+    build:
+      context: ./digital-signature
+      dockerfile: Dockerfile
+      args:
+        SERVER_PORT: ${SERVER_PORT:-5555}
+    container_name: digital-signature-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      SERVER_PORT: ${SERVER_PORT}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+      FRONTEND_URL: ${FRONTEND_URL}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-smtp.gmail.com}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-587}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-test.email@example.com}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-testpassword123}
+      APP_EMAIL_ENABLED: ${APP_EMAIL_ENABLED:-false}
+      APP_EMAIL_TEST_MODE: ${APP_EMAIL_TEST_MODE:-true}
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_INTERNAL_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${BACKEND_INTERNAL_PORT}/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - digital-signature-network
+
+  frontend:
+    build:
+      context: ./digital-signature-front-end
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_APP_NAME: ${VITE_APP_NAME:-Digital Signature}
+        VITE_USE_MSW: ${VITE_USE_MSW:-false}
+        VITE_USE_REDUX_DEVTOOLS: ${VITE_USE_REDUX_DEVTOOLS:-false}
+        VITE_I18N_DEFAULT_LANG: ${VITE_I18N_DEFAULT_LANG:-en}
+        VITE_IS_DEV: ${VITE_IS_DEV:-false}
+        VITE_IS_PROD: ${VITE_IS_PROD:-true}
+    container_name: digital-signature-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_INTERNAL_PORT}"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - digital-signature-network
+
+networks:
+  digital-signature-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+

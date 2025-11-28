@@ -7,6 +7,7 @@ import { UserBase } from '@/shared/types';
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage').then(module => ({ default: module.RegisterPage })));
 const UsersPage = lazy(() => import('@/features/users/pages/UsersPage').then(module => ({ default: module.UsersPage })));
+const HomePage = lazy(() => import('@/pages/HomePage').then(module => ({ default: module.HomePage })));
 
 // Loading fallback
 const Loader = () => <div>Loading...</div>;
@@ -93,7 +94,7 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
     path: APP_ROUTES.HOME,
     element: (
       <Suspense fallback={<Loader />}>
-        {isAuthenticated ? <div>Home Page</div> : <Navigate to={APP_ROUTES.LOGIN} replace />}
+        {isAuthenticated ? <HomePage /> : <Navigate to={APP_ROUTES.LOGIN} replace />}
       </Suspense>
     ),
   },
