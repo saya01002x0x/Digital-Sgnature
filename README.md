@@ -47,6 +47,14 @@ run.bat
 docker-compose up --build -d
 ```
 
+**Cách 3: Chạy riêng lẻ back-end/front-end**
+
+```bash
+# Build và chạy
+docker-compose up --build -d back-end
+docker-compose up --build -d front-end
+```
+
 ## 🔍 Kiểm tra và Truy cập
 
 Sau khi build thành công, truy cập ứng dụng tại:
