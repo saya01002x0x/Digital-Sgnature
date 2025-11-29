@@ -45,10 +45,6 @@ run.bat
 ```bash
 # Build và chạy
 docker-compose up --build -d
-
-# Build lại từ đầu (xóa containers và images cũ)
-docker-compose down
-docker-compose up --build -d
 ```
 
 ## 🔍 Kiểm tra và Truy cập
@@ -62,39 +58,22 @@ Sau khi build thành công, truy cập ứng dụng tại:
 
 ## 💻 Hướng dẫn Development (Build/Chạy riêng lẻ)
 
-### Build Backend
+### Build + Run Backend
 
 ```bash
 cd digital-signature
 mvn clean package -DskipTests
+java -jar target/digital-signature-0.0.1-SNAPSHOT.jar
 ```
 
-### Build Frontend
+### Build + Run Frontend
 
 ```bash
 cd digital-signature-front-end
 npm install
 npm run build
-```
-
-### Chạy Backend
-
-```bash
-cd digital-signature
-java -jar target/digital-signature-0.0.1-SNAPSHOT.jar
-```
-
-Backend: http://localhost:5555
-
-### Chạy Frontend (Development)
-
-```bash
-cd digital-signature-front-end
-npm install
 npm run dev
 ```
-
-Frontend: http://localhost:5556
 
 ### Auto-Update Database
 - **Hibernate DDL Auto:** `update` - Tự động tạo/cập nhật bảng khi có thay đổi entity
