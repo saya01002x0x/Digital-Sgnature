@@ -3,7 +3,7 @@ package sis.hust.edu.vn.digital_signature.repository.user;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import sis.hust.edu.vn.digital_signature.entity.User;
+import sis.hust.edu.vn.digital_signature.entity.model.User;
 
 import java.util.Optional;
 

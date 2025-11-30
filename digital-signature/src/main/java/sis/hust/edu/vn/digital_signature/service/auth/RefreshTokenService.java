@@ -3,10 +3,10 @@ package sis.hust.edu.vn.digital_signature.service.auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sis.hust.edu.vn.digital_signature.constants.ErrorMessages;
-import sis.hust.edu.vn.digital_signature.entity.RefreshToken;
-import sis.hust.edu.vn.digital_signature.entity.User;
-import sis.hust.edu.vn.digital_signature.exception.BusinessException;
+import sis.hust.edu.vn.digital_signature.constants.error.ErrorMessages;
+import sis.hust.edu.vn.digital_signature.entity.model.RefreshToken;
+import sis.hust.edu.vn.digital_signature.entity.model.User;
+import sis.hust.edu.vn.digital_signature.exception.business.BusinessException;
 import sis.hust.edu.vn.digital_signature.repository.auth.RefreshTokenRepository;
 
 import java.time.Instant;

@@ -2,7 +2,7 @@ package sis.hust.edu.vn.digital_signature.mapper.user;
 
 import org.springframework.stereotype.Component;
 import sis.hust.edu.vn.digital_signature.dto.user.response.UserResponse;
-import sis.hust.edu.vn.digital_signature.entity.User;
+import sis.hust.edu.vn.digital_signature.entity.model.User;
 import sis.hust.edu.vn.digital_signature.mapper.Mapper;
 
 @Component
@@ -50,4 +50,5 @@ public class UserMapper implements Mapper<User, UserResponse> {
                 .build();
     }
 }
+
 

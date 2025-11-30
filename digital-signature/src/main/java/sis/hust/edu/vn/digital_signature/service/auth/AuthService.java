@@ -4,19 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import sis.hust.edu.vn.digital_signature.constants.ErrorMessages;
+import sis.hust.edu.vn.digital_signature.constants.error.ErrorMessages;
 import sis.hust.edu.vn.digital_signature.dto.auth.request.LoginRequest;
 import sis.hust.edu.vn.digital_signature.dto.auth.request.RegisterRequest;
 import sis.hust.edu.vn.digital_signature.dto.auth.request.VerifyOtpRequest;
 import sis.hust.edu.vn.digital_signature.dto.auth.response.AuthResponse;
-import sis.hust.edu.vn.digital_signature.entity.RefreshToken;
-import sis.hust.edu.vn.digital_signature.entity.User;
+import sis.hust.edu.vn.digital_signature.entity.model.RefreshToken;
+import sis.hust.edu.vn.digital_signature.entity.model.User;
 import sis.hust.edu.vn.digital_signature.entity.enums.Role;
-import sis.hust.edu.vn.digital_signature.exception.BusinessException;
-import sis.hust.edu.vn.digital_signature.exception.EntityNotFoundException;
+import sis.hust.edu.vn.digital_signature.exception.business.BusinessException;
+import sis.hust.edu.vn.digital_signature.exception.entity.EntityNotFoundException;
 import sis.hust.edu.vn.digital_signature.repository.user.UserRepository;
-import sis.hust.edu.vn.digital_signature.security.JwtService;
-import sis.hust.edu.vn.digital_signature.security.UserContext;
+import sis.hust.edu.vn.digital_signature.security.jwt.JwtService;
+import sis.hust.edu.vn.digital_signature.security.context.UserContext;
 import sis.hust.edu.vn.digital_signature.service.file.FileService;
 import sis.hust.edu.vn.digital_signature.entity.enums.FileType;
 import org.springframework.web.multipart.MultipartFile;
@@ -101,6 +101,17 @@ public class AuthService {
     }
 
     public User getCurrentUserProfile(User user) {
+        if (user == null) {
+            user = userContext.getCurrentUser();
+        }
+        if (user == null) {
+            String username = userContext.getCurrentUsername();
+            if (username == null) {
+                throw new EntityNotFoundException(ErrorMessages.USER_NOT_FOUND);
+            }
+            user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.USER_NOT_FOUND));
+        }
         return userRepository.findByIdWithAvatar(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.USER_NOT_FOUND));
     }
@@ -176,7 +187,7 @@ public class AuthService {
             throw new BusinessException(ErrorMessages.USERNAME_ALREADY_EXISTS);
         }
 
-        sis.hust.edu.vn.digital_signature.entity.File avatarFile = null;
+        sis.hust.edu.vn.digital_signature.entity.model.File avatarFile = null;
         if (avatar != null && !avatar.isEmpty()) {
             try {
                 avatarFile = fileService.saveFile(avatar, FileType.AVATAR, email);

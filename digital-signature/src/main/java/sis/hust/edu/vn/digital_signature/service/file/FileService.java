@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import sis.hust.edu.vn.digital_signature.entity.File;
+import sis.hust.edu.vn.digital_signature.entity.model.File;
 import sis.hust.edu.vn.digital_signature.entity.enums.FileType;
 import sis.hust.edu.vn.digital_signature.repository.file.FileRepository;
 

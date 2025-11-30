@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class OtpService {
 
-    private static final int OTP_LENGTH = 6;
     private static final long OTP_EXPIRY_TIME = 5 * 60 * 1000;
 
     private final Map<String, OtpData> otpStore = new ConcurrentHashMap<>();

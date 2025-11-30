@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
-import sis.hust.edu.vn.digital_signature.entity.RefreshToken;
-import sis.hust.edu.vn.digital_signature.entity.User;
+import sis.hust.edu.vn.digital_signature.entity.model.RefreshToken;
+import sis.hust.edu.vn.digital_signature.entity.model.User;
 
 import java.util.Optional;
 
