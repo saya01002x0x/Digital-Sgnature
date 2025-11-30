@@ -25,7 +25,7 @@ Hệ thống chữ ký số được xây dựng với Spring Boot (Backend) và
 ## ⚙️ Cấu hình
 
 ### Ports
-- **Backend API:** `5555`
+- **Backend:** `5555`
 - **Frontend:** `5556`
 - **Database:** `5432`
 - **Frontend API base URL:** `http://localhost:5555` (`VITE_API_URL`)
@@ -44,15 +44,16 @@ run.bat
 
 ```bash
 # Build và chạy
+# Sau đó truy cập web: http://localhost:5556
 docker-compose up --build -d
 ```
 
-**Cách 3: Chạy riêng lẻ back-end/front-end**
+**Cách 3: Chạy riêng lẻ Backend/Frontend để trỏ vào test code local**
 
 ```bash
-# Build và chạy
-docker-compose up --build -d back-end
-docker-compose up --build -d front-end
+# Build và chạy 
+docker-compose up --build -d Backend
+docker-compose up --build -d Frontend
 ```
 
 ## 🔍 Kiểm tra và Truy cập
@@ -77,24 +78,22 @@ java -jar target/digital-signature-0.0.1-SNAPSHOT.jar
 ### Build + Run Frontend
 
 ```bash
-cd digital-signature-front-end
+cd digital-signature-Frontend
 npm install
 npm run build
 npm run dev
 ```
 
 ### Auto-Update Database
-- **Hibernate DDL Auto:** `update` - Tự động tạo/cập nhật bảng khi có thay đổi entity
+- **Hibernate DDL Auto:** `update`
+- Tự động tạo/cập nhật bảng khi có thay đổi entity nên nghiêm cấm Backend sửa entity nếu code đang chạy
 - Backend chờ database healthy trước khi start
 - Schema tự động cập nhật mỗi lần backend restart
+- Nếu không chạy docker phía Backend sẽ báo lỗi không tìm thấy ip của database
 
 ### Đảm bảo hoạt động ổn định
 - ✅ Docker Compose quản lý dependencies và thứ tự khởi động
 - ✅ Health checks đảm bảo services sẵn sàng
 - ✅ Restart policy: `unless-stopped` - Tự động restart khi máy khởi động lại
 - ✅ Volume persistence: Database data được lưu trong Docker volume
-
-## ⚠️ Lưu ý quan trọng
-
-- **Docker:** Đảm bảo Docker Desktop đang chạy trước khi build
-- **Code quality:** Chỉ build Docker Compose khi code không có lỗi và được chỉ định
+- ✅ Nếu Frontend hay Backend sửa code xong chỉ cần rebuild lại docker phần tương ứng (hoặc rebuild all cho lẹ cũng được)
