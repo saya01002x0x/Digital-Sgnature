@@ -32,3 +32,9 @@ repomix-output.xml
 .env.production
 .env.*
 .env
+
+.cursor/
+.specify/
+
+# Test PDF files
+public/doc.pdf

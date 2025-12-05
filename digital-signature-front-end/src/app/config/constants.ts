@@ -2,6 +2,11 @@ export const APP_ROUTES = {
   HOME: '/',
   LOGIN: '/login',
   REGISTER: '/register',
+  FORGOT_PASSWORD: '/forgot-password',
+  PROFILE: '/profile',
+  DOCUMENTS: '/documents',
+  SIGNATURES: '/signatures',
+  ADMIN: '/admin',
   USERS: '/users',
   DEMO: '/demo',
   NOT_FOUND: '*',
@@ -9,6 +14,7 @@ export const APP_ROUTES = {
 
 export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
+  AUTH_USER: 'auth_user',
   REFRESH_TOKEN: 'refresh_token',
   THEME: 'theme',
   LANGUAGE: 'language',

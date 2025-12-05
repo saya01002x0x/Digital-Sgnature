@@ -1,53 +1,64 @@
-import React from 'react';
-import { Row, Col, Layout, Typography, Avatar, Space } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-import { RegisterForm } from '../components/RegisterForm';
-import { ThemeSwitcher } from '@/shared/components/ThemeSwitcher';
-import { LanguageSwitcher } from '@/shared/components/LanguageSwitcher';
-import { useAppSelector } from '@/app/hooks';
-import { selectUser, selectIsAuthenticated } from '../authSlice';
-import '../styles/auth.css';
+/**
+ * RegisterPage Component
+ * Page for user registration
+ * Using pure Ant Design components
+ */
 
-const { Content, Header } = Layout;
+import type React from 'react';
+import { Typography, Space, Divider, message } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { RegisterForm } from '../components/RegisterForm';
+import { AuthLayout } from '../components/AuthLayout';
+import { useRegisterMutation } from '../api';
+import type { RegisterFormData } from '../utils/validators';
+
 const { Text } = Typography;
 
 export const RegisterPage: React.FC = () => {
-  const user = useAppSelector(selectUser);
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [register, { isLoading, error }] = useRegisterMutation();
+
+  const handleRegister = async (values: RegisterFormData) => {
+    try {
+      await register({
+        username: values.email, // Use email as username since login uses email
+        email: values.email,
+        password: values.password,
+        fullName: values.name,
+      }).unwrap();
+
+      message.success(t('auth.registerSuccess', 'Registration successful! Please login.'));
+      navigate('/login');
+    } catch (err: any) {
+      message.error(err?.data?.message || t('auth.registerFailed', 'Registration failed'));
+    }
+  };
 
   return (
-    <Layout className="layout auth-layout">
-      <Header className="auth-header">
-        <div className="auth-header-left">
-          <Typography.Title level={3} className="auth-header-title">
-            Chữ ký số
-          </Typography.Title>
+    <AuthLayout
+      title={t('auth.createAccount', 'Create Account')}
+      description={t('auth.registerSubtitle', 'Join E-Signature platform today')}
+    >
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <RegisterForm
+          onSubmit={handleRegister}
+          isLoading={isLoading}
+          error={error ? String(error) : null}
+        />
+
+        <Divider>{t('common.or', 'OR')}</Divider>
+
+        <div style={{ textAlign: 'center' }}>
+          <Text>
+            {t('auth.haveAccount', 'Already have an account?')}{' '}
+            <Link to="/login">
+              {t('auth.loginNow', 'Login now')}
+            </Link>
+          </Text>
         </div>
-        <div className="auth-header-right">
-          {isAuthenticated && user ? (
-            <Space className="auth-user-info">
-              <Avatar icon={<UserOutlined />} />
-              <div className="auth-user-details">
-                <Text strong className="auth-user-name">
-                  {user.name || user.email}
-                </Text>
-                <Text type="secondary" className="auth-user-email">
-                  {user.email}
-                </Text>
-              </div>
-            </Space>
-          ) : null}
-          <ThemeSwitcher />
-          <LanguageSwitcher />
-        </div>
-      </Header>
-      <Content style={{ padding: '50px 0', position: 'relative', zIndex: 1 }}>
-        <Row justify="center" align="middle" style={{ minHeight: '80vh' }}>
-          <Col xs={22} sm={20} md={16} lg={10} xl={8}>
-            <RegisterForm />
-          </Col>
-        </Row>
-      </Content>
-    </Layout>
+      </Space>
+    </AuthLayout>
   );
 };

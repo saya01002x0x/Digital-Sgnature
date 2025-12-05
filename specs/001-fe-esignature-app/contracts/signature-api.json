@@ -1,0 +1,130 @@
+{
+  "apiName": "signature",
+  "baseEndpoint": "/api/signatures",
+  "description": "Personal signature management API",
+  "endpoints": [
+    {
+      "name": "listSignatures",
+      "method": "GET",
+      "path": "/",
+      "description": "Get all signatures for current user",
+      "request": {},
+      "responses": {
+        "200": {
+          "signatures": "Array<Signature>"
+        },
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["Signature"]
+      }
+    },
+    {
+      "name": "createSignature",
+      "method": "POST",
+      "path": "/",
+      "description": "Create new signature",
+      "request": {
+        "body": {
+          "type": "string (DRAW | TYPE)",
+          "imageData": "string (base64 data URL)",
+          "name": "string (optional)"
+        }
+      },
+      "responses": {
+        "201": "Created Signature object",
+        "400": "Validation error",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Signature"]
+      }
+    },
+    {
+      "name": "getSignature",
+      "method": "GET",
+      "path": "/:id",
+      "description": "Get signature by ID",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        }
+      },
+      "responses": {
+        "200": "Signature object",
+        "404": "Signature not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["Signature"]
+      }
+    },
+    {
+      "name": "updateSignature",
+      "method": "PATCH",
+      "path": "/:id",
+      "description": "Update signature (name only)",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        },
+        "body": {
+          "name": "string"
+        }
+      },
+      "responses": {
+        "200": "Updated Signature object",
+        "404": "Signature not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Signature"]
+      }
+    },
+    {
+      "name": "deleteSignature",
+      "method": "DELETE",
+      "path": "/:id",
+      "description": "Delete signature",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        }
+      },
+      "responses": {
+        "204": "Success (no content)",
+        "404": "Signature not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Signature"]
+      }
+    },
+    {
+      "name": "setDefault",
+      "method": "POST",
+      "path": "/:id/set-default",
+      "description": "Set signature as default",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        }
+      },
+      "responses": {
+        "200": "Updated Signature object with isDefault=true",
+        "404": "Signature not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Signature"]
+      }
+    }
+  ]
+}
+

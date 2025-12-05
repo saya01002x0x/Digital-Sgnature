@@ -1,4 +1,5 @@
-interface Env {
+// Map and safe-get VITE_* environment variables
+type Env = {
   VITE_API_URL: string;
   VITE_APP_NAME: string;
   VITE_USE_MSW: string;
@@ -19,13 +20,13 @@ const getEnvVar = (key: string, defaultValue: string = ''): string => {
 };
 
 export const env: Env = {
-  VITE_API_URL: getEnvVar('VITE_API_URL'),
+  VITE_API_URL: getEnvVar('VITE_API_URL', 'http://localhost:5555'),
   VITE_APP_NAME: getEnvVar('VITE_APP_NAME', 'Digital Signature'),
   VITE_USE_MSW: getEnvVar('VITE_USE_MSW', 'false'),
   VITE_USE_REDUX_DEVTOOLS: getEnvVar('VITE_USE_REDUX_DEVTOOLS', 'false'),
-  VITE_I18N_DEFAULT_LANG: getEnvVar('VITE_I18N_DEFAULT_LANG', 'en'),
-  VITE_IS_DEV: getEnvVar('VITE_IS_DEV', 'true'),
-  VITE_IS_PROD: getEnvVar('VITE_IS_PROD', 'false'),
+  VITE_I18N_DEFAULT_LANG: getEnvVar('VITE_I18N_DEFAULT_LANG', 'vi'),
+  VITE_IS_DEV: getEnvVar('VITE_IS_DEV', 'false'),
+  VITE_IS_PROD: getEnvVar('VITE_IS_PROD', 'true'),
 };
 
 if (!env.VITE_API_URL) {

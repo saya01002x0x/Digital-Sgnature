@@ -1,6 +1,13 @@
 {
   "app": {
-    "name": "React Boilerplate"
+    "name": "E-Signature"
+  },
+  "nav": {
+    "documents": "Tài liệu",
+    "signatures": "Chữ ký",
+    "admin": "Quản trị",
+    "profile": "Hồ sơ",
+    "logout": "Đăng xuất"
   },
   "common": {
     "loading": "Đang tải...",
@@ -11,7 +18,11 @@
     "edit": "Sửa",
     "delete": "Xóa",
     "confirm": "Xác nhận",
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "or": "HOẶC",
+    "tryAgain": "Thử lại",
+    "goHome": "Về trang chủ",
+    "noData": "Không có dữ liệu"
   },
   "auth": {
     "login": "Đăng nhập",
@@ -23,10 +34,30 @@
     "forgotPassword": "Quên mật khẩu?",
     "rememberMe": "Ghi nhớ đăng nhập",
     "orLoginWith": "Hoặc đăng nhập bằng",
+    "orSignUpWith": "Hoặc đăng ký bằng",
     "noAccount": "Chưa có tài khoản?",
     "alreadyHaveAccount": "Đã có tài khoản?",
     "signUp": "Đăng ký",
-    "signIn": "Đăng nhập"
+    "signIn": "Đăng nhập",
+    "signInInstead": "Đăng nhập thay vì",
+    "welcomeBack": "Chào mừng bạn đến với hệ thống.",
+    "createAccount": "Tạo tài khoản mới",
+    "createAccountDescription": "Tạo tài khoản và bắt đầu sử dụng dịch vụ ký tài liệu hiện đại. Ký tài liệu dễ dàng và đẹp mắt trong tầm tay bạn.",
+    "fullName": "Họ và tên",
+    "emailAddress": "Địa chỉ Email",
+    "signHere": "Ký tại đây",
+    "signUpWithGoogle": "Đăng ký bằng Google",
+    "complete": "Hoàn thành",
+    "termsAgreement": "Khi tiếp tục, bạn đồng ý với",
+    "termsOfService": "Điều khoản dịch vụ",
+    "and": "và",
+    "privacyPolicy": "Chính sách bảo mật",
+    "draw": "Vẽ",
+    "type": "Gõ",
+    "upload": "Tải lên",
+    "clearSignature": "Xóa chữ ký",
+    "typeYourSignature": "Gõ chữ ký của bạn",
+    "next": "Tiếp theo"
   },
   "validation": {
     "required": "Trường này là bắt buộc",
@@ -39,7 +70,8 @@
     "vi": "Tiếng Việt"
   },
   "theme": {
-    "light": "Sáng",
-    "dark": "Tối"
+    "light": "Chuyển sang chế độ sáng",
+    "dark": "Chuyển sang chế độ tối",
+    "toggle": "Chuyển đổi theme"
   }
 }

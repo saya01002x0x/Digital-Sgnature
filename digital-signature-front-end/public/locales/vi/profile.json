@@ -1,0 +1,23 @@
+{
+  "title": "Hồ Sơ Của Tôi",
+  "subtitle": "Quản lý thông tin tài khoản của bạn",
+  "information": "Thông Tin Hồ Sơ",
+  "editProfile": "Sửa Hồ Sơ",
+  "name": "Họ và Tên",
+  "email": "Email",
+  "role": "Vai Trò",
+  "avatar": "Ảnh Đại Diện",
+  "changeAvatar": "Thay Đổi Ảnh Đại Diện",
+  "memberSince": "Thành Viên Từ",
+  "lastUpdated": "Cập Nhật Lần Cuối",
+  "verified": "Đã Xác Minh",
+  "updateButton": "Cập Nhật Hồ Sơ",
+  "updateSuccess": "Cập nhật hồ sơ thành công",
+  "updateError": "Cập nhật hồ sơ thất bại",
+  "namePlaceholder": "Nhập tên của bạn",
+  "nameRequired": "Tên là bắt buộc",
+  "nameMin": "Tên phải có ít nhất 2 ký tự",
+  "avatarTypeError": "Bạn chỉ có thể tải lên file ảnh!",
+  "avatarSizeError": "Ảnh phải nhỏ hơn 2MB!"
+}
+

@@ -5,10 +5,10 @@ import { handlers } from './handlers';
 export const server = setupServer(...handlers);
 
 // Enable API mocking before tests
-beforeAll(() => server.listen());
+beforeAll(() => { server.listen(); });
 
 // Reset request handlers between tests
-afterEach(() => server.resetHandlers());
+afterEach(() => { server.resetHandlers(); });
 
 // Disable API mocking after tests
-afterAll(() => server.close());
+afterAll(() => { server.close(); });

@@ -1,0 +1,231 @@
+{
+  "apiName": "documents",
+  "baseEndpoint": "/api/documents",
+  "description": "Document and field management API",
+  "endpoints": [
+    {
+      "name": "listDocuments",
+      "method": "GET",
+      "path": "/",
+      "description": "Get documents list with filters",
+      "request": {
+        "query": {
+          "status": "string (optional, DRAFT|SIGNING|DONE|DECLINED)",
+          "search": "string (optional, search by title)",
+          "sortBy": "string (optional, createdAt|updatedAt)",
+          "sortOrder": "string (optional, asc|desc)",
+          "page": "number (optional, default 1)",
+          "limit": "number (optional, default 20)"
+        }
+      },
+      "responses": {
+        "200": {
+          "documents": "Array<Document>",
+          "total": "number",
+          "page": "number",
+          "limit": "number"
+        },
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["Document"]
+      }
+    },
+    {
+      "name": "uploadDocument",
+      "method": "POST",
+      "path": "/upload",
+      "description": "Upload PDF document",
+      "request": {
+        "contentType": "multipart/form-data",
+        "body": {
+          "file": "File (PDF)",
+          "title": "string (optional)"
+        }
+      },
+      "responses": {
+        "201": "Created Document object",
+        "400": "Invalid file type or size",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Document"]
+      }
+    },
+    {
+      "name": "getDocument",
+      "method": "GET",
+      "path": "/:id",
+      "description": "Get document details with fields and signers",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        }
+      },
+      "responses": {
+        "200": {
+          "document": "Document object",
+          "fields": "Array<Field>",
+          "signers": "Array<Signer>"
+        },
+        "404": "Document not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["Document", "Field", "Signer"]
+      }
+    },
+    {
+      "name": "updateDocument",
+      "method": "PATCH",
+      "path": "/:id",
+      "description": "Update document metadata (title only, Draft status only)",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        },
+        "body": {
+          "title": "string"
+        }
+      },
+      "responses": {
+        "200": "Updated Document object",
+        "400": "Cannot edit (status != Draft)",
+        "404": "Document not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Document"]
+      }
+    },
+    {
+      "name": "deleteDocument",
+      "method": "DELETE",
+      "path": "/:id",
+      "description": "Delete document (Draft only)",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        }
+      },
+      "responses": {
+        "204": "Success (no content)",
+        "400": "Cannot delete (status != Draft)",
+        "404": "Document not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Document"]
+      }
+    },
+    {
+      "name": "createField",
+      "method": "POST",
+      "path": "/:documentId/fields",
+      "description": "Add field to document",
+      "request": {
+        "params": {
+          "documentId": "string (UUID)"
+        },
+        "body": {
+          "type": "string (SIGNATURE|INITIALS|DATE|TEXT)",
+          "pageNumber": "number",
+          "positionX": "number (0-100)",
+          "positionY": "number (0-100)",
+          "width": "number (0-100)",
+          "height": "number (0-100)",
+          "signerId": "string (UUID, optional)",
+          "isRequired": "boolean (default true)"
+        }
+      },
+      "responses": {
+        "201": "Created Field object",
+        "400": "Validation error or document locked",
+        "404": "Document not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Field", "Document"]
+      }
+    },
+    {
+      "name": "updateField",
+      "method": "PATCH",
+      "path": "/fields/:id",
+      "description": "Update field position or assignment",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        },
+        "body": {
+          "positionX": "number (optional)",
+          "positionY": "number (optional)",
+          "width": "number (optional)",
+          "height": "number (optional)",
+          "signerId": "string (UUID, optional)"
+        }
+      },
+      "responses": {
+        "200": "Updated Field object",
+        "400": "Validation error or document locked",
+        "404": "Field not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Field"]
+      }
+    },
+    {
+      "name": "deleteField",
+      "method": "DELETE",
+      "path": "/fields/:id",
+      "description": "Delete field from document",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        }
+      },
+      "responses": {
+        "204": "Success (no content)",
+        "400": "Document locked",
+        "404": "Field not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "mutation": true,
+        "invalidatesTags": ["Field", "Document"]
+      }
+    },
+    {
+      "name": "getTimeline",
+      "method": "GET",
+      "path": "/:id/timeline",
+      "description": "Get audit trail for document",
+      "request": {
+        "params": {
+          "id": "string (UUID)"
+        }
+      },
+      "responses": {
+        "200": {
+          "events": "Array<AuditEvent> (newest first)"
+        },
+        "404": "Document not found",
+        "401": "Not authenticated"
+      },
+      "rtkQuery": {
+        "query": true,
+        "providesTags": ["AuditEvent"],
+        "pollingInterval": 5000
+      }
+    }
+  ]
+}
+

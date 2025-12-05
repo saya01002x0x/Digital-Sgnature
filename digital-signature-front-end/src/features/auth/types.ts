@@ -17,6 +17,7 @@ export type Tokens = {
 export type AuthState = {
   user: AuthUser | null;
   token: string | null;
+  isAuthenticated: boolean;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 };

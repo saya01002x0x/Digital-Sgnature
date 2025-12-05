@@ -1,55 +1,41 @@
-/* @layer theme, base, antd, components, utilities; */
-/* @layer theme, base, antd, components, utilities; */
-@layer  antd, theme, base, components, utilities;
+/* Global styles for Ant Design */
 
-/* @config "../../tailwind.config.js";
-@import 'tailwindcss';
-@plugin */
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities" layer(utilities);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
 
-/* Global styles */
-/* @layer base {
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+#root {
+  height: 100%;
+  width: 100%;
+}
 
-  html,
-  body {
-    height: 100%;
-    width: 100%;
-  }
+html {
+  font-size: 16px;
+}
 
-  #root {
-    height: 100%;
-    width: 100%;
-  }
-
+@media screen and (max-width: 768px) {
   html {
-    font-size: 16px;
+    font-size: 14px;
   }
+}
 
-  @media screen and (max-width: 768px) {
-    html {
-      font-size: 14px;
-    }
-  }
-} */
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
 
-/* Util classes */
-@layer components {
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  .page-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

@@ -1,4 +1,5 @@
-import React, { ReactElement } from 'react';
+import type { ReactElement } from 'react';
+import type React from 'react';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@/app/providers/ThemeProvider';

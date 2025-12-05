@@ -1,55 +1,79 @@
-import React from 'react';
-import { Row, Col, Layout, Typography, Avatar, Space } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
-import { LoginForm } from '../components/LoginForm';
-import { ThemeSwitcher } from '@/shared/components/ThemeSwitcher';
-import { LanguageSwitcher } from '@/shared/components/LanguageSwitcher';
-import { useTranslation } from 'react-i18next';
-import { useAppSelector } from '@/app/hooks';
-import { selectUser, selectIsAuthenticated } from '../authSlice';
-import '../styles/auth.css';
+/**
+ * LoginPage Component
+ * Page for user login
+ * Using pure Ant Design components
+ */
 
-const { Content, Header } = Layout;
+import type React from 'react';
+import { Typography, Space, Divider, message } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { LoginForm } from '../components/LoginForm';
+import { AuthLayout } from '../components/AuthLayout';
+import { useAppDispatch } from '@/app/hooks';
+import { useLoginMutation, authApi } from '../api';
+import { loginStart, loginSuccess, loginFailure } from '../authSlice';
+import type { LoginFormData } from '../utils/validators';
+
 const { Text } = Typography;
 
 export const LoginPage: React.FC = () => {
-  useTranslation();
-  const user = useAppSelector(selectUser);
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [login, { isLoading, error }] = useLoginMutation();
+
+  const handleLogin = async (values: LoginFormData) => {
+    try {
+      dispatch(loginStart());
+      const result = await login(values).unwrap();
+
+      // Fetch user profile after login
+      const profileResult = await dispatch(
+        authApi.endpoints.getProfile.initiate(undefined, { forceRefetch: true })
+      );
+
+      if ('data' in profileResult && profileResult.data) {
+        dispatch(loginSuccess({
+          ...result,
+          user: profileResult.data,
+        }));
+      } else {
+        dispatch(loginSuccess(result));
+      }
+
+      message.success(t('auth.loginSuccess', 'Login successful!'));
+      navigate('/documents');
+    } catch (err: any) {
+      const errorMessage = err?.data?.message || t('auth.loginFailed', 'Login failed');
+      dispatch(loginFailure(errorMessage));
+      message.error(errorMessage);
+    }
+  };
 
   return (
-    <Layout className="layout auth-layout">
-      <Header className="auth-header">
-        <div className="auth-header-left">
-          <Typography.Title level={3} className="auth-header-title">
-            Chữ ký số
-          </Typography.Title>
+    <AuthLayout
+      title={t('auth.welcomeBack', 'Welcome Back')}
+      description={t('auth.loginSubtitle', 'Sign in to continue to E-Signature')}
+    >
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <LoginForm
+          onSubmit={handleLogin}
+          isLoading={isLoading}
+          error={error ? String(error) : null}
+        />
+
+        <Divider>{t('common.or', 'OR')}</Divider>
+
+        <div style={{ textAlign: 'center' }}>
+          <Text>
+            {t('auth.noAccount', "Don't have an account?")}{' '}
+            <Link to="/register">
+              {t('auth.registerNow', 'Register now')}
+            </Link>
+          </Text>
         </div>
-        <div className="auth-header-right">
-          {isAuthenticated && user ? (
-            <Space className="auth-user-info">
-              <Avatar icon={<UserOutlined />} />
-              <div className="auth-user-details">
-                <Text strong className="auth-user-name">
-                  {user.name || user.email}
-                </Text>
-                <Text type="secondary" className="auth-user-email">
-                  {user.email}
-                </Text>
-              </div>
-            </Space>
-          ) : null}
-          <ThemeSwitcher />
-          <LanguageSwitcher />
-        </div>
-      </Header>
-      <Content style={{ padding: '50px 0', position: 'relative', zIndex: 1 }}>
-        <Row justify="center" align="middle" style={{ minHeight: '80vh' }}>
-          <Col xs={22} sm={20} md={16} lg={10} xl={8}>
-            <LoginForm />
-          </Col>
-        </Row>
-      </Content>
-    </Layout>
+      </Space>
+    </AuthLayout>
   );
 };

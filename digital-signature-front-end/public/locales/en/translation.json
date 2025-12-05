@@ -1,6 +1,13 @@
 {
   "app": {
-    "name": "React Boilerplate"
+    "name": "E-Signature"
+  },
+  "nav": {
+    "documents": "Documents",
+    "signatures": "Signatures",
+    "admin": "Admin",
+    "profile": "Profile",
+    "logout": "Logout"
   },
   "common": {
     "loading": "Loading...",
@@ -11,7 +18,11 @@
     "edit": "Edit",
     "delete": "Delete",
     "confirm": "Confirm",
-    "back": "Back"
+    "back": "Back",
+    "or": "OR",
+    "tryAgain": "Try Again",
+    "goHome": "Go to Home",
+    "noData": "No data available"
   },
   "auth": {
     "login": "Login",
@@ -23,10 +34,30 @@
     "forgotPassword": "Forgot Password?",
     "rememberMe": "Remember Me",
     "orLoginWith": "Or login with",
+    "orSignUpWith": "Or sign up with",
     "noAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
     "signUp": "Sign up",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "signInInstead": "Sign in instead",
+    "welcomeBack": "Welcome back, we are lucky to have you.",
+    "createAccount": "Create a new account",
+    "createAccountDescription": "Create your account and start using state-of-the-art document signing. Open and beautiful signing is within your grasp.",
+    "fullName": "Full Name",
+    "emailAddress": "Email Address",
+    "signHere": "Sign Here",
+    "signUpWithGoogle": "Sign Up with Google",
+    "complete": "Complete",
+    "termsAgreement": "By proceeding, you agree to our",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "draw": "Draw",
+    "type": "Type",
+    "upload": "Upload",
+    "clearSignature": "Clear Signature",
+    "typeYourSignature": "Type your signature",
+    "next": "Next"
   },
   "validation": {
     "required": "This field is required",
@@ -39,7 +70,8 @@
     "vi": "Vietnamese"
   },
   "theme": {
-    "light": "Light",
-    "dark": "Dark"
+    "light": "Switch to light mode",
+    "dark": "Switch to dark mode",
+    "toggle": "Toggle theme"
   }
 }
