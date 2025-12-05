@@ -27,7 +27,7 @@ export const RegisterPage: React.FC = () => {
         password: values.password,
         name: values.name,
       }).unwrap();
-      
+
       message.success(t('auth.registerSuccess', 'Registration successful! Please login.'));
       navigate('/login');
     } catch (err: any) {

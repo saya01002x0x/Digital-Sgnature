@@ -11,8 +11,8 @@ import { useTranslation } from 'react-i18next';
 import { LoginForm } from '../components/LoginForm';
 import { AuthLayout } from '../components/AuthLayout';
 import { useAppDispatch } from '@/app/hooks';
-import { useLoginMutation } from '../services/auth.api';
-import { setCredentials } from '../authSlice';
+import { useLoginMutation, authApi } from '../api';
+import { loginStart, loginSuccess, loginFailure } from '../authSlice';
 import type { LoginFormData } from '../utils/validators';
 
 const { Text } = Typography;
@@ -25,12 +25,29 @@ export const LoginPage: React.FC = () => {
 
   const handleLogin = async (values: LoginFormData) => {
     try {
+      dispatch(loginStart());
       const result = await login(values).unwrap();
-      dispatch(setCredentials(result));
+
+      // Fetch user profile after login
+      const profileResult = await dispatch(
+        authApi.endpoints.getProfile.initiate(undefined, { forceRefetch: true })
+      );
+
+      if ('data' in profileResult && profileResult.data) {
+        dispatch(loginSuccess({
+          ...result,
+          user: profileResult.data,
+        }));
+      } else {
+        dispatch(loginSuccess(result));
+      }
+
       message.success(t('auth.loginSuccess', 'Login successful!'));
       navigate('/documents');
     } catch (err: any) {
-      message.error(err?.data?.message || t('auth.loginFailed', 'Login failed'));
+      const errorMessage = err?.data?.message || t('auth.loginFailed', 'Login failed');
+      dispatch(loginFailure(errorMessage));
+      message.error(errorMessage);
     }
   };
 

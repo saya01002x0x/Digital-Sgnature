@@ -1,45 +1,99 @@
-1. Vai trò
-- Hà Ngọc Huy: FE
-- Dương Đăng Quang: FE
-- Hoàng Chí Thanh: FE
-- Trần Hoàng Dũng: BE
-- Hoàng Nhật Minh: BE
-- Nguyễn Chiêu Văn: BE (leader)
+# Digital Signature Web Application
 
-2. Công cụ
-- FE: React + Redux + ant design
-- BE: Java Spring
+Hệ thống chữ ký số được xây dựng với Spring Boot (Backend) và React/Vite (Frontend), sử dụng Docker Compose để triển khai.
 
-3. Database: Postgres 
-- Sử dụng superbase
-- Mỗi bảng chỉ sử dụng với 1 mục đích
-- Tên bảng là danh từ và viết hoa, có tiền tố là TBL_
-Ví dụ: TBL_ADMIN (danh sách bảng admin)
+## 👥 Team
 
-4. Request + Repo trả về API dạng Json
+- **Hà Ngọc Huy:** FE
+- **Dương Đăng Quang:** FE
+- **Hoàng Chí Thanh:** FE
+- **Trần Hoàng Dũng:** BE
+- **Hoàng Nhật Minh:** BE
+- **Nguyễn Chiêu Văn:** BE (Leader)
 
-5. Tạo nhánh của mình trên nhánh được giao có dạng: feature/back-end-vannc
-- Khi push code lên phải có dạng <fix/modify/update/remove>[vannc]: nội dung
-- Ví dụ: </.fix/.>[vannc]: sửa code login
-- Phải pull code từ main về nếu leader bảo hoặc mỗi lần trước khi làm hay sau khi làm phải pull code mới nếu có
+## 📋 Yêu cầu hệ thống
 
-6. Chỉ được push lên nhánh của mình và tạo Pull request cho leader duyệt
+### Về Docker Compose
+- Docker Desktop
 
-7. Tài khoản:
-- admin: vannc 
-- user: 
-- pass: 123456a@
-- Không có form đăng ký, admin có chức năng tạo user
-- Hoặc có form đăng ký nhưng admin duyệt
+### Về Development riêng lẻ
+- Java 17+
+- Node.js 20+
+- Maven 3.6+
+- PostgreSQL 14+ (chạy trên docker)
 
-8. Nếu có ý kiến, ý tưởng hoàn thiện đề tài thì cần hỏi qua leader trước
+## ⚙️ Cấu hình
 
-9. Tên biến không cần sử dụng tiếng anh, dùng tiếng việt không dấu nếu cần
+### Ports
+- **Backend:** `5555`
+- **Frontend:** `5556`
+- **Database:** `5432`
+- **Frontend API base URL:** `http://localhost:5555` (`VITE_API_URL`)
 
-10. Link tài liệu: https://www.youtube.com/playlist?list=PLgYFT7gUQL8GUoIDh1p8FDXCmImzVVbRi
+## 🚀 Hướng dẫn nhanh (Docker Compose)
 
-11. Đối với BE không được phép sửa file pom, nếu có thêm thì phải hỏi ý kiến của leader
+### Build và Chạy Docker Compose
 
-12. BE và FE làm việc trong groupId sis.hust.edu.vn.digital_signature, không tạo thư mục hay package bừa bãi
+**Cách 1: Sử dụng file .bat (khuyến nghị)**
 
-13. Vì có những người đang đi làm có thể bị trùng nên BE sẽ có port là 5555, FE sẽ có port là 5556
+```batch
+run.bat
+```
+
+**Cách 2: Chạy trực tiếp**
+
+```bash
+# Build và chạy
+# Sau đó truy cập web: http://localhost:5556
+docker-compose up --build -d
+```
+
+**Cách 3: Chạy riêng lẻ Backend/Frontend để trỏ vào test code local**
+
+```bash
+# Build và chạy 
+docker-compose up --build -d Backend
+docker-compose up --build -d Frontend
+```
+
+## 🔍 Kiểm tra và Truy cập
+
+Sau khi build thành công, truy cập ứng dụng tại:
+- **Frontend:** http://localhost:5556
+- **Backend API:** http://localhost:5555/api
+- **Health Check:** http://localhost:5555/actuator/health
+- **Swagger UI:** http://localhost:5555/swagger-ui.html
+- **Database:** localhost:5432
+
+## 💻 Hướng dẫn Development (Build/Chạy riêng lẻ)
+
+### Build + Run Backend
+
+```bash
+cd digital-signature
+mvn clean package -DskipTests
+java -jar target/digital-signature-0.0.1-SNAPSHOT.jar
+```
+
+### Build + Run Frontend
+
+```bash
+cd digital-signature-Frontend
+npm install
+npm run build
+npm run dev
+```
+
+### Auto-Update Database
+- **Hibernate DDL Auto:** `update`
+- Tự động tạo/cập nhật bảng khi có thay đổi entity nên nghiêm cấm Backend sửa entity nếu code đang chạy
+- Backend chờ database healthy trước khi start
+- Schema tự động cập nhật mỗi lần backend restart
+- Nếu không chạy docker phía Backend sẽ báo lỗi không tìm thấy ip của database
+
+### Đảm bảo hoạt động ổn định
+- ✅ Docker Compose quản lý dependencies và thứ tự khởi động
+- ✅ Health checks đảm bảo services sẵn sàng
+- ✅ Restart policy: `unless-stopped` - Tự động restart khi máy khởi động lại
+- ✅ Volume persistence: Database data được lưu trong Docker volume
+- ✅ Nếu Frontend hay Backend sửa code xong chỉ cần rebuild lại docker phần tương ứng (hoặc rebuild all cho lẹ cũng được)

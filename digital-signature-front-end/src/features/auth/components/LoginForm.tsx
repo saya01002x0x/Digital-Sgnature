@@ -26,6 +26,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   error,
 }) => {
   const { t } = useTranslation();
+
   const {
     control,
     handleSubmit,

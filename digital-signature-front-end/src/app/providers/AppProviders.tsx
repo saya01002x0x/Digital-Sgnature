@@ -8,6 +8,7 @@ import { store } from '../store';
 import { ThemeProvider } from './ThemeProvider';
 import { routes } from '../routes';
 import { ErrorBoundary } from 'react-error-boundary';
+import { selectIsAuthenticated, selectUser } from '@/features/auth/authSlice';
 
 type AppProvidersProps = {
   children?: ReactNode;
@@ -24,8 +25,8 @@ const ErrorFallback = () => {
 };
 
 const RouterWrapper: React.FC = () => {
-  const isAuthenticated = useSelector((state: RootState) => state.auth?.isAuthenticated || false);
-  const user = useSelector((state: RootState) => state.auth?.user);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
   
   // Convert User to UserBase for routes
   const userBase = user ? {
