@@ -25,9 +25,9 @@ const ErrorFallback = () => {
 };
 
 const RouterWrapper: React.FC = () => {
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const user = useSelector(selectUser);
-  
+  const isAuthenticated = useSelector((state: RootState) => state.auth?.isAuthenticated || false);
+  const user = useSelector((state: RootState) => state.auth?.user);
+
   // Convert User to UserBase for routes
   const userBase = user ? {
     id: user.id,
@@ -35,7 +35,7 @@ const RouterWrapper: React.FC = () => {
     name: user.name,
     role: user.role as any, // Type conversion for compatibility
   } : undefined;
-  
+
   const router = createBrowserRouter(routes(isAuthenticated, userBase));
 
   return <RouterProvider router={router} />;
