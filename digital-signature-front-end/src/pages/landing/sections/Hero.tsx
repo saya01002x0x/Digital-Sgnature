@@ -28,7 +28,6 @@ export const Hero: React.FC = () => {
             opacity: 1,
             transition: {
                 duration: 0.5,
-                ease: "easeOut",
             },
         },
     };
@@ -40,7 +39,6 @@ export const Hero: React.FC = () => {
             opacity: 1,
             transition: {
                 duration: 0.8,
-                ease: "easeOut",
             },
         },
     };
@@ -185,7 +183,7 @@ export const Hero: React.FC = () => {
                             {/* Floating Elements */}
                             <motion.div
                                 animate={{ y: [0, -20, 0] }}
-                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                transition={{ duration: 4, repeat: Infinity }}
                                 style={{
                                     position: 'absolute',
                                     top: -40,
@@ -201,7 +199,7 @@ export const Hero: React.FC = () => {
                             />
                             <motion.div
                                 animate={{ y: [0, 20, 0] }}
-                                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                                transition={{ duration: 5, repeat: Infinity, delay: 1 }}
                                 style={{
                                     position: 'absolute',
                                     bottom: -40,

@@ -26,7 +26,7 @@ export const documentsApi = baseApi.injectEndpoints({
     listDocuments: builder.query<ListDocumentsResponse, ListDocumentsRequest | void>({
       query: (params) => ({
         url: '/api/documents',
-        params,
+        params: params || undefined,
       }),
       providesTags: ['Document'],
     }),

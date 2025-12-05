@@ -116,7 +116,7 @@ export const Header: React.FC = () => {
       label: t('nav.signatures', 'Chữ ký'),
       onClick: () => navigate('/signatures'),
     },
-    ...(user?.role === 'ADMIN' ? [{
+    ...(user?.role?.toUpperCase() === 'ADMIN' ? [{
       key: '/admin',
       label: t('nav.admin', 'Admin'),
       onClick: () => navigate('/admin'),

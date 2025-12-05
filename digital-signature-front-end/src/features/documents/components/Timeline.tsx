@@ -104,19 +104,19 @@ export const Timeline: React.FC<TimelineProps> = ({ events, loading }) => {
           <Text type="secondary" style={{ fontSize: '12px' }}>
             {formatTimestamp(event.timestamp, i18n.language as 'vi' | 'en')}
           </Text>
-          {event.metadata && (
+          {event.metadata && Object.keys(event.metadata).length > 0 ? (
             <div style={{ marginTop: 4 }}>
-              {event.metadata.signerName && (
-                <Text>{t('timeline.signerName')}: {String(event.metadata.signerName)}</Text>
+              {typeof event.metadata.signerName === 'string' && (
+                <div><Text>{t('timeline.signerName')}: {event.metadata.signerName}</Text></div>
               )}
-              {event.metadata.reason && (
-                <Text>{t('timeline.reason')}: {String(event.metadata.reason)}</Text>
+              {typeof event.metadata.reason === 'string' && (
+                <div><Text>{t('timeline.reason')}: {event.metadata.reason}</Text></div>
               )}
-              {event.metadata.fieldCount && (
-                <Text>{t('timeline.fieldCount')}: {String(event.metadata.fieldCount)}</Text>
+              {typeof event.metadata.fieldCount !== 'undefined' && (
+                <div><Text>{t('timeline.fieldCount')}: {String(event.metadata.fieldCount)}</Text></div>
               )}
             </div>
-          )}
+          ) : null}
         </Space>
       ),
     };

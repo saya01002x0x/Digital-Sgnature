@@ -229,9 +229,9 @@ export const DocumentDetailPage: React.FC = () => {
                     <Button type="default" icon={<SendOutlined />} onClick={handleInvite}>
                       {t('detail.inviteSigners')}
                     </Button>
-                    <Button 
-                      type="primary" 
-                      icon={<EditOutlined />} 
+                    <Button
+                      type="primary"
+                      icon={<EditOutlined />}
                       onClick={handleSelfSign}
                       loading={isSelfSigning}
                     >
@@ -284,7 +284,6 @@ export const DocumentDetailPage: React.FC = () => {
                 message={t('detail.timeline.error')}
                 type="error"
                 showIcon
-                size="small"
               />
             ) : (
               <Timeline

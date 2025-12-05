@@ -1,41 +1,52 @@
 /**
  * ProfilePage Component
  * Page for viewing and editing user profile
+ * Note: Update profile functionality temporarily disabled until backend endpoint is available
  */
 
 import type React from 'react';
-import { Card, Typography, Space, Row, Col, Tag, Divider } from 'antd';
-import { UserOutlined, MailOutlined, CalendarOutlined, SafetyOutlined } from '@ant-design/icons';
+import { Card, Typography, Space, Row, Col, Tag, Divider, message } from 'antd';
+import { UserOutlined, MailOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { ProfileForm } from '../components/ProfileForm';
 import { useAuth } from '../hooks/useAuth';
-import { useUpdateProfileMutation } from '../services/auth.api';
-import { useAppDispatch } from '@/app/hooks';
-import { setUser } from '../authSlice';
 import { LoadingSpinner } from '@/shared/components';
-import { formatDate } from '@/shared/utils';
-import type { ProfileFormValues } from '../types';
+import type { ProfileFormValues, User } from '../types/index';
+import { UserRole } from '../types/index';
 
 const { Title, Text } = Typography;
 
 export const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const dispatch = useAppDispatch();
-  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+  const { user: authUser } = useAuth();
+
+  // TODO: Add useUpdateProfileMutation when backend supports it
+  const isLoading = false;
 
   const handleUpdateProfile = async (values: ProfileFormValues) => {
     try {
-      const result = await updateProfile(values).unwrap();
-      dispatch(setUser(result.user));
+      // TODO: Implement when backend endpoint is available
+      message.info(t('profile.updateNotAvailable', 'Profile update coming soon'));
     } catch (error) {
       throw error;
     }
   };
 
-  if (!user) {
+  if (!authUser) {
     return <LoadingSpinner fullscreen />;
   }
+
+  // Convert AuthUser to User type for ProfileForm
+  const user: User = {
+    id: authUser.id || '',
+    email: authUser.email,
+    name: authUser.name || authUser.fullName || '',
+    avatar: authUser.avatar,
+    role: authUser.role?.toUpperCase() === 'ADMIN' ? UserRole.Admin : UserRole.User,
+    emailVerified: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
 
   return (
     <div style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}>
@@ -65,11 +76,6 @@ export const ProfilePage: React.FC = () => {
                     <Space>
                       <MailOutlined />
                       <Text strong>{user.email}</Text>
-                      {user.emailVerified && (
-                        <Tag color="success" icon={<SafetyOutlined />}>
-                          {t('profile.verified', 'Verified')}
-                        </Tag>
-                      )}
                     </Space>
                   </div>
                 </div>
@@ -79,7 +85,7 @@ export const ProfilePage: React.FC = () => {
                 <div>
                   <Text type="secondary">{t('profile.role', 'Role')}</Text>
                   <div style={{ marginTop: 4 }}>
-                    <Tag color={user.role === 'ADMIN' ? 'red' : 'blue'}>
+                    <Tag color={user.role === UserRole.Admin ? 'red' : 'blue'}>
                       {user.role}
                     </Tag>
                   </div>
@@ -88,24 +94,9 @@ export const ProfilePage: React.FC = () => {
                 <Divider style={{ margin: '12px 0' }} />
 
                 <div>
-                  <Text type="secondary">{t('profile.memberSince', 'Member Since')}</Text>
+                  <Text type="secondary">{t('profile.name', 'Name')}</Text>
                   <div style={{ marginTop: 4 }}>
-                    <Space>
-                      <CalendarOutlined />
-                      <Text>{formatDate(user.createdAt)}</Text>
-                    </Space>
-                  </div>
-                </div>
-
-                <Divider style={{ margin: '12px 0' }} />
-
-                <div>
-                  <Text type="secondary">{t('profile.lastUpdated', 'Last Updated')}</Text>
-                  <div style={{ marginTop: 4 }}>
-                    <Space>
-                      <CalendarOutlined />
-                      <Text>{formatDate(user.updatedAt)}</Text>
-                    </Space>
+                    <Text>{user.name || '-'}</Text>
                   </div>
                 </div>
               </Space>
@@ -134,4 +125,3 @@ export const ProfilePage: React.FC = () => {
     </div>
   );
 };
-

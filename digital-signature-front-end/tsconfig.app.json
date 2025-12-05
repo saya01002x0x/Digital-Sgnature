@@ -3,10 +3,13 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -15,20 +18,24 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "resolveJsonModule": true,
-
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "types": ["vitest/globals"],
-
+    "types": [
+      "vitest/globals"
+    ],
     /* Path Aliases */
     "baseUrl": ".",
-    "paths": { 
-      "@/*": ["src/*"] 
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
     }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

@@ -38,7 +38,7 @@ export const useAuthGuard = (options: UseAuthGuardOptions = {}) => {
     }
 
     // Check role if specified
-    if (requireRole && user && user.role !== requireRole) {
+    if (requireRole && user && String(user.role).toUpperCase() !== String(requireRole).toUpperCase()) {
       navigate('/unauthorized', { replace: true });
       return;
     }
@@ -47,7 +47,7 @@ export const useAuthGuard = (options: UseAuthGuardOptions = {}) => {
   return {
     isAuthenticated,
     user,
-    isAuthorized: !requireRole || (user && user.role === requireRole),
+    isAuthorized: !requireRole || (user && String(user.role).toUpperCase() === String(requireRole).toUpperCase()),
   };
 };
 

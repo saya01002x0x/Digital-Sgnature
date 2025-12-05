@@ -27,25 +27,25 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
 
   const getStatusConfig = () => {
     switch (status) {
-      case DocumentStatus.DRAFT:
+      case DocumentStatus.Draft:
         return {
           color: 'default',
           icon: <FileTextOutlined />,
           label: t('status.draft'),
         };
-      case DocumentStatus.SIGNING:
+      case DocumentStatus.Signing:
         return {
           color: 'processing',
           icon: <ClockCircleOutlined />,
           label: t('status.signing'),
         };
-      case DocumentStatus.DONE:
+      case DocumentStatus.Done:
         return {
           color: 'success',
           icon: <CheckCircleOutlined />,
           label: t('status.done'),
         };
-      case DocumentStatus.DECLINED:
+      case DocumentStatus.Declined:
         return {
           color: 'error',
           icon: <CloseCircleOutlined />,

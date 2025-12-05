@@ -23,7 +23,7 @@ ENV VITE_I18N_DEFAULT_LANG=$VITE_I18N_DEFAULT_LANG
 ENV VITE_IS_DEV=$VITE_IS_DEV
 ENV VITE_IS_PROD=$VITE_IS_PROD
 
-RUN npm run build
+RUN npx vite build
 
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html

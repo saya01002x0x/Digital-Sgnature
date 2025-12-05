@@ -13,7 +13,7 @@ type Page3Props = {
   isMobile: boolean;
 }
 
-export const Page3: React.FC<Page3Props> = ({ isMobile }) => {
+export const Page3: React.FC<Page3Props> = ({ isMobile: _isMobile }) => {
   return (
     <SafeScrollOverPack id="page3" className="content-wrapper page">
       <div className="image3 image-wrapper" />

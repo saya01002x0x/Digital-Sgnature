@@ -1,27 +1,35 @@
 /**
  * ForgotPasswordPage Component
  * Page for requesting password reset
+ * Note: Functionality temporarily disabled until backend endpoint is available
  */
 
 import type React from 'react';
+import { useState } from 'react';
 import { Card, Typography, Space, Form, Input, Button, Alert, message } from 'antd';
 import { MailOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useForgotPasswordMutation } from '../services/auth.api';
 
 const { Title, Text } = Typography;
 
 export const ForgotPasswordPage: React.FC = () => {
   const { t } = useTranslation();
   const [form] = Form.useForm();
-  const [forgotPassword, { isLoading, isSuccess }] = useForgotPasswordMutation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (values: { email: string }) => {
     try {
-      await forgotPassword(values).unwrap();
-      message.success(t('auth.resetEmailSent', 'Password reset instructions sent to your email'));
+      setIsLoading(true);
+      // TODO: Implement when backend endpoint is available
+      // await forgotPassword(values).unwrap();
+
+      // For now, show info message
+      message.info(t('auth.featureComingSoon', 'This feature is coming soon'));
+      setIsLoading(false);
     } catch (err: any) {
+      setIsLoading(false);
       message.error(err?.data?.message || t('auth.resetEmailFailed', 'Failed to send reset email'));
     }
   };
@@ -110,4 +118,3 @@ export const ForgotPasswordPage: React.FC = () => {
     </div>
   );
 };
-

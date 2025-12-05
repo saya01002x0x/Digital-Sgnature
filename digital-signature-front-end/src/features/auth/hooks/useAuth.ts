@@ -14,13 +14,13 @@ import {
   logout as logoutAction,
   setCredentials,
 } from '../authSlice';
-import { useLoginMutation, useLogoutMutation } from '../services/auth.api';
-import type { LoginRequest } from '../types/index';
+import { useLoginMutation, useLogoutMutation } from '../api';
+import type { LoginFormValues } from '../types';
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  
+
   const user = useAppSelector(selectUser);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const token = useAppSelector(selectAuthToken);
@@ -30,7 +30,7 @@ export const useAuth = () => {
   const [loginMutation, { isLoading: isLoggingIn }] = useLoginMutation();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
 
-  const login = async (credentials: LoginRequest) => {
+  const login = async (credentials: LoginFormValues) => {
     try {
       const result = await loginMutation(credentials).unwrap();
       dispatch(setCredentials(result));
@@ -43,7 +43,10 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      await logoutMutation().unwrap();
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (refreshToken) {
+        await logoutMutation(refreshToken).unwrap();
+      }
     } catch (error) {
       console.error('Logout error:', error);
     } finally {

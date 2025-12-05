@@ -10,7 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RegisterForm } from '../components/RegisterForm';
 import { AuthLayout } from '../components/AuthLayout';
-import { useRegisterMutation } from '../services/auth.api';
+import { useRegisterMutation } from '../api';
 import type { RegisterFormData } from '../utils/validators';
 
 const { Text } = Typography;

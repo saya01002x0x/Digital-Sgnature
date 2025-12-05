@@ -20,20 +20,13 @@ const getEnvVar = (key: string, defaultValue: string = ''): string => {
 };
 
 export const env: Env = {
-  VITE_API_URL: getEnvVar('VITE_API_URL'),
+  VITE_API_URL: getEnvVar('VITE_API_URL', 'http://localhost:5555'),
   VITE_APP_NAME: getEnvVar('VITE_APP_NAME', 'Digital Signature'),
   VITE_USE_MSW: getEnvVar('VITE_USE_MSW', 'false'),
   VITE_USE_REDUX_DEVTOOLS: getEnvVar('VITE_USE_REDUX_DEVTOOLS', 'false'),
-  VITE_I18N_DEFAULT_LANG: getEnvVar('VITE_I18N_DEFAULT_LANG', 'en'),
-  VITE_IS_DEV: getEnvVar('VITE_IS_DEV', 'true'),
-  VITE_IS_PROD: getEnvVar('VITE_IS_PROD', 'false'),
-  VITE_API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000/',
-  VITE_APP_NAME: import.meta.env.VITE_APP_NAME || 'React Boilerplate',
-  VITE_USE_MSW: import.meta.env.VITE_USE_MSW || 'true',
-  VITE_USE_REDUX_DEVTOOLS: import.meta.env.VITE_USE_REDUX_DEVTOOLS || 'false',
-  VITE_I18N_DEFAULT_LANG: import.meta.env.VITE_I18N_DEFAULT_LANG || 'en',
-  VITE_IS_DEV: import.meta.env.VITE_IS_DEV || 'true',
-  VITE_IS_PROD: import.meta.env.VITE_IS_PROD || 'false',
+  VITE_I18N_DEFAULT_LANG: getEnvVar('VITE_I18N_DEFAULT_LANG', 'vi'),
+  VITE_IS_DEV: getEnvVar('VITE_IS_DEV', 'false'),
+  VITE_IS_PROD: getEnvVar('VITE_IS_PROD', 'true'),
 };
 
 if (!env.VITE_API_URL) {
