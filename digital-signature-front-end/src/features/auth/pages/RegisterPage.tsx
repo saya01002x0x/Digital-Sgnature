@@ -23,9 +23,10 @@ export const RegisterPage: React.FC = () => {
   const handleRegister = async (values: RegisterFormData) => {
     try {
       await register({
+        username: values.email, // Use email as username since login uses email
         email: values.email,
         password: values.password,
-        name: values.name,
+        fullName: values.name,
       }).unwrap();
 
       message.success(t('auth.registerSuccess', 'Registration successful! Please login.'));

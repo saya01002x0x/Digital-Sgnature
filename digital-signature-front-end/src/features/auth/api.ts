@@ -88,7 +88,7 @@ export const authApi = baseApi.injectEndpoints({
       transformErrorResponse: (response: ApiError) => response,
     }),
 
-    register: builder.mutation<{ user: AuthUser; token: string; refreshToken: string }, { email: string; password: string; name: string }>({
+    register: builder.mutation<{ user: AuthUser; token: string; refreshToken: string }, { email: string; password: string; fullName: string; username: string }>({
       query: (userData) => ({
         url: '/api/auth/register',
         method: 'POST',
