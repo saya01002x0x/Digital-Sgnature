@@ -16,6 +16,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import sis.hust.edu.vn.digital_signature.security.filter.JwtAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
@@ -44,6 +50,8 @@ public class SecurityConfig {
                         )
                 )
                         .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                                                 // 1. Các API Public (Đăng ký, Đăng nhập, Refresh, OTP...) -> CHO PHÉP HẾT
                                                 .requestMatchers(
                                                         "/api/auth/login",
@@ -65,9 +73,12 @@ public class SecurityConfig {
 
                                                 // 4. Riêng API lấy thông tin User (/me, đổi pass) -> BẮT BUỘC ĐĂNG NHẬP
                                                 .requestMatchers("/api/auth/me", "/api/auth/change-password", "/api/auth/logout").authenticated()
+                                                .requestMatchers("/api/signatures/**").authenticated()
+                                                .requestMatchers("/api/documents/**").authenticated()
 
                                                 // 5. Tất cả request còn lại -> BẮT BUỘC ĐĂNG NHẬP
-                                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                                // 5. Tất cả request còn lại -> BẮT BUỘC ĐĂNG NHẬP
+
                                                 .anyRequest().authenticated()
                                         )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -84,6 +95,18 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("*")); // Allow all origins (or use "http://localhost:3000")
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "x-auth-token"));
+        configuration.setExposedHeaders(List.of("x-auth-token"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
 
