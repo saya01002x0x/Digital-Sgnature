@@ -27,7 +27,7 @@ export const DocumentEditorPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { pageCount, currentPage } = usePDFViewer();
+  const { pageCount, currentPage, setCurrentPage } = usePDFViewer();
 
   const isNewDocument = id === 'new';
 
@@ -184,6 +184,7 @@ export const DocumentEditorPage: React.FC = () => {
               <PDFViewer
                 fileUrl={document.fileUrl}
                 pageCount={document.pageCount}
+                onPageChange={setCurrentPage}
               />
 
               {/* Field Overlay */}

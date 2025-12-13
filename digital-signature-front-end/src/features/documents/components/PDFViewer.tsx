@@ -5,12 +5,12 @@
 
 import React, { useState } from 'react';
 import { Card, Button, Space, Typography, Spin, Alert } from 'antd';
-import { 
-  ZoomInOutlined, 
-  ZoomOutOutlined, 
-  LeftOutlined, 
+import {
+  ZoomInOutlined,
+  ZoomOutOutlined,
+  LeftOutlined,
   RightOutlined,
-  FullscreenOutlined 
+  FullscreenOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -104,9 +104,9 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
             </Button>
           </Space>
           <Space>
-            <Button 
-              icon={<LeftOutlined />} 
-              onClick={handlePreviousPage} 
+            <Button
+              icon={<LeftOutlined />}
+              onClick={handlePreviousPage}
               disabled={pageNumber <= 1}
             >
               Prev
@@ -114,9 +114,9 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
             <Text type="secondary">
               Page {pageNumber} / {numPages || '?'}
             </Text>
-            <Button 
-              icon={<RightOutlined />} 
-              onClick={handleNextPage} 
+            <Button
+              icon={<RightOutlined />}
+              onClick={handleNextPage}
               disabled={pageNumber >= numPages}
             >
               Next
@@ -129,12 +129,12 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
       </Card>
 
       {/* PDF Viewer */}
-      <div 
+      <div
         id="pdf-container"
-        style={{ 
-          position: 'relative', 
-          border: '1px solid #d9d9d9', 
-          borderRadius: 8, 
+        style={{
+          position: 'relative',
+          border: '1px solid #d9d9d9',
+          borderRadius: 8,
           overflow: 'auto',
           minHeight: 600,
           display: 'flex',
@@ -168,7 +168,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
             style={{ margin: '20px' }}
           />
         )}
-        
+
         <Document
           file={fileUrl}
           onLoadSuccess={onDocumentLoadSuccess}
@@ -178,8 +178,8 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
           <Page
             pageNumber={pageNumber}
             scale={scale}
-            renderTextLayer={true}
-            renderAnnotationLayer={true}
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
           />
         </Document>
       </div>
