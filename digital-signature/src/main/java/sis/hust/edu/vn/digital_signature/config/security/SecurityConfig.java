@@ -44,14 +44,32 @@ public class SecurityConfig {
                         )
                 )
                         .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/auth/**", "/api/api/auth/**").permitAll()
-                                .requestMatchers("/api/files/**", "/api/api/files/**").permitAll()
-                                .requestMatchers("/login", "/register").permitAll()
-                                .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .anyRequest().authenticated()
-                        )
+                                                // 1. Các API Public (Đăng ký, Đăng nhập, Refresh, OTP...) -> CHO PHÉP HẾT
+                                                .requestMatchers(
+                                                        "/api/auth/login",
+                                                        "/api/auth/register",
+                                                        "/api/auth/refresh",
+                                                        "/api/auth/send-otp",
+                                                        "/api/auth/verify-otp",
+                                                        "/api/auth/forgot-password", // Nếu có
+                                                        "/api/auth/reset-password"   // Nếu có
+                                                ).permitAll()
+
+                                                // 2. Các API liên quan đến File và Swagger -> CHO PHÉP HẾT
+                                                .requestMatchers("/api/files/**", "/api/api/files/**").permitAll()
+                                                .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                                                
+                                                // 3. API Public để người ngoài vào ký (quan trọng cho flow Invite)
+                                                .requestMatchers("/api/signing/**").permitAll()
+
+                                                // 4. Riêng API lấy thông tin User (/me, đổi pass) -> BẮT BUỘC ĐĂNG NHẬP
+                                                .requestMatchers("/api/auth/me", "/api/auth/change-password", "/api/auth/logout").authenticated()
+
+                                                // 5. Tất cả request còn lại -> BẮT BUỘC ĐĂNG NHẬP
+                                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                                .anyRequest().authenticated()
+                                        )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
