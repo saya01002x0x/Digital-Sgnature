@@ -10,5 +10,6 @@ import java.util.List;
 public interface FieldRepository extends BaseRepository<Field, String> {
     List<Field> findByDocumentId(String documentId);
     List<Field> findBySignerId(String signerId);
+    List<Field> findByDocumentIdAndSignerIdIsNull(String documentId);
 }
 

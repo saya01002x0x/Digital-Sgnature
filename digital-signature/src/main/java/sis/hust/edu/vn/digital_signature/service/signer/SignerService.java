@@ -69,6 +69,29 @@ public class SignerService {
 
         List<Signer> savedSigners = signerRepository.saveAll(signers);
 
+        // Assign fields to signers based on fieldAssignments (fieldId -> signerEmail)
+        if (request.getFieldAssignments() != null && !request.getFieldAssignments().isEmpty()) {
+            // Create email -> signerId map for quick lookup
+            java.util.Map<String, String> emailToSignerId = savedSigners.stream()
+                    .collect(Collectors.toMap(Signer::getEmail, Signer::getId));
+
+            for (java.util.Map.Entry<String, String> entry : request.getFieldAssignments().entrySet()) {
+                String fieldId = entry.getKey();
+                String signerEmail = entry.getValue();
+
+                // Find the signer ID for this email
+                String signerId = emailToSignerId.get(signerEmail);
+                if (signerId != null) {
+                    // Update the field with the signer ID
+                    Field field = fieldRepository.findById(fieldId).orElse(null);
+                    if (field != null && field.getDocumentId().equals(documentId)) {
+                        field.setSignerId(signerId);
+                        fieldRepository.save(field);
+                    }
+                }
+            }
+        }
+
         // Generate signingUrl for each signer
         List<SignerResponse> signerResponses = savedSigners.stream()
                 .map(signer -> {
@@ -224,39 +247,137 @@ public class SignerService {
                 .build();
     }
 
+// File: digital-signature/src/main/java/sis.hust.edu.vn/digital_signature/service/signer/SignerService.java
+
+// ... (Các imports và khai báo lớp giữ nguyên)
+
     @Transactional
     public DeclineResponse declineSigning(String token, DeclineRequest request) {
-        // Validate signer exists and status = PENDING
+        // 1. Validate signer exists
         Signer signer = signerRepository.findByToken(token)
-                .orElseThrow(() -> new EntityNotFoundException("Invalid signing token"));
+                .orElseThrow(() -> new EntityNotFoundException("Invalid signing token")); //
 
+        // 2. Validate status = PENDING (chỉ cho phép từ chối khi đang chờ ký)
         if (signer.getStatus() != SignerStatus.PENDING) {
-            throw new BusinessException("Signing session is no longer available. Status: " + signer.getStatus());
+            throw new BusinessException("Signing session is no longer available. Status: " + signer.getStatus()); //
         }
 
-        // Validate reason length
+        // 3. Validate reason length
         if (request.getReason() == null || request.getReason().trim().length() < 10) {
-            throw new BusinessException("Decline reason must be at least 10 characters");
+            // BusinessException là cách tốt nhất để trả về 400 Bad Request cho Spring
+            throw new BusinessException("Decline reason must be at least 10 characters"); //
         }
 
-        // Update signer status = DECLINED, declinedAt = now, declineReason
-        signer.setStatus(SignerStatus.DECLINED);
-        signer.setDeclinedAt(LocalDateTime.now());
-        signer.setDeclineReason(request.getReason());
-        signer = signerRepository.save(signer);
+        // 4. Update Signer (Status -> DECLINED)
+        signer.setStatus(SignerStatus.DECLINED); //
+        signer.setDeclinedAt(LocalDateTime.now()); //
+        signer.setDeclineReason(request.getReason()); //
+        signer = signerRepository.save(signer); //
 
-        // Update document status = DECLINED, declinedAt = now, declinedBy = signer.id
+        // 5. Update Document (Status -> DECLINED)
         Document document = documentRepository.findById(signer.getDocumentId())
+                .orElseThrow(() -> new EntityNotFoundException("Document not found")); //
+
+        document.setStatus(DocumentStatus.DECLINED); //
+        document.setDeclinedAt(LocalDateTime.now()); //
+        document.setDeclinedBy(signer.getId()); //
+        document.setDeclineReason(request.getReason()); //
+        document = documentRepository.save(document); //
+
+        // 6. Build response
+        String signingUrl = frontendUrl + "/signing/" + signer.getToken(); //
+        SignerResponse signerResponse = SignerResponse.builder()
+                .id(signer.getId()) //
+                .documentId(signer.getDocumentId()) //
+                .email(signer.getEmail()) //
+                .name(signer.getName()) //
+                .order(signer.getOrder()) //
+                .status(signer.getStatus().name()) //
+                .signingUrl(signingUrl) //
+                .signedAt(signer.getSignedAt()) //
+                .declinedAt(signer.getDeclinedAt()) //
+                .declineReason(signer.getDeclineReason()) //
+                .createdAt(signer.getCreatedAt()) //
+                .updatedAt(signer.getUpdatedAt()) //
+                .build();
+
+        return DeclineResponse.builder()
+                .signer(signerResponse) //
+                .document(document) //
+                .build();
+    }
+
+    @Transactional
+    public SelfSignResponse selfSign(String documentId, String ownerId, String ownerEmail, String ownerName) {
+        // Validate document exists, status = DRAFT, owner = current user
+        Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new EntityNotFoundException("Document not found"));
 
-        document.setStatus(DocumentStatus.DECLINED);
-        document.setDeclinedAt(LocalDateTime.now());
-        document.setDeclinedBy(signer.getId());
-        document.setDeclineReason(request.getReason());
-        document = documentRepository.save(document);
+        if (document.getStatus() != DocumentStatus.DRAFT) {
+            throw new BusinessException("Cannot self-sign document with status: " + document.getStatus());
+        }
+
+        if (!document.getOwnerId().equals(ownerId)) {
+            throw new BusinessException("Only document owner can self-sign");
+        }
+
+        // Check if owner already has a signer record
+        List<Signer> existingSigners = signerRepository.findByDocumentId(documentId);
+        Signer ownerSigner = existingSigners.stream()
+                .filter(s -> s.getEmail().equals(ownerEmail))
+                .findFirst()
+                .orElse(null);
+
+        if (ownerSigner != null) {
+            // Owner already invited as signer, return existing signing URL
+            String signingUrl = frontendUrl + "/signing/" + ownerSigner.getToken();
+            SignerResponse signerResponse = SignerResponse.builder()
+                    .id(ownerSigner.getId())
+                    .documentId(ownerSigner.getDocumentId())
+                    .email(ownerSigner.getEmail())
+                    .name(ownerSigner.getName())
+                    .order(ownerSigner.getOrder())
+                    .status(ownerSigner.getStatus().name())
+                    .signingUrl(signingUrl)
+                    .signedAt(ownerSigner.getSignedAt())
+                    .declinedAt(ownerSigner.getDeclinedAt())
+                    .declineReason(ownerSigner.getDeclineReason())
+                    .createdAt(ownerSigner.getCreatedAt())
+                    .updatedAt(ownerSigner.getUpdatedAt())
+                    .build();
+
+            return SelfSignResponse.builder()
+                    .signingUrl(signingUrl)
+                    .signer(signerResponse)
+                    .build();
+        }
+
+        // Create new signer for owner
+        String token = UUID.randomUUID().toString();
+        Signer signer = Signer.builder()
+                .documentId(documentId)
+                .email(ownerEmail)
+                .name(ownerName)
+                .token(token)
+                .order(1) // Owner gets order 1
+                .status(SignerStatus.PENDING)
+                .build();
+
+        signer = signerRepository.save(signer);
+
+        // Assign all unassigned fields to this signer
+        List<Field> unassignedFields = fieldRepository.findByDocumentIdAndSignerIdIsNull(documentId);
+        for (Field field : unassignedFields) {
+            field.setSignerId(signer.getId());
+            fieldRepository.save(field);
+        }
+
+        // Update document status to SIGNING
+        document.setStatus(DocumentStatus.SIGNING);
+        documentRepository.save(document);
 
         // Build response
-        String signingUrl = frontendUrl + "/signing/" + signer.getToken();
+        String signingUrl = frontendUrl + "/signing/" + token;
         SignerResponse signerResponse = SignerResponse.builder()
                 .id(signer.getId())
                 .documentId(signer.getDocumentId())
@@ -272,9 +393,9 @@ public class SignerService {
                 .updatedAt(signer.getUpdatedAt())
                 .build();
 
-        return DeclineResponse.builder()
+        return SelfSignResponse.builder()
+                .signingUrl(signingUrl)
                 .signer(signerResponse)
-                .document(document)
                 .build();
     }
 }

@@ -105,5 +105,14 @@ public class DocumentController extends BaseController {
         InviteSignersResponse response = signerService.inviteSigners(documentId, request, user.getId());
         return success("Signers invited successfully", response);
     }
+
+    @PostMapping("/{documentId}/self-sign")
+    public ResponseEntity<Response<sis.hust.edu.vn.digital_signature.dto.signer.SelfSignResponse>> selfSign(
+            @PathVariable String documentId,
+            @CurrentUser User user) {
+        sis.hust.edu.vn.digital_signature.dto.signer.SelfSignResponse response = 
+            signerService.selfSign(documentId, user.getId(), user.getEmail(), user.getFullName());
+        return success("Self-sign initiated successfully", response);
+    }
 }
 

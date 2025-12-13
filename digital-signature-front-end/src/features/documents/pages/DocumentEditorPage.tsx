@@ -46,17 +46,20 @@ export const DocumentEditorPage: React.FC = () => {
     selectedFieldType,
     selectedFieldId,
     isPlacingField,
+    isDragging,
+    dragStart,
     containerRef,
     handleFieldTypeSelect,
-    handleContainerClick,
+    handleMouseDown,
+    handleMouseUp,
     handleFieldClick,
     cancelPlacement,
   } = useFieldPlacement(isNewDocument ? '' : (id || ''), currentPage);
 
-  const handlePDFClick = async (event: React.MouseEvent<HTMLDivElement>) => {
+  const handlePDFMouseUp = async (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isPlacingField) return;
 
-    const fieldData = handleContainerClick(event);
+    const fieldData = handleMouseUp(event);
     if (fieldData && id) {
       try {
         await createField({ documentId: id, data: fieldData }).unwrap();
@@ -175,7 +178,8 @@ export const DocumentEditorPage: React.FC = () => {
           <Col xs={24} lg={18}>
             <div
               ref={containerRef}
-              onClick={handlePDFClick}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handlePDFMouseUp}
               style={{
                 position: 'relative',
                 cursor: isPlacingField ? 'crosshair' : 'default',
@@ -209,6 +213,14 @@ export const DocumentEditorPage: React.FC = () => {
                     onFieldDelete={handleDeleteField}
                     selectedFieldId={selectedFieldId}
                   />
+
+                  {/* Drag preview */}
+                  {isDragging && dragStart && containerRef.current && (() => {
+                    const rect = containerRef.current.getBoundingClientRect();
+                    const currentMouseX = 0; // Will be updated by mouse move
+                    const currentMouseY = 0;
+                    return null; // Simplified - drag preview handled by CSS cursor
+                  })()}
                 </div>
               )}
             </div>
@@ -217,7 +229,7 @@ export const DocumentEditorPage: React.FC = () => {
             {isPlacingField && (
               <div style={{ marginTop: 16, textAlign: 'center' }}>
                 <Text type="secondary">
-                  {t('documents.clickToPlace', 'Click on the document to place the field')}
+                  {t('documents.dragToPlace', 'Drag on the document to place and size the field')}
                   {' '}
                   <Button size="small" onClick={cancelPlacement}>
                     {t('common.cancel', 'Cancel')}

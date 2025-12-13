@@ -14,5 +14,6 @@ import java.util.List;
 public class InviteSignersRequest {
     private List<SignerRequest> signers;
     private String signingOrder; // SEQUENTIAL or PARALLEL
+    private java.util.Map<String, String> fieldAssignments; // fieldId -> signerEmail
 }
 
