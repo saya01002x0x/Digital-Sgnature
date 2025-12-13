@@ -5,12 +5,12 @@
 
 import React, { useState } from 'react';
 import { Card, Button, Space, Typography, Spin, Alert } from 'antd';
-import { 
-  ZoomInOutlined, 
-  ZoomOutOutlined, 
-  LeftOutlined, 
+import {
+  ZoomInOutlined,
+  ZoomOutOutlined,
+  LeftOutlined,
   RightOutlined,
-  FullscreenOutlined 
+  FullscreenOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -27,6 +27,7 @@ const { Text } = Typography;
 type PDFViewerProps = {
   fileUrl: string;
   pageCount?: number;
+  currentPage?: number; // Add controlled prop
   onLoad?: () => void;
   onPageChange?: (pageNumber: number) => void;
   style?: React.CSSProperties;
@@ -34,13 +35,16 @@ type PDFViewerProps = {
 
 export const PDFViewer: React.FC<PDFViewerProps> = ({
   fileUrl,
+  pageCount,
+  currentPage,
   onLoad,
   onPageChange,
   style,
 }) => {
   const { t } = useTranslation();
   const [numPages, setNumPages] = useState<number>(0);
-  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [internalPageNumber, setInternalPageNumber] = useState<number>(1);
+  const pageNumber = currentPage || internalPageNumber; // Use prop or state
   const [scale, setScale] = useState<number>(1.0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,19 +71,17 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
   };
 
   const handlePreviousPage = () => {
-    setPageNumber(prev => {
-      const newPage = Math.max(prev - 1, 1);
-      onPageChange?.(newPage);
-      return newPage;
-    });
+    const prev = pageNumber;
+    const newPage = Math.max(prev - 1, 1);
+    setInternalPageNumber(newPage);
+    onPageChange?.(newPage);
   };
 
   const handleNextPage = () => {
-    setPageNumber(prev => {
-      const newPage = Math.min(prev + 1, numPages);
-      onPageChange?.(newPage);
-      return newPage;
-    });
+    const prev = pageNumber;
+    const newPage = Math.min(prev + 1, numPages);
+    setInternalPageNumber(newPage);
+    onPageChange?.(newPage);
   };
 
   const handleFullscreen = () => {
@@ -104,9 +106,9 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
             </Button>
           </Space>
           <Space>
-            <Button 
-              icon={<LeftOutlined />} 
-              onClick={handlePreviousPage} 
+            <Button
+              icon={<LeftOutlined />}
+              onClick={handlePreviousPage}
               disabled={pageNumber <= 1}
             >
               Prev
@@ -114,9 +116,9 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
             <Text type="secondary">
               Page {pageNumber} / {numPages || '?'}
             </Text>
-            <Button 
-              icon={<RightOutlined />} 
-              onClick={handleNextPage} 
+            <Button
+              icon={<RightOutlined />}
+              onClick={handleNextPage}
               disabled={pageNumber >= numPages}
             >
               Next
@@ -129,12 +131,12 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
       </Card>
 
       {/* PDF Viewer */}
-      <div 
+      <div
         id="pdf-container"
-        style={{ 
-          position: 'relative', 
-          border: '1px solid #d9d9d9', 
-          borderRadius: 8, 
+        style={{
+          position: 'relative',
+          border: '1px solid #d9d9d9',
+          borderRadius: 8,
           overflow: 'auto',
           minHeight: 600,
           display: 'flex',
@@ -168,7 +170,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
             style={{ margin: '20px' }}
           />
         )}
-        
+
         <Document
           file={fileUrl}
           onLoadSuccess={onDocumentLoadSuccess}
@@ -178,8 +180,8 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
           <Page
             pageNumber={pageNumber}
             scale={scale}
-            renderTextLayer={true}
-            renderAnnotationLayer={true}
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
           />
         </Document>
       </div>

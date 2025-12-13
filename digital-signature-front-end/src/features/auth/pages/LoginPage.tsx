@@ -26,20 +26,30 @@ export const LoginPage: React.FC = () => {
   const handleLogin = async (values: LoginFormData) => {
     try {
       dispatch(loginStart());
+      // 1. Gọi API Login để lấy Token
       const result = await login(values).unwrap();
 
-      // Fetch user profile after login
+      // ------------------------------------------------------------------
+      // FIX QUAN TRỌNG: Lưu Token vào Redux/Storage NGAY LẬP TỨC
+      // Để các request sau (như /me) có thể lấy được token từ storage
+      // ------------------------------------------------------------------
+      dispatch(loginSuccess({
+        token: result.token,
+        refreshToken: result.refreshToken,
+        // Chưa có user info cũng không sao, lưu token trước đã
+      }));
+
+      // 2. Bây giờ mới gọi API lấy thông tin User (Lúc này Header đã có Token)
       const profileResult = await dispatch(
         authApi.endpoints.getProfile.initiate(undefined, { forceRefetch: true })
       );
 
+      // 3. Cập nhật lại Redux với thông tin User đầy đủ
       if ('data' in profileResult && profileResult.data) {
         dispatch(loginSuccess({
           ...result,
           user: profileResult.data,
         }));
-      } else {
-        dispatch(loginSuccess(result));
       }
 
       message.success(t('auth.loginSuccess', 'Login successful!'));
@@ -49,7 +59,7 @@ export const LoginPage: React.FC = () => {
       dispatch(loginFailure(errorMessage));
       message.error(errorMessage);
     }
-  };
+};
 
   return (
     <AuthLayout

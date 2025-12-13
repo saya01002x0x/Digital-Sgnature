@@ -165,7 +165,7 @@ public class AuthService {
                         .build()
         );
 
-        String token = jwtService.generateToken(user.getEmail());
+        String token = jwtService.generateToken(user.getUsername());
         RefreshToken refresh = refreshTokenService.createRefreshToken(user);
 
         return new AuthResponse(token, refresh.getToken());
@@ -225,7 +225,7 @@ public class AuthService {
 
         User user = userRepository.save(userBuilder.build());
 
-        String token = jwtService.generateToken(user.getEmail());
+        String token = jwtService.generateToken(user.getUsername());
         RefreshToken refresh = refreshTokenService.createRefreshToken(user);
 
         return new AuthResponse(token, refresh.getToken());

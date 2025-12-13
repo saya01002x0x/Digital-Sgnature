@@ -603,12 +603,20 @@ footer .bottom-bar .translate-button {
   color: inherit;
 }
 
-#header.home-nav-white .ant-space span {
+/* #header.home-nav-white .ant-space span {
   color: rgba(0, 0, 0, 0.85);
 }
 
 #header:not(.home-nav-white) .ant-space span {
   color: #fff;
+} */
+
+body:has(.landing-page) #header.home-nav-white .ant-space span {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+body:has(.landing-page) #header:not(.home-nav-white) .ant-space span {
+  color: #fff !important;
 }
 
 /* Avatar in header */

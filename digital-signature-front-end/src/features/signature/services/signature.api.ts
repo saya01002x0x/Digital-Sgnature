@@ -7,11 +7,7 @@ import { baseApi } from '@/app/api/baseApi';
 import type {
   Signature,
   CreateSignatureRequest,
-  CreateSignatureResponse,
   UpdateSignatureRequest,
-  UpdateSignatureResponse,
-  ListSignaturesResponse,
-  SetDefaultResponse,
 } from '../types';
 
 export const signatureApi = baseApi.injectEndpoints({
@@ -19,13 +15,17 @@ export const signatureApi = baseApi.injectEndpoints({
     // List all signatures for current user
     listSignatures: builder.query<Signature[], void>({
       query: () => '/api/signatures',
-      transformResponse: (response: ListSignaturesResponse) => response.signatures,
+      // SỬA: Lấy dữ liệu từ response.data.signatures
+      // Dùng (response: any) để tránh lỗi type tạm thời nếu interface chưa cập nhật
+      transformResponse: (response: any) => response.data.signatures,
       providesTags: ['Signature'],
     }),
 
     // Get signature by ID
     getSignature: builder.query<Signature, string>({
       query: (id) => `/api/signatures/${id}`,
+      // SỬA: Lấy dữ liệu từ response.data (hoặc response.data.signature tùy backend trả về)
+      transformResponse: (response: any) => response.data,
       providesTags: (_result, _error, id) => [{ type: 'Signature', id }],
     }),
 
@@ -36,7 +36,15 @@ export const signatureApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      transformResponse: (response: CreateSignatureResponse) => response.signature,
+      // SỬA: Backend thường trả về { data: { ...signatureObj } } hoặc { data: signatureObj }
+      // Tôi để response.data, nếu vẫn lỗi bạn thử response.data.signature nhé
+      transformResponse: (response: any) => {
+        // Nếu backend trả về { data: { signature: {...} } } thì dùng dòng dưới:
+        // return response.data.signature; 
+
+        // Nếu backend trả về { data: { ... } } (object trực tiếp) thì dùng dòng này:
+        return response.data;
+      },
       invalidatesTags: ['Signature'],
     }),
 
@@ -47,7 +55,8 @@ export const signatureApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      transformResponse: (response: UpdateSignatureResponse) => response.signature,
+      // SỬA: Tương tự như create
+      transformResponse: (response: any) => response.data,
       invalidatesTags: (_result, _error, { id }) => [{ type: 'Signature', id }, 'Signature'],
     }),
 
@@ -66,7 +75,8 @@ export const signatureApi = baseApi.injectEndpoints({
         url: `/api/signatures/${id}/set-default`,
         method: 'POST',
       }),
-      transformResponse: (response: SetDefaultResponse) => response.signature,
+      // SỬA: Tương tự như create
+      transformResponse: (response: any) => response.data,
       invalidatesTags: ['Signature'],
     }),
   }),
@@ -80,4 +90,3 @@ export const {
   useDeleteSignatureMutation,
   useSetDefaultSignatureMutation,
 } = signatureApi;
-

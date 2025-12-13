@@ -15,7 +15,7 @@ export const useInvite = (documentId: string, fields: Field[]) => {
   const { t } = useTranslation('invite-signing');
   const navigate = useNavigate();
   const [assignedFields, setAssignedFields] = useState<Record<string, string>>({});
-  
+
   const [inviteSigners, { isLoading: isSending }] = useInviteSignersMutation();
 
   // Handle field assignment
@@ -29,14 +29,14 @@ export const useInvite = (documentId: string, fields: Field[]) => {
   // Validate all fields are assigned
   const validateFieldAssignments = useCallback(() => {
     const unassignedFields = fields.filter((field) => !assignedFields[field.id]);
-    
+
     if (unassignedFields.length > 0) {
       message.error(
         t('useInvite.unassignedFields', { count: unassignedFields.length })
       );
       return false;
     }
-    
+
     return true;
   }, [fields, assignedFields, t]);
 
@@ -44,12 +44,12 @@ export const useInvite = (documentId: string, fields: Field[]) => {
   const validateUniqueEmails = useCallback((signers: { email: string }[]) => {
     const emails = signers.map((s) => s.email.toLowerCase());
     const uniqueEmails = new Set(emails);
-    
+
     if (emails.length !== uniqueEmails.size) {
       message.error(t('useInvite.duplicateEmails'));
       return false;
     }
-    
+
     return true;
   }, [t]);
 
@@ -76,6 +76,7 @@ export const useInvite = (documentId: string, fields: Field[]) => {
           data: {
             signers: formValues.signers,
             signingOrder: formValues.signingOrder,
+            fieldAssignments: assignedFields, // Send field assignments to backend
           },
         }).unwrap();
 
@@ -85,7 +86,7 @@ export const useInvite = (documentId: string, fields: Field[]) => {
 
         // Navigate back to document list or detail
         navigate(`/documents`);
-        
+
         return result;
       } catch (error: any) {
         console.error('Invite signers error:', error);
@@ -120,12 +121,12 @@ export const useInvite = (documentId: string, fields: Field[]) => {
     // Field assignment
     assignedFields,
     handleAssignField,
-    
+
     // Validation
     validateFieldAssignments,
     validateUniqueEmails,
     isReadyToSend: isReadyToSend(),
-    
+
     // Actions
     handleSendInvitations,
     isSending,

@@ -117,27 +117,30 @@ export const DocumentList: React.FC<DocumentListProps> = ({
             </Button>
           )}
 
+
+
+
           {/* Delete (only for DRAFT or DECLINED) */}
           {(record.status === DocumentStatus.Draft ||
             record.status === DocumentStatus.Declined) && (
-            <Popconfirm
-              title={t('list.deleteConfirm')}
-              description={t('list.deleteDescription', { title: record.title })}
-              onConfirm={() => onDelete?.(record.id)}
-              okText={t('list.deleteYes')}
-              cancelText={t('list.deleteNo')}
-              okButtonProps={{ danger: true }}
-            >
-              <Button
-                type="link"
-                danger
-                icon={<DeleteOutlined />}
-                size="small"
+              <Popconfirm
+                title={t('list.deleteConfirm')}
+                description={t('list.deleteDescription', { title: record.title })}
+                onConfirm={() => onDelete?.(record.id)}
+                okText={t('list.deleteYes')}
+                cancelText={t('list.deleteNo')}
+                okButtonProps={{ danger: true }}
               >
-                {t('list.delete')}
-              </Button>
-            </Popconfirm>
-          )}
+                <Button
+                  type="link"
+                  danger
+                  icon={<DeleteOutlined />}
+                  size="small"
+                >
+                  {t('list.delete')}
+                </Button>
+              </Popconfirm>
+            )}
         </Space>
       ),
     },
@@ -145,17 +148,17 @@ export const DocumentList: React.FC<DocumentListProps> = ({
 
   const paginationConfig: TablePaginationConfig | false = pagination
     ? {
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-        total: pagination.total,
-        showSizeChanger: true,
-        showTotal: (total) => t('list.totalDocuments', { count: total }),
-        onChange: onPageChange,
-        style: {
-          marginTop: 16,
-          marginBottom: 0,
-        },
-      }
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+      total: pagination.total,
+      showSizeChanger: true,
+      showTotal: (total) => t('list.totalDocuments', { count: total }),
+      onChange: onPageChange,
+      style: {
+        marginTop: 16,
+        marginBottom: 0,
+      },
+    }
     : false;
 
   return (

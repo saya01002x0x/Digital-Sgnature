@@ -20,6 +20,7 @@ export const inviteSigningApi = baseApi.injectEndpoints({
     // Get Signing Session (PUBLIC endpoint)
     getSigningSession: builder.query<SigningSession, string>({
       query: (token) => `/api/signing/${token}`,
+      transformResponse: (response: any) => response.data,
       providesTags: ['SigningSession'],
     }),
 
@@ -33,6 +34,7 @@ export const inviteSigningApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      transformResponse: (response: any) => response.data,
       invalidatesTags: ['SigningSession', 'Document', 'Signer'],
     }),
 
@@ -46,6 +48,7 @@ export const inviteSigningApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      transformResponse: (response: any) => response.data,
       invalidatesTags: ['SigningSession', 'Document', 'Signer'],
     }),
 
@@ -59,6 +62,7 @@ export const inviteSigningApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      transformResponse: (response: any) => response.data,
       invalidatesTags: ['Document', 'Signer'],
     }),
 
@@ -71,6 +75,7 @@ export const inviteSigningApi = baseApi.injectEndpoints({
         url: `/api/documents/${documentId}/self-sign`,
         method: 'POST',
       }),
+      transformResponse: (response: any) => response.data,
       invalidatesTags: ['Document', 'Signer'],
     }),
   }),

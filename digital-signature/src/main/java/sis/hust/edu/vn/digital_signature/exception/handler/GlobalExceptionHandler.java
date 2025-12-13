@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Response<Object>> handleEntityNotFoundException(
             EntityNotFoundException ex) {
-        return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(BusinessException.class)

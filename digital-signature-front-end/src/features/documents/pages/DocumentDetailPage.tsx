@@ -25,6 +25,7 @@ import {
   EditOutlined,
   SendOutlined,
   DownloadOutlined,
+  FormOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useGetDocumentQuery, useGetDocumentTimelineQuery } from '../services/documents.api';
@@ -49,16 +50,18 @@ export const DocumentDetailPage: React.FC = () => {
     data: documentData,
     isLoading: isLoadingDocument,
     error: documentError,
-  } = useGetDocumentQuery(id!, { skip: !id });
+  } = useGetDocumentQuery(id!, { skip: !id || id === 'new' });
 
+  // Fetch timeline with polling for real-time updates
   // Fetch timeline with polling for real-time updates
   const {
     data: timelineData,
     isLoading: isLoadingTimeline,
     error: timelineError,
   } = useGetDocumentTimelineQuery(id!, {
-    skip: !id,
-    pollingInterval: 10000, // Poll every 10 seconds for real-time updates
+    skip: true, // <--- TẠM THỜI TẮT CALL API NÀY
+    // skip: !id || id === 'new', 
+    pollingInterval: 0, // Tắt polling
   });
 
   // Self sign mutation
@@ -112,7 +115,11 @@ export const DocumentDetailPage: React.FC = () => {
     try {
       const result = await selfSign(id!).unwrap();
       message.success(t('detail.selfSignSuccess'));
-      navigate(result.signingUrl);
+
+      // SỬA DÒNG NÀY: Dùng window.location.href thay cho navigate
+      // navigate(result.signingUrl); <--- Dòng cũ
+      window.location.href = result.signingUrl; // <--- Dòng mới FIX lỗi
+
     } catch (error) {
       message.error(t('detail.selfSignError'));
     }
@@ -167,6 +174,8 @@ export const DocumentDetailPage: React.FC = () => {
   const canEdit = document.status === DocumentStatus.Draft;
   const canInvite = document.status === DocumentStatus.Draft && fields.length > 0;
   const isOwnerSigner = signers.some((s) => s.email === user?.email);
+  const currentSigner = signers.find((s) => s.email === user?.email);
+  const canSign = currentSigner && (currentSigner.status === 'PENDING' || currentSigner.status === 'OPENED' as SignerStatus);
 
   return (
     <div style={{ padding: '24px' }}>
@@ -175,6 +184,16 @@ export const DocumentDetailPage: React.FC = () => {
         <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
           {t('detail.back')}
         </Button>
+        {canSign && (
+          <Button
+            type="primary"
+            icon={<FormOutlined />}
+            // SỬA DÒNG NÀY: Dùng window.location.href thay cho navigate
+            onClick={() => { window.location.href = currentSigner!.signingUrl; }}
+          >
+            {t('detail.signNow', 'Sign Now')}
+          </Button>
+        )}
       </Space>
 
       <Row gutter={[16, 16]}>
@@ -224,20 +243,31 @@ export const DocumentDetailPage: React.FC = () => {
                     {t('detail.editDocument')}
                   </Button>
                 )}
-                {canInvite && !isOwnerSigner && (
+                {canInvite && (
                   <>
                     <Button type="default" icon={<SendOutlined />} onClick={handleInvite}>
                       {t('detail.inviteSigners')}
                     </Button>
-                    <Button
-                      type="primary"
-                      icon={<EditOutlined />}
-                      onClick={handleSelfSign}
-                      loading={isSelfSigning}
-                    >
-                      {t('detail.selfSign')}
-                    </Button>
+                    {!isOwnerSigner && (
+                      <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        onClick={handleSelfSign}
+                        loading={isSelfSigning}
+                      >
+                        {t('detail.selfSign')}
+                      </Button>
+                    )}
                   </>
+                )}
+                {canSign && (
+                  <Button
+                    type="primary"
+                    icon={<FormOutlined />}
+                    onClick={() => navigate(currentSigner!.signingUrl)}
+                  >
+                    {t('detail.signNow', 'Sign Now')}
+                  </Button>
                 )}
                 <Button icon={<DownloadOutlined />}>{t('detail.download')}</Button>
               </Space>

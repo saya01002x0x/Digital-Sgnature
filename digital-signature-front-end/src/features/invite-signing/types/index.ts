@@ -71,6 +71,7 @@ export interface InviteSignersRequest {
     order: number;
   }[];
   signingOrder: SigningOrder;
+  fieldAssignments?: Record<string, string>; // fieldId -> signerEmail
 }
 
 // Invite Signers Response

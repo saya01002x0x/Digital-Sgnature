@@ -44,7 +44,7 @@ export const InviteSignersPage: React.FC = () => {
     data: documentData,
     isLoading: isLoadingDocument,
     error: documentError,
-  } = useGetDocumentQuery(id || '', { skip: !id });
+  } = useGetDocumentQuery(id || '', { skip: !id || id === 'new' });
 
   const document = documentData?.document;
   const fields = documentData?.fields || [];
@@ -66,7 +66,7 @@ export const InviteSignersPage: React.FC = () => {
   // Handle send invitations (Step 2)
   const handleSend = async () => {
     if (!formValues) return;
-    
+
     try {
       await handleSendInvitations(formValues);
     } catch (error) {
