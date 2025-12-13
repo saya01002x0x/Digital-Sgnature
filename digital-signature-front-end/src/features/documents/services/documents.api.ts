@@ -9,15 +9,15 @@ import type {
   Field,
   ListDocumentsRequest,
   ListDocumentsResponse,
-  UploadDocumentResponse,
-  GetDocumentResponse,
   UpdateDocumentRequest,
-  UpdateDocumentResponse,
   CreateFieldRequest,
-  CreateFieldResponse,
   UpdateFieldRequest,
-  UpdateFieldResponse,
   GetTimelineResponse,
+  GetDocumentResponse,
+  UploadDocumentResponse,
+  CreateFieldResponse,
+  UpdateFieldResponse,
+  UpdateDocumentResponse
 } from '../types';
 
 export const documentsApi = baseApi.injectEndpoints({
@@ -28,6 +28,8 @@ export const documentsApi = baseApi.injectEndpoints({
         url: '/api/documents',
         params: params || undefined,
       }),
+      // FIX: Bóc tách data từ response backend
+      transformResponse: (response: any) => response.data,
       providesTags: ['Document'],
     }),
 
@@ -38,13 +40,15 @@ export const documentsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: formData,
       }),
-      transformResponse: (response: UploadDocumentResponse) => response.document,
+      transformResponse: (response: any) => response.data,
       invalidatesTags: ['Document'],
     }),
 
     // Get document with fields
     getDocument: builder.query<GetDocumentResponse, string>({
       query: (id) => `/api/documents/${id}`,
+      // FIX: Bóc tách data
+      transformResponse: (response: any) => response.data,
       providesTags: (_result, _error, id) => [
         { type: 'Document', id },
         'Field',
@@ -59,7 +63,7 @@ export const documentsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      transformResponse: (response: UpdateDocumentResponse) => response.document,
+      transformResponse: (response: any) => response.data,
       invalidatesTags: (_result, _error, { id }) => [{ type: 'Document', id }, 'Document'],
     }),
 
@@ -79,7 +83,7 @@ export const documentsApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      transformResponse: (response: CreateFieldResponse) => response.field,
+      transformResponse: (response: any) => response.data,
       invalidatesTags: ['Field', 'Document'],
     }),
 
@@ -90,7 +94,7 @@ export const documentsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
-      transformResponse: (response: UpdateFieldResponse) => response.field,
+      transformResponse: (response: any) => response.data,
       invalidatesTags: (_result, _error, { id }) => [{ type: 'Field', id }, 'Field'],
     }),
 
@@ -106,13 +110,13 @@ export const documentsApi = baseApi.injectEndpoints({
     // Get document timeline (audit trail)
     getDocumentTimeline: builder.query<GetTimelineResponse, string>({
       query: (documentId) => `/api/documents/${documentId}/timeline`,
+      transformResponse: (response: any) => response.data,
       providesTags: (_result, _error, documentId) => [
         { type: 'Document', id: documentId },
         'AuditEvent',
       ],
-      // Enable polling for real-time updates (every 10 seconds)
-      // Can be overridden in component with pollingInterval option
-      keepUnusedDataFor: 60, // Keep cached for 1 minute
+      // Tắt polling nếu backend chưa có API timeline để đỡ báo lỗi liên tục
+      keepUnusedDataFor: 60,
     }),
   }),
 });
@@ -128,4 +132,3 @@ export const {
   useDeleteFieldMutation,
   useGetDocumentTimelineQuery,
 } = documentsApi;
-

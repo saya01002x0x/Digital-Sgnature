@@ -11,12 +11,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PDFViewer } from '../components/PDFViewer';
 import { FieldToolbar } from '../components/FieldToolbar';
 import { FieldOverlay } from '../components/FieldOverlay';
+import { DocumentUpload } from '../components/DocumentUpload';
 import { usePDFViewer } from '../hooks/usePDFViewer';
 import { useFieldPlacement } from '../hooks/useFieldPlacement';
 import {
   useGetDocumentQuery,
   useCreateFieldMutation,
   useDeleteFieldMutation,
+  useUploadDocumentMutation,
 } from '../services/documents.api';
 
 const { Title, Text } = Typography;
@@ -26,12 +28,16 @@ export const DocumentEditorPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { pageCount, currentPage } = usePDFViewer();
-  
+
+  const isNewDocument = id === 'new';
+
   const {
     data: documentData,
     isLoading: isLoadingDocument,
     error: documentError,
-  } = useGetDocumentQuery(id || '', { skip: !id });
+  } = useGetDocumentQuery(id || '', { skip: !id || isNewDocument });
+
+  const [uploadDocument, { isLoading: isUploading }] = useUploadDocumentMutation();
 
   const [createField, { isLoading: isCreatingField }] = useCreateFieldMutation();
   const [deleteField, { isLoading: isDeletingField }] = useDeleteFieldMutation();
@@ -45,7 +51,7 @@ export const DocumentEditorPage: React.FC = () => {
     handleContainerClick,
     handleFieldClick,
     cancelPlacement,
-  } = useFieldPlacement(id || '', currentPage);
+  } = useFieldPlacement(isNewDocument ? '' : (id || ''), currentPage);
 
   const handlePDFClick = async (event: React.MouseEvent<HTMLDivElement>) => {
     if (!isPlacingField) return;
@@ -70,6 +76,45 @@ export const DocumentEditorPage: React.FC = () => {
       message.error(error?.data?.message || t('documents.fieldDeleteError', 'Failed to delete field'));
     }
   };
+
+  const handleFileSelect = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('title', file.name.replace('.pdf', ''));
+
+      const document = await uploadDocument(formData).unwrap();
+      message.success(t('documents.uploadSuccess', 'Document uploaded successfully'));
+      navigate(`/documents/editor/${document.id}`);
+    } catch (error: any) {
+      message.error(error?.data?.message || t('documents.uploadError', 'Failed to upload document'));
+    }
+  };
+
+  // Show upload UI for new document
+  if (isNewDocument) {
+    return (
+      <div style={{ padding: '24px', maxWidth: 800, margin: '0 auto' }}>
+        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+          <div>
+            <Button
+              type="text"
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate('/documents')}
+              style={{ marginBottom: 16 }}
+            >
+              {t('common.back', 'Back')}
+            </Button>
+            <Title level={2}>{t('documents.createNewDocument', 'Create New Document')}</Title>
+            <Text type="secondary">
+              {t('documents.uploadSubtitle', 'Upload a PDF document to get started')}
+            </Text>
+          </div>
+          <DocumentUpload onFileSelect={handleFileSelect} disabled={isUploading} />
+        </Space>
+      </div>
+    );
+  }
 
   if (isLoadingDocument) {
     return (

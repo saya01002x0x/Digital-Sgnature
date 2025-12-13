@@ -49,16 +49,18 @@ export const DocumentDetailPage: React.FC = () => {
     data: documentData,
     isLoading: isLoadingDocument,
     error: documentError,
-  } = useGetDocumentQuery(id!, { skip: !id });
+  } = useGetDocumentQuery(id!, { skip: !id || id === 'new' });
 
+  // Fetch timeline with polling for real-time updates
   // Fetch timeline with polling for real-time updates
   const {
     data: timelineData,
     isLoading: isLoadingTimeline,
     error: timelineError,
   } = useGetDocumentTimelineQuery(id!, {
-    skip: !id,
-    pollingInterval: 10000, // Poll every 10 seconds for real-time updates
+    skip: true, // <--- TẠM THỜI TẮT CALL API NÀY
+    // skip: !id || id === 'new', 
+    pollingInterval: 0, // Tắt polling
   });
 
   // Self sign mutation

@@ -40,7 +40,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (!isAuthenticated) {
     return <Navigate to={redirectPath} replace />;
   }
-  
+
   return <>{children}</>;
 };
 
@@ -59,11 +59,11 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   fallbackPath = APP_ROUTES.HOME,
 }) => {
   const hasPermission = userRoles.some(role => allowedRoles.includes(role));
-  
+
   if (!hasPermission) {
     return <Navigate to={fallbackPath} replace />;
   }
-  
+
   return <>{children}</>;
 };
 
@@ -88,121 +88,125 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
         </Suspense>
       ),
     },
-        {
-    path: APP_ROUTES.PROFILE,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <ProfilePage />
-        </ProtectedRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: APP_ROUTES.USERS,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          {user && (
-            <RoleGuard
-              userRoles={[user.role]}
-              allowedRoles={['admin']}
-              fallbackPath={APP_ROUTES.HOME}
-            >
-              <UsersPage />
-            </RoleGuard>
-          )}
-        </ProtectedRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: APP_ROUTES.SIGNATURES,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <SignatureListPage />
-        </ProtectedRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: `${APP_ROUTES.SIGNATURES}/create`,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <CreateSignaturePage />
-        </ProtectedRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: APP_ROUTES.DOCUMENTS,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <DocumentListPage />
-        </ProtectedRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: `${APP_ROUTES.DOCUMENTS}/editor/:id`,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <DocumentEditorPage />
-        </ProtectedRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: `${APP_ROUTES.DOCUMENTS}/:id`,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <DocumentDetailPage />
-        </ProtectedRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: `${APP_ROUTES.DOCUMENTS}/:id/invite`,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <InviteSignersPage />
-        </ProtectedRoute>
-      </Suspense>
-    ),
-  },
-  {
-    path: '/signing/:token',
-    element: (
-      <Suspense fallback={<Loader />}>
-        <SigningRoomPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: APP_ROUTES.HOME,
-    element: (
-      <Suspense fallback={<Loader />}>
-        <LandingPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: '/testcard',
-    element: (
-      <Suspense fallback={<Loader />}>
-        <TestCardPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: APP_ROUTES.NOT_FOUND,
-    element: <div>404 - Không tìm thấy trang</div>,
-  },
+    {
+      path: APP_ROUTES.PROFILE,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <ProfilePage />
+          </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: APP_ROUTES.USERS,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            {user && (
+              <RoleGuard
+                userRoles={[user.role]}
+                allowedRoles={['admin']}
+                fallbackPath={APP_ROUTES.HOME}
+              >
+                <UsersPage />
+              </RoleGuard>
+            )}
+          </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: APP_ROUTES.SIGNATURES,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <SignatureListPage />
+          </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: `${APP_ROUTES.SIGNATURES}/create`,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <CreateSignaturePage />
+          </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: APP_ROUTES.DOCUMENTS,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <DocumentListPage />
+          </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: `${APP_ROUTES.DOCUMENTS}/editor/:id`,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <DocumentEditorPage />
+          </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: `${APP_ROUTES.DOCUMENTS}/new`,
+      element: <Navigate to={`${APP_ROUTES.DOCUMENTS}/editor/new`} replace />,
+    },
+    {
+      path: `${APP_ROUTES.DOCUMENTS}/:id`,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <DocumentDetailPage />
+          </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: `${APP_ROUTES.DOCUMENTS}/:id/invite`,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <InviteSignersPage />
+          </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/signing/:token',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <SigningRoomPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: APP_ROUTES.HOME,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <LandingPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: '/testcard',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <TestCardPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: APP_ROUTES.NOT_FOUND,
+      element: <div>404 - Không tìm thấy trang</div>,
+    },
   ],
 }];

@@ -9,16 +9,13 @@ import sis.hust.edu.vn.digital_signature.entity.enums.DocumentStatus;
 import sis.hust.edu.vn.digital_signature.entity.model.Document;
 import sis.hust.edu.vn.digital_signature.repository.BaseRepository;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
 @Repository
-public interface DocumentRepository extends BaseRepository<Document, String> {
+public interface DocumentRepository extends BaseRepository<Document, String>, JpaSpecificationExecutor<Document> {
+
     
-    @Query("SELECT d FROM Document d WHERE d.ownerId = :ownerId " +
-           "AND (:status IS NULL OR d.status = :status) " +
-           "AND (:search IS NULL OR LOWER(d.title) LIKE LOWER(CONCAT('%', :search, '%')))")
-    Page<Document> findByOwnerIdAndFilters(
-            @Param("ownerId") String ownerId,
-            @Param("status") DocumentStatus status,
-            @Param("search") String search,
-            Pageable pageable);
+    // Custom query removed in favor of Specifications
+
 }
 

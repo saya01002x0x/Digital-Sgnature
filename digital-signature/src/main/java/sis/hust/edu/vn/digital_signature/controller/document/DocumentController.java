@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sis.hust.edu.vn.digital_signature.controller.BaseController;
 import sis.hust.edu.vn.digital_signature.dto.common.response.Response;
+import sis.hust.edu.vn.digital_signature.dto.document.GetDocumentResponse;
 import sis.hust.edu.vn.digital_signature.dto.document.ListDocumentsResponse;
 import sis.hust.edu.vn.digital_signature.dto.signer.InviteSignersRequest;
 import sis.hust.edu.vn.digital_signature.dto.signer.InviteSignersResponse;
@@ -57,11 +58,16 @@ public class DocumentController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Response<Document>> getDocument(
+    public ResponseEntity<Response<GetDocumentResponse>> getDocument(
             @PathVariable String id,
             @CurrentUser User user) {
-        Document document = documentService.getDocumentById(id, user.getId());
-        return success(document);
+        if ("new".equalsIgnoreCase(id)) {
+            // Frontend might mistakenly call this while navigating to create page.
+            // Return 404 to indicate not found (or could be 400, but 404 is cleaner for "ID not found").
+            throw new sis.hust.edu.vn.digital_signature.exception.entity.EntityNotFoundException("Document not found");
+        }
+        GetDocumentResponse response = documentService.getDocumentWithFieldsAndSigners(id, user.getId());
+        return success(response);
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
