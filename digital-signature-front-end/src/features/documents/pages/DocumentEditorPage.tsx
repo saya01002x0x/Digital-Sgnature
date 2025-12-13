@@ -184,6 +184,7 @@ export const DocumentEditorPage: React.FC = () => {
               <PDFViewer
                 fileUrl={document.fileUrl}
                 pageCount={document.pageCount}
+                currentPage={currentPage}
                 onPageChange={setCurrentPage}
               />
 

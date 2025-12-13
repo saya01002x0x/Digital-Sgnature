@@ -43,7 +43,7 @@ export const useSigning = (token: string) => {
 
   // Check if all fields are filled
   const allFieldsFilled = useCallback(() => {
-    if (!session) return false;
+    if (!session || !session.fields || session.fields.length === 0) return false;
     return session.fields.every((field) => {
       const value = fieldValues[field.id];
       return value && value.trim() !== '';
@@ -74,7 +74,7 @@ export const useSigning = (token: string) => {
       return result;
     } catch (error: any) {
       console.error('Complete signing error:', error);
-      
+
       if (error.status === 410) {
         message.error(t('useSigning.alreadyCompleted'));
       } else if (error.status === 404) {
@@ -82,7 +82,7 @@ export const useSigning = (token: string) => {
       } else {
         message.error(t('useSigning.completeError'));
       }
-      
+
       throw error;
     }
   }, [token, fieldValues, allFieldsFilled, completeSigning, t]);
@@ -100,7 +100,7 @@ export const useSigning = (token: string) => {
         return result;
       } catch (error: any) {
         console.error('Decline signing error:', error);
-        
+
         if (error.status === 410) {
           message.error(t('useSigning.alreadyCompleted'));
         } else if (error.status === 404) {
@@ -108,7 +108,7 @@ export const useSigning = (token: string) => {
         } else {
           message.error(t('useSigning.declineError'));
         }
-        
+
         throw error;
       }
     },

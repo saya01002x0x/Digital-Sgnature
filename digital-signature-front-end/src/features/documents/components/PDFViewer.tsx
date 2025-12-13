@@ -27,6 +27,7 @@ const { Text } = Typography;
 type PDFViewerProps = {
   fileUrl: string;
   pageCount?: number;
+  currentPage?: number; // Add controlled prop
   onLoad?: () => void;
   onPageChange?: (pageNumber: number) => void;
   style?: React.CSSProperties;
@@ -34,13 +35,16 @@ type PDFViewerProps = {
 
 export const PDFViewer: React.FC<PDFViewerProps> = ({
   fileUrl,
+  pageCount,
+  currentPage,
   onLoad,
   onPageChange,
   style,
 }) => {
   const { t } = useTranslation();
   const [numPages, setNumPages] = useState<number>(0);
-  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [internalPageNumber, setInternalPageNumber] = useState<number>(1);
+  const pageNumber = currentPage || internalPageNumber; // Use prop or state
   const [scale, setScale] = useState<number>(1.0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,19 +71,17 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
   };
 
   const handlePreviousPage = () => {
-    setPageNumber(prev => {
-      const newPage = Math.max(prev - 1, 1);
-      onPageChange?.(newPage);
-      return newPage;
-    });
+    const prev = pageNumber;
+    const newPage = Math.max(prev - 1, 1);
+    setInternalPageNumber(newPage);
+    onPageChange?.(newPage);
   };
 
   const handleNextPage = () => {
-    setPageNumber(prev => {
-      const newPage = Math.min(prev + 1, numPages);
-      onPageChange?.(newPage);
-      return newPage;
-    });
+    const prev = pageNumber;
+    const newPage = Math.min(prev + 1, numPages);
+    setInternalPageNumber(newPage);
+    onPageChange?.(newPage);
   };
 
   const handleFullscreen = () => {
