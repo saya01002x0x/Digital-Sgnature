@@ -2,7 +2,7 @@
  * Document Detail Page
  * Display document information, signers status, and timeline/audit trail
  */
-
+import { STORAGE_KEYS } from '@/app/config/constants';
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -262,11 +262,20 @@ export const DocumentDetailPage: React.FC = () => {
                 <Button
                   icon={<DownloadOutlined />}
                   onClick={() => {
-                    const token = localStorage.getItem('token');
+                    // FIX: Lấy token từ STORAGE_KEYS.AUTH_TOKEN
+                    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+
+                    // Tự động thêm Bearer token vào header
                     fetch(`/api/documents/${id}/download`, {
                       headers: { 'Authorization': `Bearer ${token}` },
                     })
-                      .then(res => res.ok ? res.blob() : Promise.reject())
+                      .then(res => {
+                        if (!res.ok) {
+                          // Báo lỗi 403/404/500 rõ ràng hơn
+                          return res.json().then(err => Promise.reject(err));
+                        }
+                        return res.blob();
+                      })
                       .then(blob => {
                         const url = window.URL.createObjectURL(blob);
                         const link = window.document.createElement('a');
@@ -276,7 +285,10 @@ export const DocumentDetailPage: React.FC = () => {
                         window.URL.revokeObjectURL(url);
                         message.success(t('detail.downloadSuccess', 'Download successful!'));
                       })
-                      .catch(() => message.error(t('detail.downloadError', 'Download failed')));
+                      .catch((err) => {
+                        console.error('Download error details:', err);
+                        message.error(err?.message || t('detail.downloadError', 'Download failed. Vui lòng kiểm tra đã đăng nhập chưa.'));
+                      });
                   }}
                 >
                   {t('detail.download')}
