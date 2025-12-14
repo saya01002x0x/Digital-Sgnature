@@ -21,6 +21,7 @@ const DocumentListPage = lazy(() => import('@/features/documents/pages/DocumentL
 const DocumentDetailPage = lazy(() => import('@/features/documents/pages/DocumentDetailPage').then(module => ({ default: module.DocumentDetailPage })));
 const SigningRoomPage = lazy(() => import('@/features/invite-signing/pages/SigningRoomPage').then(module => ({ default: module.SigningRoomPage })));
 const InviteSignersPage = lazy(() => import('@/features/invite-signing/pages/InviteSignersPage').then(module => ({ default: module.InviteSignersPage })));
+const AdminPage = lazy(() => import('@/pages/admin/AdminPage').then(module => ({ default: module.AdminPage })));
 
 // Loading fallback
 const Loader = () => <div>Loading...</div>;
@@ -58,7 +59,8 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
   allowedRoles,
   fallbackPath = APP_ROUTES.HOME,
 }) => {
-  const hasPermission = userRoles.some(role => allowedRoles.includes(role));
+  const allowedLower = allowedRoles.map(r => r.toLowerCase());
+  const hasPermission = userRoles.some(role => allowedLower.includes((role || '').toLowerCase()));
 
   if (!hasPermission) {
     return <Navigate to={fallbackPath} replace />;
@@ -121,7 +123,15 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
       element: (
         <Suspense fallback={<Loader />}>
           <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <SignatureListPage />
+            {user && (
+              <RoleGuard
+                userRoles={[user.role]}
+                allowedRoles={['user']}
+                fallbackPath={APP_ROUTES.HOME}
+              >
+                <SignatureListPage />
+              </RoleGuard>
+            )}
           </ProtectedRoute>
         </Suspense>
       ),
@@ -131,7 +141,15 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
       element: (
         <Suspense fallback={<Loader />}>
           <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <CreateSignaturePage />
+            {user && (
+              <RoleGuard
+                userRoles={[user.role]}
+                allowedRoles={['user']}
+                fallbackPath={APP_ROUTES.HOME}
+              >
+                <CreateSignaturePage />
+              </RoleGuard>
+            )}
           </ProtectedRoute>
         </Suspense>
       ),
@@ -141,7 +159,15 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
       element: (
         <Suspense fallback={<Loader />}>
           <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DocumentListPage />
+            {user && (
+              <RoleGuard
+                userRoles={[user.role]}
+                allowedRoles={['user']}
+                fallbackPath={APP_ROUTES.HOME}
+              >
+                <DocumentListPage />
+              </RoleGuard>
+            )}
           </ProtectedRoute>
         </Suspense>
       ),
@@ -151,21 +177,41 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
       element: (
         <Suspense fallback={<Loader />}>
           <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DocumentEditorPage />
+            {user && (
+              <RoleGuard
+                userRoles={[user.role]}
+                allowedRoles={['user']}
+                fallbackPath={APP_ROUTES.HOME}
+              >
+                <DocumentEditorPage />
+              </RoleGuard>
+            )}
           </ProtectedRoute>
         </Suspense>
       ),
     },
     {
       path: `${APP_ROUTES.DOCUMENTS}/new`,
-      element: <Navigate to={`${APP_ROUTES.DOCUMENTS}/editor/new`} replace />,
+      element: user && user.role?.toLowerCase() === 'user' ? (
+        <Navigate to={`${APP_ROUTES.DOCUMENTS}/editor/new`} replace />
+      ) : (
+        <Navigate to={APP_ROUTES.HOME} replace />
+      ),
     },
     {
       path: `${APP_ROUTES.DOCUMENTS}/:id`,
       element: (
         <Suspense fallback={<Loader />}>
           <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <DocumentDetailPage />
+            {user && (
+              <RoleGuard
+                userRoles={[user.role]}
+                allowedRoles={['user']}
+                fallbackPath={APP_ROUTES.HOME}
+              >
+                <DocumentDetailPage />
+              </RoleGuard>
+            )}
           </ProtectedRoute>
         </Suspense>
       ),
@@ -175,7 +221,15 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
       element: (
         <Suspense fallback={<Loader />}>
           <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <InviteSignersPage />
+            {user && (
+              <RoleGuard
+                userRoles={[user.role]}
+                allowedRoles={['user']}
+                fallbackPath={APP_ROUTES.HOME}
+              >
+                <InviteSignersPage />
+              </RoleGuard>
+            )}
           </ProtectedRoute>
         </Suspense>
       ),
@@ -193,6 +247,20 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
       element: (
         <Suspense fallback={<Loader />}>
           <LandingPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: APP_ROUTES.ADMIN,
+      element: (
+        <Suspense fallback={<Loader />}>
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            {user && (
+              <RoleGuard userRoles={[user.role]} allowedRoles={["admin"]}>
+                <AdminPage />
+              </RoleGuard>
+            )}
+          </ProtectedRoute>
         </Suspense>
       ),
     },

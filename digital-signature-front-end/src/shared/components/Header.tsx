@@ -100,25 +100,30 @@ export const Header: React.FC = () => {
   ];
 
   // Menu items khi ĐÃ đăng nhập
+  const isAdmin = user?.role?.toUpperCase() === 'ADMIN';
   const authMenuItems: MenuProps['items'] = [
     {
       key: '/',
       label: t('nav.home', 'Trang chủ'),
       onClick: () => navigate('/'),
     },
-    {
-      key: '/documents',
-      label: t('nav.documents', 'Tài liệu'),
-      onClick: () => navigate('/documents'),
-    },
-    {
-      key: '/signatures',
-      label: t('nav.signatures', 'Chữ ký'),
-      onClick: () => navigate('/signatures'),
-    },
-    ...(user?.role?.toUpperCase() === 'ADMIN' ? [{
+    // Chỉ hiển thị Documents và Signatures cho user thường, không cho admin
+    ...(!isAdmin ? [
+      {
+        key: '/documents',
+        label: t('nav.documents', 'Tài liệu'),
+        onClick: () => navigate('/documents'),
+      },
+      {
+        key: '/signatures',
+        label: t('nav.signatures', 'Chữ ký'),
+        onClick: () => navigate('/signatures'),
+      },
+    ] : []),
+    // Admin chỉ thấy menu Admin
+    ...(isAdmin ? [{
       key: '/admin',
-      label: t('nav.admin', 'Admin'),
+      label: t('nav.admin', 'Quản lý hệ thống'),
       onClick: () => navigate('/admin'),
     }] : []),
     {
