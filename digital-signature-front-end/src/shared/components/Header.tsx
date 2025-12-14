@@ -72,16 +72,6 @@ export const Header: React.FC = () => {
       onClick: () => navigate('/'),
     },
     {
-      key: 'features',
-      label: t('nav.features', 'Tính năng'),
-      onClick: () => navigate('/#features'),
-    },
-    {
-      key: 'pricing',
-      label: t('nav.pricing', 'Bảng giá'),
-      onClick: () => navigate('/#pricing'),
-    },
-    {
       key: 'docs',
       label: t('nav.docs', 'Tài liệu'),
       onClick: () => navigate('/#docs'),
@@ -90,6 +80,16 @@ export const Header: React.FC = () => {
       key: 'about',
       label: t('nav.about', 'Về chúng tôi'),
       onClick: () => navigate('/#about'),
+    },
+    {
+      key: 'login',
+      label: t('auth.login', 'Đăng nhập'),
+      onClick: () => navigate(APP_ROUTES.LOGIN),
+    },
+    {
+      key: 'register',
+      label: t('auth.register', 'Đăng ký'),
+      onClick: () => navigate(APP_ROUTES.REGISTER),
     },
     {
       key: 'language',
@@ -180,53 +180,15 @@ export const Header: React.FC = () => {
       items={menuItems}
       style={{ background: 'transparent', border: 'none' }}
     />,
-    !isAuthenticated && (
-      <div key="mobile-actions" style={{ padding: '16px', borderTop: '1px solid #f0f0f0' }}>
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Button
-            block
-            className="auth-btn auth-btn-login"
-            onClick={() => navigate(APP_ROUTES.LOGIN)}
-          >
-            {t('auth.login', 'Đăng nhập')}
-          </Button>
-          <Button
-            type="primary"
-            block
-            className="auth-btn auth-btn-register"
-            onClick={() => navigate(APP_ROUTES.REGISTER)}
-          >
-            {t('auth.register', 'Đăng ký')}
-          </Button>
-        </Space>
-      </div>
-    ),
-  ].filter(Boolean);
+  ];
 
-  // Auth buttons for guest users (desktop only)
-  const authButtons = !isAuthenticated && (
-    <div className="auth-buttons-container">
-      <Button
-        className="auth-btn auth-btn-login"
-        onClick={() => navigate(APP_ROUTES.LOGIN)}
-      >
-        {t('auth.login', 'Đăng nhập')}
-      </Button>
-      <Button
-        type="primary"
-        className="auth-btn auth-btn-register"
-        onClick={() => navigate(APP_ROUTES.REGISTER)}
-      >
-        {t('auth.register', 'Đăng ký')}
-      </Button>
-    </div>
-  );
+
 
   return (
     <header id="header" className={headerClassName}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', height: '100%' }}>
-        <Row style={{ height: '100%', alignItems: 'center' }}>
-          <Col flex="200px">
+      <div style={{ maxWidth: 1200, margin: '0 auto', height: '100%', display: 'flex', alignItems: 'center' }}>
+        <Row style={{ height: '100%', width: '100%', alignItems: 'center' }}>
+          <Col flex="200px" style={{ display: 'flex', alignItems: 'center' }}>
             <a id="logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
               <img
                 alt="logo"
@@ -235,7 +197,7 @@ export const Header: React.FC = () => {
               <span>E-Signature</span>
             </a>
           </Col>
-          <Col flex="auto" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Col flex="auto" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             {menuMode === 'horizontal' ? (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Menu
@@ -245,7 +207,7 @@ export const Header: React.FC = () => {
                   items={menuItems}
                   disabledOverflow
                 />
-                {authButtons}
+
               </div>
             ) : (
               <Popover
