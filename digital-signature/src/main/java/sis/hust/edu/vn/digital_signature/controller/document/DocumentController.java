@@ -44,7 +44,14 @@ public class DocumentController extends BaseController {
         int pageNumber = (page != null && page > 0) ? page - 1 : 0;
         Pageable pageable = PaginationUtils.createPageable(pageNumber, limit, sortBy, sortOrder);
         
-        Page<Document> documents = documentService.listDocuments(user.getId(), status, search, pageable);
+        // Fetch documents owned by user OR where user is invited as signer
+        var documents = documentService.listDocumentsWithOwnerInfo(
+            user.getId(), 
+            user.getEmail(), 
+            status, 
+            search, 
+            pageable
+        );
         
         // Convert to frontend format
         ListDocumentsResponse response = ListDocumentsResponse.builder()
@@ -66,7 +73,8 @@ public class DocumentController extends BaseController {
             // Return 404 to indicate not found (or could be 400, but 404 is cleaner for "ID not found").
             throw new sis.hust.edu.vn.digital_signature.exception.entity.EntityNotFoundException("Document not found");
         }
-        GetDocumentResponse response = documentService.getDocumentWithFieldsAndSigners(id, user.getId());
+        // Pass both user ID and email to allow owner OR signer access
+        GetDocumentResponse response = documentService.getDocumentWithFieldsAndSigners(id, user.getId(), user.getEmail());
         return success(response);
     }
 

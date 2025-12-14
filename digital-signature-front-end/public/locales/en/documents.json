@@ -93,6 +93,8 @@
   "list": {
     "title": "Title",
     "pages": "{{count}} page(s)",
+    "owner": "Owner",
+    "ownerMe": "Me",
     "status": "Status",
     "createdAt": "Created",
     "updatedAt": "Updated",
@@ -123,4 +125,3 @@
     "sortUpdatedAsc": "Least Recently Updated"
   }
 }
-

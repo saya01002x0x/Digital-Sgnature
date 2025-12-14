@@ -57,6 +57,17 @@ export const DocumentList: React.FC<DocumentListProps> = ({
       ),
     },
     {
+      title: t('list.owner'),
+      dataIndex: 'ownerName',
+      key: 'owner',
+      width: 150,
+      render: (_: string, record: Document) => (
+        <Text>
+          {record.isOwner ? t('list.ownerMe') : (record.ownerName || 'N/A')}
+        </Text>
+      ),
+    },
+    {
       title: t('list.status'),
       dataIndex: 'status',
       key: 'status',
@@ -68,14 +79,14 @@ export const DocumentList: React.FC<DocumentListProps> = ({
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 180,
-      render: (date: string) => new Date(date).toLocaleString(),
+      render: (date: string) => date ? new Date(date).toLocaleString() : '-',
     },
     {
       title: t('list.updatedAt'),
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       width: 180,
-      render: (date: string) => new Date(date).toLocaleString(),
+      render: (date: string) => date ? new Date(date).toLocaleString() : '-',
     },
     {
       title: t('list.actions'),

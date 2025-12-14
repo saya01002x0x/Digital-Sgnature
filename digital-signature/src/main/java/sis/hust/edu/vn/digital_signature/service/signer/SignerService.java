@@ -124,14 +124,31 @@ public class SignerService {
         Signer signer = signerRepository.findByToken(token)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid signing token"));
 
-        // Validate status = PENDING
+        // Get document first to check document-level status
+        Document document = documentRepository.findById(signer.getDocumentId())
+                .orElseThrow(() -> new EntityNotFoundException("Document not found"));
+
+        // Check document status - if document is DECLINED or DONE, signing is not allowed
+        if (document.getStatus() == DocumentStatus.DECLINED) {
+            throw new BusinessException("This document has been declined and signing is no longer available.");
+        }
+        if (document.getStatus() == DocumentStatus.DONE) {
+            throw new BusinessException("This document has been completed. All signatures have been collected.");
+        }
+        if (document.getStatus() == DocumentStatus.DRAFT) {
+            throw new BusinessException("This document is not ready for signing yet.");
+        }
+
+        // Validate this signer's status = PENDING (each signer has their own status)
+        if (signer.getStatus() == SignerStatus.SIGNED) {
+            throw new BusinessException("You have already signed this document.");
+        }
+        if (signer.getStatus() == SignerStatus.DECLINED) {
+            throw new BusinessException("You have declined to sign this document.");
+        }
         if (signer.getStatus() != SignerStatus.PENDING) {
             throw new BusinessException("Signing session is no longer available. Status: " + signer.getStatus());
         }
-
-        // Get document
-        Document document = documentRepository.findById(signer.getDocumentId())
-                .orElseThrow(() -> new EntityNotFoundException("Document not found"));
 
         // Get fields assigned to this signer
         List<Field> fields = fieldRepository.findBySignerId(signer.getId());
