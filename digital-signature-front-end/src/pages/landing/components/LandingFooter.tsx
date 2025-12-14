@@ -16,7 +16,7 @@ export const LandingFooter: React.FC = () => {
             <div className="footer-center">
               <h2>E-Signature</h2>
               <div>
-                <a target="_blank" rel="noopener noreferrer" href="https://github.com">
+                <a target="_blank" rel="noopener noreferrer" href="https://github.com/miiao29/digital-signature-web">
                   GitHub
                 </a>
               </div>
@@ -68,7 +68,7 @@ export const LandingFooter: React.FC = () => {
                 </a>
               </div>
               <div>
-                <a target="_blank" rel="noopener noreferrer" href="https://github.com/issues">
+                <a target="_blank" rel="noopener noreferrer" href="https://github.com/miiao29/digital-signature-web/issues">
                   Báo lỗi
                 </a>
               </div>
