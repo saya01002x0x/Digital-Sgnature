@@ -1,10 +1,10 @@
 /**
  * FieldToolbar Component
- * Toolbar with field types for adding to document
+ * Toolbar with draggable field types for adding to document
  */
 
 import React from 'react';
-import { Card, Button, Space, Typography, Tooltip } from 'antd';
+import { Card, Typography, Tooltip, Space } from 'antd';
 import { EditOutlined, FontSizeOutlined, CalendarOutlined, AlignLeftOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { FieldType } from '../types';
@@ -12,7 +12,8 @@ import { FieldType } from '../types';
 const { Text } = Typography;
 
 type FieldToolbarProps = {
-  onFieldTypeSelect: (type: FieldType) => void;
+  onFieldDragStart: (type: FieldType) => void;
+  onFieldDragEnd: () => void;
   disabled?: boolean;
 }
 
@@ -31,39 +32,66 @@ const FIELD_COLORS = {
 };
 
 export const FieldToolbar: React.FC<FieldToolbarProps> = ({
-  onFieldTypeSelect,
+  onFieldDragStart,
+  onFieldDragEnd,
   disabled = false,
 }) => {
   const { t } = useTranslation();
 
   const fieldTypes = [
-    { type: FieldType.Signature, label: t('documents.signature', 'Signature') },
+    { type: FieldType.Signature, label: t('documents.signature', 'Chữ ký') },
   ];
 
   return (
-    <Card title={t('documents.addFields', 'Add Fields')} size="small">
+    <Card title={t('documents.addFields', 'Thêm trường ký')} size="small">
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Text type="secondary">
-          {t('documents.clickToAddField', 'Click a field type, then click on the document to place it (fixed size)')}
+        <Text type="secondary" style={{ fontSize: 12 }}>
+          {t('documents.dragToDocument', 'Kéo thả vào tài liệu để đặt trường ký')}
         </Text>
 
-        <Space direction="vertical" style={{ width: '100%' }} size="small">
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
           {fieldTypes.map(({ type, label }) => {
             const Icon = FIELD_ICONS[type];
+            const color = FIELD_COLORS[type];
+
             return (
-              <Tooltip key={type} title={label} placement="right">
-                <Button
-                  block
-                  icon={<Icon />}
-                  onClick={() => onFieldTypeSelect(type)}
-                  disabled={disabled}
+              <Tooltip key={type} title={t('documents.dragToPlace', 'Kéo vào tài liệu')} placement="right">
+                <div
+                  draggable={!disabled}
+                  onDragStart={() => onFieldDragStart(type)}
+                  onDragEnd={onFieldDragEnd}
                   style={{
-                    borderColor: FIELD_COLORS[type],
-                    color: FIELD_COLORS[type],
+                    width: '100%',
+                    height: 150, // Match SignatureListPage preview size
+                    border: `2px dashed ${color}`,
+                    borderRadius: 8,
+                    backgroundColor: `${color}10`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: disabled ? 'not-allowed' : 'grab',
+                    opacity: disabled ? 0.5 : 1,
+                    transition: 'all 0.2s',
+                    userSelect: 'none',
+                  }}
+                  onMouseOver={(e) => {
+                    if (!disabled) {
+                      e.currentTarget.style.borderStyle = 'solid';
+                      e.currentTarget.style.backgroundColor = `${color}20`;
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.borderStyle = 'dashed';
+                    e.currentTarget.style.backgroundColor = `${color}10`;
                   }}
                 >
-                  {label}
-                </Button>
+                  <Icon style={{ fontSize: 32, color, marginBottom: 8 }} />
+                  <Text style={{ color, fontWeight: 500 }}>{label}</Text>
+                  <Text type="secondary" style={{ fontSize: 11, marginTop: 4 }}>
+                    {t('documents.dragMe', 'Kéo tôi vào tài liệu')}
+                  </Text>
+                </div>
               </Tooltip>
             );
           })}
@@ -72,4 +100,3 @@ export const FieldToolbar: React.FC<FieldToolbarProps> = ({
     </Card>
   );
 };
-
