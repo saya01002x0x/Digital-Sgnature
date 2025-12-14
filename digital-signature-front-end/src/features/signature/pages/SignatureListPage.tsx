@@ -172,7 +172,7 @@ export const SignatureListPage: React.FC = () => {
                       {t('signature.type', 'Type')}: {signature.type}
                     </Text>
 
-                    {/* Preview */}
+                    {/* Preview - Larger for A4 documents */}
                     <div
                       style={{
                         marginTop: 12,
@@ -183,7 +183,7 @@ export const SignatureListPage: React.FC = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: 100,
+                        minHeight: 150,
                       }}
                     >
                       <img
@@ -191,7 +191,7 @@ export const SignatureListPage: React.FC = () => {
                         alt={signature.name || 'Signature'}
                         style={{
                           maxWidth: '100%',
-                          maxHeight: 100,
+                          maxHeight: 150,
                           objectFit: 'contain',
                         }}
                       />

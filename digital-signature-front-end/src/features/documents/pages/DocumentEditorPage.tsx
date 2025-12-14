@@ -229,7 +229,7 @@ export const DocumentEditorPage: React.FC = () => {
             {isPlacingField && (
               <div style={{ marginTop: 16, textAlign: 'center' }}>
                 <Text type="secondary">
-                  {t('documents.dragToPlace', 'Drag on the document to place and size the field')}
+                  {t('documents.clickToPlace', 'Click on the document to place the signature field')}
                   {' '}
                   <Button size="small" onClick={cancelPlacement}>
                     {t('common.cancel', 'Cancel')}

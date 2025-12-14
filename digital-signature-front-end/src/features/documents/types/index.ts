@@ -153,13 +153,13 @@ export const FIELD_TOOLBAR_ITEMS: FieldToolbarItem[] = [
 ];
 
 /**
- * Default field dimensions (in %)
+ * Default field dimensions (in %) - optimized for A4 documents
  */
 export const DEFAULT_FIELD_DIMENSIONS = {
-  [FieldType.Signature]: { width: 20, height: 8 },
-  [FieldType.Initials]: { width: 10, height: 8 },
-  [FieldType.Date]: { width: 15, height: 5 },
-  [FieldType.Text]: { width: 25, height: 5 },
+  [FieldType.Signature]: { width: 25, height: 10 }, // Larger for A4 documents
+  [FieldType.Initials]: { width: 12, height: 10 },
+  [FieldType.Date]: { width: 18, height: 6 },
+  [FieldType.Text]: { width: 30, height: 6 },
 };
 
 /**

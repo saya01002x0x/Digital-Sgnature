@@ -44,9 +44,9 @@ export const FieldToolbar: React.FC<FieldToolbarProps> = ({
     <Card title={t('documents.addFields', 'Add Fields')} size="small">
       <Space direction="vertical" style={{ width: '100%' }}>
         <Text type="secondary">
-          {t('documents.clickToAdd', 'Click a field type, then click on the document to place it')}
+          {t('documents.clickToAddField', 'Click a field type, then click on the document to place it (fixed size)')}
         </Text>
-        
+
         <Space direction="vertical" style={{ width: '100%' }} size="small">
           {fieldTypes.map(({ type, label }) => {
             const Icon = FIELD_ICONS[type];
