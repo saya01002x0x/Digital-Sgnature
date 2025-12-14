@@ -248,8 +248,9 @@ public class DocumentService {
     public void deleteDocument(String documentId, String ownerId) {
         Document document = getDocumentByIdOwnerOnly(documentId, ownerId);
         
-        // Only allow delete if status is DRAFT
-        if (document.getStatus() != DocumentStatus.DRAFT) {
+        // Only allow delete if status is DRAFT or DECLINED
+        if (document.getStatus() != DocumentStatus.DRAFT && 
+            document.getStatus() != DocumentStatus.DECLINED) {
             throw new BusinessException("Cannot delete document with status: " + document.getStatus());
         }
         

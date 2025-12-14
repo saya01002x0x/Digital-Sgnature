@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetDocumentQuery, useGetDocumentTimelineQuery } from '../services/documents.api';
 import { useSelfSignDocumentMutation } from '@/features/invite-signing/services/invite-signing.api';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { Timeline } from '../components/Timeline';
+import { DocumentPreview } from '../components/DocumentPreview';
 import { StatusBadge } from '../components/StatusBadge';
 import { DocumentStatus } from '../types';
 import { formatTimestamp } from '@/shared/utils/formatters';
@@ -184,16 +184,6 @@ export const DocumentDetailPage: React.FC = () => {
         <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
           {t('detail.back')}
         </Button>
-        {canSign && (
-          <Button
-            type="primary"
-            icon={<FormOutlined />}
-            // SỬA DÒNG NÀY: Dùng window.location.href thay cho navigate
-            onClick={() => { window.location.href = currentSigner!.signingUrl; }}
-          >
-            {t('detail.signNow', 'Sign Now')}
-          </Button>
-        )}
       </Space>
 
       <Row gutter={[16, 16]}>
@@ -264,12 +254,33 @@ export const DocumentDetailPage: React.FC = () => {
                   <Button
                     type="primary"
                     icon={<FormOutlined />}
-                    onClick={() => navigate(currentSigner!.signingUrl)}
+                    onClick={() => { window.location.href = currentSigner!.signingUrl; }}
                   >
                     {t('detail.signNow', 'Sign Now')}
                   </Button>
                 )}
-                <Button icon={<DownloadOutlined />}>{t('detail.download')}</Button>
+                <Button
+                  icon={<DownloadOutlined />}
+                  onClick={() => {
+                    const token = localStorage.getItem('token');
+                    fetch(`/api/documents/${id}/download`, {
+                      headers: { 'Authorization': `Bearer ${token}` },
+                    })
+                      .then(res => res.ok ? res.blob() : Promise.reject())
+                      .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const link = window.document.createElement('a');
+                        link.href = url;
+                        link.download = `${document.title}_signed.pdf`;
+                        link.click();
+                        window.URL.revokeObjectURL(url);
+                        message.success(t('detail.downloadSuccess', 'Download successful!'));
+                      })
+                      .catch(() => message.error(t('detail.downloadError', 'Download failed')));
+                  }}
+                >
+                  {t('detail.download')}
+                </Button>
               </Space>
             </Space>
           </Card>
@@ -306,21 +317,14 @@ export const DocumentDetailPage: React.FC = () => {
           </Card>
         </Col>
 
-        {/* Right Column - Timeline */}
+        {/* Right Column - Document Preview */}
         <Col xs={24} lg={8}>
-          <Card title={<Title level={5}>{t('detail.timeline.title')}</Title>}>
-            {timelineError ? (
-              <Alert
-                message={t('detail.timeline.error')}
-                type="error"
-                showIcon
-              />
-            ) : (
-              <Timeline
-                events={timelineData?.events || []}
-                loading={isLoadingTimeline}
-              />
-            )}
+          <Card title={<Title level={5}>{t('detail.preview.title', 'Document Preview')}</Title>}>
+            <DocumentPreview
+              fileUrl={document.fileUrl}
+              fields={fields}
+              title={document.title}
+            />
           </Card>
         </Col>
       </Row>
