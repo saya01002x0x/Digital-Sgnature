@@ -74,6 +74,7 @@
     "addMyself": "Add Myself",
     "addedMyself": "Added yourself to the signers list",
     "userNotFound": "User information not found",
+    "completeExistingFirst": "Please complete all existing signer information before adding a new one",
     "submit": "Continue to Assign Fields"
   },
   "signingRoom": {

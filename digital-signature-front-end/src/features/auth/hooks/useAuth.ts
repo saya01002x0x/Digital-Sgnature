@@ -15,6 +15,7 @@ import {
   setCredentials,
 } from '../authSlice';
 import { useLoginMutation, useLogoutMutation } from '../api';
+import { baseApi } from '@/app/api/baseApi';
 import type { LoginFormValues } from '../types';
 
 export const useAuth = () => {
@@ -50,6 +51,8 @@ export const useAuth = () => {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      // Clear all RTK Query cached data to prevent next user from seeing previous user's data
+      dispatch(baseApi.util.resetApiState());
       dispatch(logoutAction());
       navigate('/login');
     }

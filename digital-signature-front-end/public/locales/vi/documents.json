@@ -93,6 +93,8 @@
   "list": {
     "title": "Tiêu Đề",
     "pages": "{{count}} trang",
+    "owner": "Người Sở Hữu",
+    "ownerMe": "Tôi",
     "status": "Trạng Thái",
     "createdAt": "Ngày Tạo",
     "updatedAt": "Cập Nhật",
@@ -123,4 +125,3 @@
     "sortUpdatedAsc": "Cập Nhật Lâu Nhất"
   }
 }
-

@@ -74,6 +74,7 @@
     "addMyself": "Thêm Chính Mình",
     "addedMyself": "Đã thêm chính bạn vào danh sách người ký",
     "userNotFound": "Không tìm thấy thông tin người dùng",
+    "completeExistingFirst": "Vui lòng điền đầy đủ thông tin các người ký hiện tại trước khi thêm người mới",
     "submit": "Tiếp tục Gán Trường"
   },
   "signingRoom": {

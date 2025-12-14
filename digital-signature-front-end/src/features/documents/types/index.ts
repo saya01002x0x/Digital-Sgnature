@@ -34,6 +34,8 @@ export type Document = {
   pageCount: number;
   status: DocumentStatus;
   ownerId: string;
+  ownerName?: string;  // Display name of the owner (from backend)
+  isOwner?: boolean;   // True if current user is the owner
   createdAt: string;
   updatedAt: string;
   completedAt?: string;

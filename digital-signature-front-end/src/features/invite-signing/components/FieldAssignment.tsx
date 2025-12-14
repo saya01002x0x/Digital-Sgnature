@@ -17,6 +17,7 @@ type FieldAssignmentProps = {
   signers: { email: string; name: string; order: number }[];
   assignedFields: Record<string, string>; // fieldId -> signer email
   onAssign: (fieldId: string, signerEmail: string) => void;
+  onUnassign?: (fieldId: string) => void;
 };
 
 // Color palette for signers
@@ -36,6 +37,7 @@ export const FieldAssignment: React.FC<FieldAssignmentProps> = ({
   signers,
   assignedFields,
   onAssign,
+  onUnassign,
 }) => {
   const { t } = useTranslation('invite-signing');
 
@@ -137,7 +139,15 @@ export const FieldAssignment: React.FC<FieldAssignmentProps> = ({
                     style={{ width: '100%' }}
                     placeholder={t('fieldAssignment.selectSigner')}
                     value={assignedEmail || undefined}
-                    onChange={(email) => onAssign(field.id, email)}
+                    onChange={(email) => {
+                      if (email) {
+                        onAssign(field.id, email);
+                      } else if (onUnassign) {
+                        // Clear assignment if onUnassign is provided
+                        onUnassign(field.id);
+                      }
+                    }}
+                    allowClear
                     size="large"
                   >
                     {signers.map((signer, index) => (

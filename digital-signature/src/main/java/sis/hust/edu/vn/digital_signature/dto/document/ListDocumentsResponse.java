@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import sis.hust.edu.vn.digital_signature.entity.model.Document;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ListDocumentsResponse {
-    private List<Document> documents;
+    private List<DocumentListItem> documents;
     private Integer total;
     private Integer page;
     private Integer limit;
