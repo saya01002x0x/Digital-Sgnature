@@ -3,6 +3,7 @@ package sis.hust.edu.vn.digital_signature.controller.document;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,13 @@ import sis.hust.edu.vn.digital_signature.entity.model.Document;
 import sis.hust.edu.vn.digital_signature.entity.model.User;
 import sis.hust.edu.vn.digital_signature.security.annotation.CurrentUser;
 import sis.hust.edu.vn.digital_signature.service.document.DocumentService;
+import sis.hust.edu.vn.digital_signature.service.document.PdfExportService;
 import sis.hust.edu.vn.digital_signature.service.signer.SignerService;
 import sis.hust.edu.vn.digital_signature.util.pagination.PaginationUtils;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -30,6 +34,7 @@ public class DocumentController extends BaseController {
 
     private final DocumentService documentService;
     private final SignerService signerService;
+    private final PdfExportService pdfExportService;
 
     @GetMapping
     public ResponseEntity<Response<ListDocumentsResponse>> listDocuments(
@@ -121,6 +126,31 @@ public class DocumentController extends BaseController {
         sis.hust.edu.vn.digital_signature.dto.signer.SelfSignResponse response = 
             signerService.selfSign(documentId, user.getId(), user.getEmail(), user.getFullName());
         return success("Self-sign initiated successfully", response);
+    }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<byte[]> downloadDocument(
+            @PathVariable String id,
+            @CurrentUser User user) {
+        // Verify user has access (owner or signer)
+        GetDocumentResponse docResponse = documentService.getDocumentWithFieldsAndSigners(id, user.getId(), user.getEmail());
+        Document document = docResponse.getDocument();
+        
+        // Generate PDF with embedded signatures
+        byte[] pdfBytes = pdfExportService.generatePdfWithSignatures(id);
+        
+        // Set filename with proper encoding for Vietnamese characters
+        String filename = document.getTitle() + "_signed.pdf";
+        String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replace("+", "%20");
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", encodedFilename);
+        headers.add("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFilename);
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
     }
 }
 

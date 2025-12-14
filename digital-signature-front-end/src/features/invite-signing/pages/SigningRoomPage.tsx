@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Typography, Space, Button, Alert, Spin, Result } from 'antd';
+import { Typography, Space, Button, Alert, Spin, Result, message } from 'antd';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -48,7 +48,9 @@ export const SigningRoomPage: React.FC = () => {
     try {
       await handleCompleteSigning();
       setShowCompleteDialog(false);
-      setIsCompleted(true);
+      // Show success message and redirect to documents page
+      message.success(t('signingRoom.signSuccess', 'Ký tài liệu thành công!'));
+      navigate('/documents');
     } catch (error) {
       // Error is already handled in hook with message
     }

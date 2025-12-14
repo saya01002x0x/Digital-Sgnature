@@ -1,11 +1,13 @@
 import React, { ReactNode, useState } from 'react';
-import { Layout, Typography, Space, Avatar, Button, Menu } from 'antd';
+import { Layout, Typography, Space, Avatar, Button, Menu, Tabs } from 'antd';
 import {
   MenuFoldOutlined,
   LogoutOutlined,
   UserOutlined,
   HomeOutlined,
-  AppstoreOutlined,
+  TeamOutlined,
+  FileTextOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '@/app/config/constants';
@@ -14,16 +16,14 @@ import { UserBase } from '@/shared/types';
 const { Header, Content, Sider } = Layout;
 const { Title, Text } = Typography;
 
-interface DashboardLayoutProps {
+interface AdminLayoutProps {
   user?: UserBase | null;
   children: ReactNode;
   onLogout: () => Promise<void> | void;
   logoutLoading?: boolean;
 }
 
-
-
-export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
+export const AdminLayout: React.FC<AdminLayoutProps> = ({
   user,
   children,
   onLogout,
@@ -37,6 +37,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     navigate(key);
   };
 
+  // Menu items dành riêng cho admin - chỉ quản lý hệ thống
   const menuItems = [
     {
       key: APP_ROUTES.HOME,
@@ -44,19 +45,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       label: 'Trang chủ',
     },
     {
-      key: APP_ROUTES.DEMO,
-      icon: <AppstoreOutlined />,
-      label: 'Demo trắng',
+      key: APP_ROUTES.ADMIN,
+      icon: <BarChartOutlined />,
+      label: 'Quản lý hệ thống',
     },
-    ...(user && (user.role || '').toLowerCase() === 'admin'
-      ? [
-          {
-            key: APP_ROUTES.ADMIN,
-            icon: <UserOutlined />,
-            label: 'Admin',
-          },
-        ]
-      : []),
   ];
 
   return (
@@ -83,11 +75,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             alignItems: 'center',
             gap: 12,
             padding: '16px 20px',
+            borderBottom: '1px solid #f0f0f0',
           }}
         >
           <MenuFoldOutlined />
           {expanded && (
-            <Typography.Text strong>Digital Signature</Typography.Text>
+            <Typography.Text strong style={{ fontSize: '16px' }}>
+              Quản trị hệ thống
+            </Typography.Text>
           )}
         </div>
         <Menu
@@ -95,6 +90,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           selectedKeys={[location.pathname]}
           items={menuItems}
           onClick={handleNavigate}
+          style={{ borderRight: 0, marginTop: '8px' }}
         />
       </Sider>
       <Layout style={{ marginLeft: expanded ? 220 : 72, transition: 'margin 0.2s ease' }}>
@@ -106,16 +102,24 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
           }}
         >
-          <Title level={4} style={{ margin: 0 }}>
-            Chữ ký số
+          <Title level={4} style={{ margin: 0, color: '#1890ff' }}>
+            Bảng điều khiển quản trị
           </Title>
-          <Space>
+          <Space size="large">
             {user && (
               <Space>
                 <Avatar src={user.avatar} icon={<UserOutlined />} />
-                <Text strong>{user.fullName || user.username}</Text>
+                <div>
+                  <Text strong style={{ display: 'block', fontSize: '14px' }}>
+                    {user.fullName || user.username}
+                  </Text>
+                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                    Quản trị viên
+                  </Text>
+                </div>
               </Space>
             )}
             <Button
@@ -129,11 +133,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </Button>
           </Space>
         </Header>
-        <Content style={{ padding: 24, background: '#f4f6f8', minHeight: '100vh' }}>
+        <Content style={{ padding: '24px', background: '#f5f7fa', minHeight: '100vh' }}>
           {children}
         </Content>
       </Layout>
     </Layout>
   );
 };
-

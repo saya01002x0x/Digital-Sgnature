@@ -9,6 +9,7 @@ import { authHandlers } from './features/auth.handlers';
 import { signatureHandlers } from './features/signature.handlers';
 import { documentsHandlers } from './features/documents.handlers';
 import { inviteSigningHandlers } from './features/invite-signing.handlers';
+import { adminHandlers } from './features/admin.handlers';
 
 // Handle static PDF files from public folder
 const staticFileHandlers = [
@@ -104,5 +105,5 @@ export const handlers = [
   ...documentsHandlers,
   ...inviteSigningHandlers,
   // Add more feature handlers as they are created:
-  // ...adminHandlers,
+  ...adminHandlers,
 ];

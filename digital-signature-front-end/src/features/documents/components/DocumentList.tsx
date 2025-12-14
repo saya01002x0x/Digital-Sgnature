@@ -47,6 +47,8 @@ export const DocumentList: React.FC<DocumentListProps> = ({
       title: t('list.title'),
       dataIndex: 'title',
       key: 'title',
+      width: 250,
+      ellipsis: true,
       render: (title: string, record: Document) => (
         <Space direction="vertical" size="small">
           <Text strong>{title}</Text>
@@ -157,20 +159,16 @@ export const DocumentList: React.FC<DocumentListProps> = ({
     },
   ];
 
-  const paginationConfig: TablePaginationConfig | false = pagination
-    ? {
-      current: pagination.current,
-      pageSize: pagination.pageSize,
-      total: pagination.total,
-      showSizeChanger: true,
-      showTotal: (total) => t('list.totalDocuments', { count: total }),
-      onChange: onPageChange,
-      style: {
-        marginTop: 16,
-        marginBottom: 0,
-      },
-    }
-    : false;
+  const paginationConfig: TablePaginationConfig | false = {
+    pageSize: 10,
+    hideOnSinglePage: true,
+    showSizeChanger: false,
+    showTotal: (total) => t('list.totalDocuments', { count: total }),
+    style: {
+      marginTop: 16,
+      marginBottom: 0,
+    },
+  };
 
   return (
     <Table

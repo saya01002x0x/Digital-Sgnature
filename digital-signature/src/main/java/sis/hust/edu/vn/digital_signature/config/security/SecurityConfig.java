@@ -71,14 +71,15 @@ public class SecurityConfig {
                                                 // 3. API Public để người ngoài vào ký (quan trọng cho flow Invite)
                                                 .requestMatchers("/api/signing/**").permitAll()
 
-                                                // 4. Riêng API lấy thông tin User (/me, đổi pass) -> BẮT BUỘC ĐĂNG NHẬP
+                                                // 4. Admin APIs -> BẮT BUỘC ADMIN ROLE
+                                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                                
+                                                // 5. Riêng API lấy thông tin User (/me, đổi pass) -> BẮT BUỘC ĐĂNG NHẬP
                                                 .requestMatchers("/api/auth/me", "/api/auth/change-password", "/api/auth/logout").authenticated()
                                                 .requestMatchers("/api/signatures/**").authenticated()
                                                 .requestMatchers("/api/documents/**").authenticated()
 
-                                                // 5. Tất cả request còn lại -> BẮT BUỘC ĐĂNG NHẬP
-                                                // 5. Tất cả request còn lại -> BẮT BUỘC ĐĂNG NHẬP
-
+                                                // 6. Tất cả request còn lại -> BẮT BUỘC ĐĂNG NHẬP
                                                 .anyRequest().authenticated()
                                         )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -100,10 +101,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Allow all origins (or use "http://localhost:3000")
+        configuration.setAllowedOriginPatterns(List.of("*")); // Use pattern instead for credentials
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "x-auth-token"));
-        configuration.setExposedHeaders(List.of("x-auth-token"));
+        configuration.setExposedHeaders(List.of("x-auth-token", "Content-Disposition"));
+        configuration.setAllowCredentials(true); // Enable credentials for Authorization header
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
