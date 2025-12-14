@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Row, Col, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { APP_ROUTES } from '@/app/config/constants';
 import { ArrowRightOutlined, CheckCircleFilled } from '@ant-design/icons';
 
@@ -9,6 +10,7 @@ const { Title, Paragraph } = Typography;
 
 export const Hero: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation('landing');
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -87,7 +89,7 @@ export const Hero: React.FC = () => {
                                     fontWeight: 600,
                                     fontSize: 14
                                 }}>
-                                    <span style={{ display: 'flex', alignItems: 'center' }}>🚀 Nền tảng ký số hàng đầu</span>
+                                    <span style={{ display: 'flex', alignItems: 'center' }}>{t('hero.badge')}</span>
                                 </div>
                             </motion.div>
 
@@ -101,15 +103,14 @@ export const Hero: React.FC = () => {
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
                                 }}>
-                                    Ký tài liệu số <br />
-                                    <span style={{ color: '#1890ff', WebkitTextFillColor: '#1890ff' }}>Mọi lúc, Mọi nơi</span>
+                                    {t('hero.title')} <br />
+                                    <span style={{ color: '#1890ff', WebkitTextFillColor: '#1890ff' }}>{t('hero.titleHighlight')}</span>
                                 </Title>
                             </motion.div>
 
                             <motion.div variants={itemVariants}>
                                 <Paragraph style={{ fontSize: 18, color: '#666', marginBottom: 32, maxWidth: 500, lineHeight: 1.6 }}>
-                                    Giải pháp ký số điện tử an toàn, nhanh chóng và pháp lý.
-                                    Đơn giản hóa quy trình làm việc của bạn ngay hôm nay.
+                                    {t('hero.subtitle')}
                                 </Paragraph>
                             </motion.div>
 
@@ -128,7 +129,7 @@ export const Hero: React.FC = () => {
                                     icon={<ArrowRightOutlined />}
                                     iconPosition="end"
                                 >
-                                    Bắt đầu miễn phí
+                                    {t('hero.getStarted')}
                                 </Button>
                                 <Button
                                     size="large"
@@ -141,16 +142,16 @@ export const Hero: React.FC = () => {
                                     }}
                                     onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                                 >
-                                    Tìm hiểu thêm
+                                    {t('hero.learnMore')}
                                 </Button>
                             </motion.div>
 
                             <motion.div variants={itemVariants} style={{ marginTop: 48, display: 'flex', gap: 24, color: '#888' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <CheckCircleFilled style={{ color: '#52c41a' }} /> <span>An toàn tuyệt đối</span>
+                                    <CheckCircleFilled style={{ color: '#52c41a' }} /> <span>{t('hero.checkSecurity')}</span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <CheckCircleFilled style={{ color: '#52c41a' }} /> <span>Pháp lý đảm bảo</span>
+                                    <CheckCircleFilled style={{ color: '#52c41a' }} /> <span>{t('hero.checkLegal')}</span>
                                 </div>
                             </motion.div>
                         </motion.div>

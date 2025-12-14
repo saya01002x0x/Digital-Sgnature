@@ -6,8 +6,11 @@
 
 import type React from 'react';
 import { Row, Col } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 export const LandingFooter: React.FC = () => {
+  const { t } = useTranslation('landing');
+
   return (
     <footer id="footer" className="dark">
       <div className="footer-wrap">
@@ -21,30 +24,30 @@ export const LandingFooter: React.FC = () => {
                 </a>
               </div>
               <div>
-                <a href="/">Trang chủ</a>
+                <a href="/">{t('footer.home', 'Trang chủ')}</a>
               </div>
               <div>
-                <a href="/about">Về chúng tôi</a>
+                <a href="/about">{t('footer.about', 'Về chúng tôi')}</a>
               </div>
               <div>
-                <a href="/pricing">Bảng giá</a>
+                <a href="/pricing">{t('footer.pricing', 'Bảng giá')}</a>
               </div>
             </div>
           </Col>
           <Col lg={6} sm={24} xs={24}>
             <div className="footer-center">
-              <h2>Tài nguyên</h2>
+              <h2>{t('footer.resources', 'Tài nguyên')}</h2>
               <div>
-                <a href="/docs">Tài liệu API</a>
+                <a href="/docs">{t('footer.apiDocs', 'Tài liệu API')}</a>
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/sdk">
-                  SDK & Tích hợp
+                  {t('footer.sdk', 'SDK & Tích hợp')}
                 </a>
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/tutorials">
-                  Hướng dẫn
+                  {t('footer.tutorials', 'Hướng dẫn')}
                 </a>
               </div>
               <div>
@@ -54,57 +57,57 @@ export const LandingFooter: React.FC = () => {
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/faq">
-                  Câu hỏi thường gặp
+                  {t('footer.faq', 'Câu hỏi thường gặp')}
                 </a>
               </div>
             </div>
           </Col>
           <Col lg={6} sm={24} xs={24}>
             <div className="footer-center">
-              <h2>Cộng đồng</h2>
+              <h2>{t('footer.community', 'Cộng đồng')}</h2>
               <div>
                 <a href="/changelog">
-                  Lịch sử cập nhật
+                  {t('footer.changelog', 'Lịch sử cập nhật')}
                 </a>
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="https://github.com/miiao29/digital-signature-web/issues">
-                  Báo lỗi
+                  {t('footer.reportBug', 'Báo lỗi')}
                 </a>
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/community">
-                  Diễn đàn thảo luận
+                  {t('footer.forum', 'Diễn đàn thảo luận')}
                 </a>
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/support">
-                  Hỗ trợ
+                  {t('footer.support', 'Hỗ trợ')}
                 </a>
               </div>
             </div>
           </Col>
           <Col lg={6} sm={24} xs={24}>
             <div className="footer-center">
-              <h2>Công ty</h2>
+              <h2>{t('footer.company', 'Công ty')}</h2>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/about">
-                  Giới thiệu
+                  {t('footer.introduction', 'Giới thiệu')}
                 </a>
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/careers">
-                  Tuyển dụng
+                  {t('footer.careers', 'Tuyển dụng')}
                 </a>
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/contact">
-                  Liên hệ
+                  {t('footer.contact', 'Liên hệ')}
                 </a>
               </div>
               <div>
                 <a target="_blank" rel="noopener noreferrer" href="/partners">
-                  Đối tác
+                  {t('footer.partners', 'Đối tác')}
                 </a>
               </div>
             </div>
@@ -127,7 +130,7 @@ export const LandingFooter: React.FC = () => {
               rel="noopener noreferrer"
               target="_blank"
             >
-              Chính sách bảo mật
+              {t('footer.privacyPolicy', 'Chính sách bảo mật')}
             </a>
           </span>
           <span style={{ marginRight: 24 }}>
@@ -136,7 +139,7 @@ export const LandingFooter: React.FC = () => {
               rel="noopener noreferrer"
               target="_blank"
             >
-              Điều khoản dịch vụ
+              {t('footer.termsOfService', 'Điều khoản dịch vụ')}
             </a>
           </span>
           <span style={{ marginRight: 12 }}>© {new Date().getFullYear()} E-Signature Platform</span>
@@ -145,4 +148,3 @@ export const LandingFooter: React.FC = () => {
     </footer>
   );
 };
-

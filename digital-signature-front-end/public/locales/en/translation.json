@@ -3,6 +3,9 @@
     "name": "E-Signature"
   },
   "nav": {
+    "home": "Home",
+    "docs": "Docs",
+    "about": "About Us",
     "documents": "Documents",
     "signatures": "Signatures",
     "admin": "Admin",
@@ -73,5 +76,16 @@
     "light": "Switch to light mode",
     "dark": "Switch to dark mode",
     "toggle": "Toggle theme"
+  },
+  "admin": {
+    "title": "System Administration",
+    "dashboard": "Admin Dashboard",
+    "administrator": "Administrator",
+    "user": "User",
+    "role": "Role"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "user": "User"
   }
 }

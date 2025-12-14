@@ -68,32 +68,32 @@ export const Header: React.FC = () => {
   const guestMenuItems: MenuProps['items'] = [
     {
       key: 'home',
-      label: t('nav.home', 'Trang chủ'),
+      label: t('nav.home'),
       onClick: () => navigate('/'),
     },
     {
       key: 'docs',
-      label: t('nav.docs', 'Tài liệu'),
+      label: t('nav.docs'),
       onClick: () => navigate('/#docs'),
     },
     {
       key: 'about',
-      label: t('nav.about', 'Về chúng tôi'),
+      label: t('nav.about'),
       onClick: () => navigate('/#about'),
     },
     {
       key: 'login',
-      label: t('auth.login', 'Đăng nhập'),
+      label: t('auth.login'),
       onClick: () => navigate(APP_ROUTES.LOGIN),
     },
     {
       key: 'register',
-      label: t('auth.register', 'Đăng ký'),
+      label: t('auth.register'),
       onClick: () => navigate(APP_ROUTES.REGISTER),
     },
     {
       key: 'language',
-      label: i18n.language === LOCALES.VI ? 'Tiếng Việt' : 'English',
+      label: t(`language.${i18n.language}`),
       icon: <GlobalOutlined />,
       onClick: toggleLanguage,
     },
@@ -104,26 +104,26 @@ export const Header: React.FC = () => {
   const authMenuItems: MenuProps['items'] = [
     {
       key: '/',
-      label: t('nav.home', 'Trang chủ'),
+      label: t('nav.home'),
       onClick: () => navigate('/'),
     },
     // Chỉ hiển thị Documents và Signatures cho user thường, không cho admin
     ...(!isAdmin ? [
       {
         key: '/documents',
-        label: t('nav.documents', 'Tài liệu'),
+        label: t('nav.documents'),
         onClick: () => navigate('/documents'),
       },
       {
         key: '/signatures',
-        label: t('nav.signatures', 'Chữ ký'),
+        label: t('nav.signatures'),
         onClick: () => navigate('/signatures'),
       },
     ] : []),
     // Admin chỉ thấy menu Admin
     ...(isAdmin ? [{
       key: '/admin',
-      label: t('nav.admin', 'Quản lý hệ thống'),
+      label: t('nav.admin'),
       onClick: () => navigate('/admin'),
     }] : []),
     {
@@ -137,7 +137,7 @@ export const Header: React.FC = () => {
               style={{ marginRight: -4 }}
             />
           )}
-          {!isMobile && <span>{user?.name || t('nav.profile', 'Profile')}</span>}
+          {!isMobile && <span>{user?.name || t('nav.profile')}</span>}
           {isMobile && !user?.avatar && <UserOutlined />}
         </Space>
       ),
@@ -146,7 +146,7 @@ export const Header: React.FC = () => {
         {
           key: 'profile-detail',
           icon: <UserOutlined />,
-          label: t('nav.profile', 'Profile'),
+          label: t('nav.profile'),
           onClick: () => navigate('/profile'),
         },
         {
@@ -155,7 +155,7 @@ export const Header: React.FC = () => {
         {
           key: 'logout',
           icon: <LogoutOutlined />,
-          label: t('nav.logout', 'Đăng xuất'),
+          label: t('nav.logout'),
           danger: true,
           onClick: logout,
         },
@@ -163,7 +163,7 @@ export const Header: React.FC = () => {
     },
     {
       key: 'language',
-      label: i18n.language === LOCALES.VI ? 'Tiếng Việt' : 'English',
+      label: t(`language.${i18n.language}`),
       icon: <GlobalOutlined />,
       onClick: toggleLanguage,
     },

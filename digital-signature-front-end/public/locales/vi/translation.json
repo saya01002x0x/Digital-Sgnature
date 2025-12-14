@@ -3,6 +3,9 @@
     "name": "E-Signature"
   },
   "nav": {
+    "home": "Trang chủ",
+    "docs": "Tài liệu",
+    "about": "Về chúng tôi",
     "documents": "Tài liệu",
     "signatures": "Chữ ký",
     "admin": "Quản trị",
@@ -73,5 +76,16 @@
     "light": "Chuyển sang chế độ sáng",
     "dark": "Chuyển sang chế độ tối",
     "toggle": "Chuyển đổi theme"
+  },
+  "admin": {
+    "title": "Quản trị hệ thống",
+    "dashboard": "Bảng điều khiển quản trị",
+    "administrator": "Quản trị viên",
+    "user": "Người dùng",
+    "role": "Vai trò"
+  },
+  "roles": {
+    "admin": "Quản trị viên",
+    "user": "Người dùng"
   }
 }
