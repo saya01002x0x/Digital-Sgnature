@@ -1,9 +1,9 @@
 /**
  * DocumentEditorPage Component
- * Page for editing document and placing fields
+ * Page for editing document and placing fields via drag-and-drop
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Typography, Space, Row, Col, Button, message, Spin } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,8 @@ import { FieldToolbar } from '../components/FieldToolbar';
 import { FieldOverlay } from '../components/FieldOverlay';
 import { DocumentUpload } from '../components/DocumentUpload';
 import { usePDFViewer } from '../hooks/usePDFViewer';
-import { useFieldPlacement } from '../hooks/useFieldPlacement';
+import { FieldType } from '../types';
+import { getDefaultFieldDimensions, calculateFieldPositionFromEvent } from '../utils/fieldHelpers';
 import {
   useGetDocumentQuery,
   useCreateFieldMutation,
@@ -28,8 +29,14 @@ export const DocumentEditorPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { pageCount, currentPage, setCurrentPage } = usePDFViewer();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const isNewDocument = id === 'new';
+
+  // Drag state
+  const [draggingFieldType, setDraggingFieldType] = useState<FieldType | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [selectedFieldId, setSelectedFieldId] = useState<string | undefined>(undefined);
 
   const {
     data: documentData,
@@ -38,46 +45,74 @@ export const DocumentEditorPage: React.FC = () => {
   } = useGetDocumentQuery(id || '', { skip: !id || isNewDocument });
 
   const [uploadDocument, { isLoading: isUploading }] = useUploadDocumentMutation();
-
   const [createField, { isLoading: isCreatingField }] = useCreateFieldMutation();
   const [deleteField, { isLoading: isDeletingField }] = useDeleteFieldMutation();
 
-  const {
-    selectedFieldType,
-    selectedFieldId,
-    isPlacingField,
-    isDragging,
-    dragStart,
-    containerRef,
-    handleFieldTypeSelect,
-    handleMouseDown,
-    handleMouseUp,
-    handleFieldClick,
-    cancelPlacement,
-  } = useFieldPlacement(isNewDocument ? '' : (id || ''), currentPage);
+  // Drag handlers
+  const handleFieldDragStart = (type: FieldType) => {
+    setDraggingFieldType(type);
+  };
 
-  const handlePDFMouseUp = async (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!isPlacingField) return;
+  const handleFieldDragEnd = () => {
+    setDraggingFieldType(null);
+    setIsDragOver(false);
+  };
 
-    const fieldData = handleMouseUp(event);
-    if (fieldData && id) {
-      try {
-        await createField({ documentId: id, data: fieldData }).unwrap();
-        message.success(t('documents.fieldAdded', 'Field added successfully'));
-        cancelPlacement();
-      } catch (error: any) {
-        message.error(error?.data?.message || t('documents.fieldAddError', 'Failed to add field'));
-      }
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragOver(false);
+
+    if (!draggingFieldType || !containerRef.current || !id) {
+      return;
     }
+
+    // Get fixed dimensions for this field type
+    const dimensions = getDefaultFieldDimensions(draggingFieldType);
+    const position = calculateFieldPositionFromEvent(
+      event.nativeEvent,
+      containerRef.current,
+      dimensions.width,
+      dimensions.height
+    );
+
+    const fieldData = {
+      type: draggingFieldType,
+      pageNumber: currentPage,
+      ...position,
+      ...dimensions,
+      isRequired: true,
+    };
+
+    try {
+      await createField({ documentId: id, data: fieldData }).unwrap();
+      message.success(t('documents.fieldAdded', 'Đã thêm trường ký thành công'));
+    } catch (error: any) {
+      message.error(error?.data?.message || t('documents.fieldAddError', 'Không thể thêm trường ký'));
+    }
+
+    setDraggingFieldType(null);
   };
 
   const handleDeleteField = async (fieldId: string) => {
     try {
       await deleteField(fieldId).unwrap();
-      message.success(t('documents.fieldDeleted', 'Field deleted successfully'));
+      message.success(t('documents.fieldDeleted', 'Đã xóa trường ký'));
     } catch (error: any) {
-      message.error(error?.data?.message || t('documents.fieldDeleteError', 'Failed to delete field'));
+      message.error(error?.data?.message || t('documents.fieldDeleteError', 'Không thể xóa trường ký'));
     }
+  };
+
+  const handleFieldClick = (field: any) => {
+    setSelectedFieldId(field.id);
   };
 
   const handleFileSelect = async (file: File) => {
@@ -87,10 +122,10 @@ export const DocumentEditorPage: React.FC = () => {
       formData.append('title', file.name.replace('.pdf', ''));
 
       const document = await uploadDocument(formData).unwrap();
-      message.success(t('documents.uploadSuccess', 'Document uploaded successfully'));
+      message.success(t('documents.uploadSuccess', 'Tải lên thành công'));
       navigate(`/documents/editor/${document.id}`);
     } catch (error: any) {
-      message.error(error?.data?.message || t('documents.uploadError', 'Failed to upload document'));
+      message.error(error?.data?.message || t('documents.uploadError', 'Không thể tải lên'));
     }
   };
 
@@ -106,11 +141,11 @@ export const DocumentEditorPage: React.FC = () => {
               onClick={() => navigate('/documents')}
               style={{ marginBottom: 16 }}
             >
-              {t('common.back', 'Back')}
+              {t('common.back', 'Quay lại')}
             </Button>
-            <Title level={2}>{t('documents.createNewDocument', 'Create New Document')}</Title>
+            <Title level={2}>{t('documents.createNewDocument', 'Tạo tài liệu mới')}</Title>
             <Text type="secondary">
-              {t('documents.uploadSubtitle', 'Upload a PDF document to get started')}
+              {t('documents.uploadSubtitle', 'Tải lên tài liệu PDF để bắt đầu')}
             </Text>
           </div>
           <DocumentUpload onFileSelect={handleFileSelect} disabled={isUploading} />
@@ -130,7 +165,7 @@ export const DocumentEditorPage: React.FC = () => {
   if (documentError || !documentData) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
-        <Text type="danger">{t('documents.loadError', 'Failed to load document')}</Text>
+        <Text type="danger">{t('documents.loadError', 'Không thể tải tài liệu')}</Text>
       </div>
     );
   }
@@ -149,11 +184,11 @@ export const DocumentEditorPage: React.FC = () => {
               onClick={() => navigate('/documents')}
               style={{ marginBottom: 16 }}
             >
-              {t('common.back', 'Back')}
+              {t('common.back', 'Quay lại')}
             </Button>
             <Title level={2}>{document.title}</Title>
             <Text type="secondary">
-              {t('documents.editorSubtitle', 'Add signature fields to your document')}
+              {t('documents.editorSubtitle', 'Thêm trường ký vào tài liệu của bạn')}
             </Text>
           </div>
           <Button
@@ -161,7 +196,7 @@ export const DocumentEditorPage: React.FC = () => {
             icon={<SaveOutlined />}
             onClick={() => navigate(`/documents/${id}/invite`)}
           >
-            {t('documents.saveAndContinue', 'Save & Continue')}
+            {t('documents.saveAndContinue', 'Lưu & Tiếp tục')}
           </Button>
         </div>
 
@@ -169,7 +204,8 @@ export const DocumentEditorPage: React.FC = () => {
           {/* Field Toolbar */}
           <Col xs={24} lg={6}>
             <FieldToolbar
-              onFieldTypeSelect={handleFieldTypeSelect}
+              onFieldDragStart={handleFieldDragStart}
+              onFieldDragEnd={handleFieldDragEnd}
               disabled={document.status !== 'DRAFT'}
             />
           </Col>
@@ -178,11 +214,15 @@ export const DocumentEditorPage: React.FC = () => {
           <Col xs={24} lg={18}>
             <div
               ref={containerRef}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handlePDFMouseUp}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
               style={{
                 position: 'relative',
-                cursor: isPlacingField ? 'crosshair' : 'default',
+                border: isDragOver ? '3px dashed #1890ff' : '3px dashed transparent',
+                borderRadius: 8,
+                transition: 'border-color 0.2s',
+                backgroundColor: isDragOver ? 'rgba(24, 144, 255, 0.05)' : 'transparent',
               }}
             >
               <PDFViewer
@@ -213,34 +253,33 @@ export const DocumentEditorPage: React.FC = () => {
                     onFieldDelete={handleDeleteField}
                     selectedFieldId={selectedFieldId}
                   />
+                </div>
+              )}
 
-                  {/* Drag preview */}
-                  {isDragging && dragStart && containerRef.current && (() => {
-                    const rect = containerRef.current.getBoundingClientRect();
-                    const currentMouseX = 0; // Will be updated by mouse move
-                    const currentMouseY = 0;
-                    return null; // Simplified - drag preview handled by CSS cursor
-                  })()}
+              {/* Drop hint */}
+              {isDragOver && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: 'rgba(24, 144, 255, 0.9)',
+                    color: 'white',
+                    padding: '16px 32px',
+                    borderRadius: 8,
+                    fontSize: 16,
+                    fontWeight: 500,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  {t('documents.dropHere', 'Thả vào đây để đặt trường ký')}
                 </div>
               )}
             </div>
-
-            {/* Placement hint */}
-            {isPlacingField && (
-              <div style={{ marginTop: 16, textAlign: 'center' }}>
-                <Text type="secondary">
-                  {t('documents.dragToPlace', 'Drag on the document to place and size the field')}
-                  {' '}
-                  <Button size="small" onClick={cancelPlacement}>
-                    {t('common.cancel', 'Cancel')}
-                  </Button>
-                </Text>
-              </div>
-            )}
           </Col>
         </Row>
       </Space>
     </div>
   );
 };
-

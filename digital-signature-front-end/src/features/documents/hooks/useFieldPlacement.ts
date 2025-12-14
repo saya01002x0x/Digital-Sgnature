@@ -1,6 +1,6 @@
 /**
  * useFieldPlacement Hook
- * Custom hook for managing field placement on PDF with drag-and-drop (全く動いていない。俺を除けばそのグループは何もしない犬どもばかりだ。)
+ * Custom hook for managing field placement on PDF with click-to-place (fixed size)
  */
 
 import { useState, useCallback, useRef } from 'react';
@@ -27,6 +27,7 @@ export const useFieldPlacement = (
     setSelectedFieldId(undefined);
   }, []);
 
+  // For fixed size, we only need mouse down position (no drag)
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!isPlacingField || !selectedFieldType || !containerRef.current) {
@@ -43,6 +44,7 @@ export const useFieldPlacement = (
     [isPlacingField, selectedFieldType]
   );
 
+  // Click to place field with fixed size from DEFAULT_FIELD_DIMENSIONS
   const handleMouseUp = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!isDragging || !dragStart || !selectedFieldType || !containerRef.current) {
@@ -51,62 +53,25 @@ export const useFieldPlacement = (
         return;
       }
 
-      const rect = containerRef.current.getBoundingClientRect();
-      const endX = event.clientX - rect.left;
-      const endY = event.clientY - rect.top;
-
-      // Calculate width and height from drag
-      const width = Math.abs(endX - dragStart.x);
-      const height = Math.abs(endY - dragStart.y);
-
-      // Minimum size check
-      const minWidth = 50;
-      const minHeight = 30;
-
-      if (width < minWidth || height < minHeight) {
-        // If drag is too small, use default dimensions
-        const dimensions = getDefaultFieldDimensions(selectedFieldType);
-        const position = calculateFieldPositionFromEvent(
-          event.nativeEvent,
-          containerRef.current,
-          dimensions.width,
-          dimensions.height
-        );
-
-        setIsDragging(false);
-        setDragStart(null);
-
-        return {
-          type: selectedFieldType,
-          pageNumber: currentPage,
-          ...position,
-          ...dimensions,
-          isRequired: true,
-        };
-      }
-
-      // Calculate position (top-left corner)
-      const positionX = Math.min(dragStart.x, endX);
-      const positionY = Math.min(dragStart.y, endY);
-
-      // Convert to percentages
-      const containerWidth = rect.width;
-      const containerHeight = rect.height;
-
-      const fieldData = {
-        type: selectedFieldType,
-        pageNumber: currentPage,
-        positionX: (positionX / containerWidth) * 100,
-        positionY: (positionY / containerHeight) * 100,
-        width: (width / containerWidth) * 100,
-        height: (height / containerHeight) * 100,
-        isRequired: true,
-      };
+      // Always use fixed default dimensions - no custom sizing
+      const dimensions = getDefaultFieldDimensions(selectedFieldType);
+      const position = calculateFieldPositionFromEvent(
+        event.nativeEvent,
+        containerRef.current,
+        dimensions.width,
+        dimensions.height
+      );
 
       setIsDragging(false);
       setDragStart(null);
 
-      return fieldData;
+      return {
+        type: selectedFieldType,
+        pageNumber: currentPage,
+        ...position,
+        ...dimensions,
+        isRequired: true,
+      };
     },
     [isDragging, dragStart, selectedFieldType, currentPage]
   );
