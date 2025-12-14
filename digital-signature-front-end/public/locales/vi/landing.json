@@ -1,0 +1,85 @@
+{
+    "pageTitle": "E-Signature - Nền tảng ký số điện tử hiện đại",
+    "features": {
+        "title": "Tính năng nổi bật",
+        "subtitle": "Chúng tôi cung cấp đầy đủ các công cụ cần thiết để bạn quản lý chữ ký số một cách hiệu quả nhất.",
+        "security": {
+            "title": "Bảo mật tuyệt đối",
+            "description": "Mã hóa đầu cuối chuẩn quốc tế, đảm bảo an toàn cho mọi tài liệu của bạn."
+        },
+        "cloudSync": {
+            "title": "Đồng bộ đám mây",
+            "description": "Truy cập và ký tài liệu từ bất kỳ thiết bị nào, mọi lúc mọi nơi."
+        },
+        "teamwork": {
+            "title": "Làm việc nhóm",
+            "description": "Dễ dàng chia sẻ và quản lý quy trình ký kết trong doanh nghiệp."
+        },
+        "legal": {
+            "title": "Pháp lý đảm bảo",
+            "description": "Tuân thủ đầy đủ các quy định pháp luật về chữ ký số điện tử."
+        },
+        "speed": {
+            "title": "Tốc độ nhanh chóng",
+            "description": "Ký hàng loạt tài liệu chỉ trong vài giây, tiết kiệm thời gian tối đa."
+        },
+        "multilang": {
+            "title": "Đa ngôn ngữ",
+            "description": "Hỗ trợ giao diện Tiếng Việt và Tiếng Anh, thuận tiện cho mọi người dùng."
+        }
+    },
+    "howItWorks": {
+        "title": "Quy trình đơn giản",
+        "subtitle": "Chỉ với 3 bước đơn giản để bắt đầu ký số điện tử",
+        "step1": {
+            "title": "Đăng ký tài khoản",
+            "description": "Tạo tài khoản miễn phí chỉ trong 1 phút."
+        },
+        "step2": {
+            "title": "Tải lên tài liệu",
+            "description": "Upload tài liệu cần ký (PDF, Word, Excel...)."
+        },
+        "step3": {
+            "title": "Ký và Gửi",
+            "description": "Thêm chữ ký của bạn và gửi cho người khác."
+        }
+    },
+    "hero": {
+        "badge": "🚀 Nền tảng ký số hàng đầu",
+        "title": "Ký tài liệu số",
+        "titleHighlight": "Mọi lúc, Mọi nơi",
+        "subtitle": "Giải pháp ký số điện tử an toàn, nhanh chóng và pháp lý. Đơn giản hóa quy trình làm việc của bạn ngay hôm nay.",
+        "getStarted": "Bắt đầu miễn phí",
+        "learnMore": "Tìm hiểu thêm",
+        "checkSecurity": "An toàn tuyệt đối",
+        "checkLegal": "Pháp lý đảm bảo"
+    },
+    "cta": {
+        "title": "Sẵn sàng bắt đầu?",
+        "subtitle": "Đăng ký miễn phí ngay hôm nay và trải nghiệm ký số điện tử hiện đại.",
+        "button": "Đăng ký miễn phí"
+    },
+    "footer": {
+        "home": "Trang chủ",
+        "about": "Về chúng tôi",
+        "pricing": "Bảng giá",
+        "resources": "Tài nguyên",
+        "apiDocs": "Tài liệu API",
+        "sdk": "SDK & Tích hợp",
+        "tutorials": "Hướng dẫn",
+        "faq": "Câu hỏi thường gặp",
+        "community": "Cộng đồng",
+        "changelog": "Lịch sử cập nhật",
+        "reportBug": "Báo lỗi",
+        "forum": "Diễn đàn thảo luận",
+        "support": "Hỗ trợ",
+        "company": "Công ty",
+        "introduction": "Giới thiệu",
+        "careers": "Tuyển dụng",
+        "contact": "Liên hệ",
+        "partners": "Đối tác",
+        "privacyPolicy": "Chính sách bảo mật",
+        "termsOfService": "Điều khoản dịch vụ",
+        "copyright": "© 2024 E-Signature. Tất cả quyền được bảo lưu."
+    }
+}

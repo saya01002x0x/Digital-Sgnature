@@ -1,0 +1,85 @@
+{
+    "pageTitle": "E-Signature - Modern Electronic Signature Platform",
+    "features": {
+        "title": "Key Features",
+        "subtitle": "We provide all the tools you need to manage digital signatures efficiently.",
+        "security": {
+            "title": "Absolute Security",
+            "description": "International standard end-to-end encryption, ensuring safety for all your documents."
+        },
+        "cloudSync": {
+            "title": "Cloud Sync",
+            "description": "Access and sign documents from any device, anytime, anywhere."
+        },
+        "teamwork": {
+            "title": "Team Collaboration",
+            "description": "Easily share and manage signing workflows in your organization."
+        },
+        "legal": {
+            "title": "Legal Compliance",
+            "description": "Fully compliant with all legal regulations on electronic signatures."
+        },
+        "speed": {
+            "title": "Lightning Fast",
+            "description": "Sign multiple documents in seconds, saving maximum time."
+        },
+        "multilang": {
+            "title": "Multi-language",
+            "description": "Support for Vietnamese and English interface, convenient for all users."
+        }
+    },
+    "howItWorks": {
+        "title": "Simple Process",
+        "subtitle": "Just 3 simple steps to start digital signing",
+        "step1": {
+            "title": "Create Account",
+            "description": "Create a free account in just 1 minute."
+        },
+        "step2": {
+            "title": "Upload Document",
+            "description": "Upload documents to sign (PDF, Word, Excel...)."
+        },
+        "step3": {
+            "title": "Sign & Send",
+            "description": "Add your signature and send to others."
+        }
+    },
+    "hero": {
+        "badge": "🚀 Leading Digital Signing Platform",
+        "title": "Sign Documents",
+        "titleHighlight": "Anytime, Anywhere",
+        "subtitle": "Safe, fast and legally compliant electronic signing solution. Simplify your workflow today.",
+        "getStarted": "Start Free",
+        "learnMore": "Learn More",
+        "checkSecurity": "Absolute Security",
+        "checkLegal": "Legal Compliance"
+    },
+    "cta": {
+        "title": "Ready to get started?",
+        "subtitle": "Sign up for free today and experience modern digital signing.",
+        "button": "Sign Up Free"
+    },
+    "footer": {
+        "home": "Home",
+        "about": "About Us",
+        "pricing": "Pricing",
+        "resources": "Resources",
+        "apiDocs": "API Docs",
+        "sdk": "SDK & Integration",
+        "tutorials": "Tutorials",
+        "faq": "FAQ",
+        "community": "Community",
+        "changelog": "Changelog",
+        "reportBug": "Report Bug",
+        "forum": "Discussion Forum",
+        "support": "Support",
+        "company": "Company",
+        "introduction": "About",
+        "careers": "Careers",
+        "contact": "Contact",
+        "partners": "Partners",
+        "privacyPolicy": "Privacy Policy",
+        "termsOfService": "Terms of Service",
+        "copyright": "© 2024 E-Signature. All rights reserved."
+    }
+}

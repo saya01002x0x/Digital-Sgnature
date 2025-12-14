@@ -4,6 +4,7 @@
  */
 
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Hero } from './sections/Hero';
 import { Features } from './sections/Features';
 import { HowItWorks } from './sections/HowItWorks';
@@ -12,13 +13,15 @@ import { LandingFooter } from './components/LandingFooter';
 import './styles/landing.css';
 
 const LandingPage: React.FC = () => {
+  const { t } = useTranslation('landing');
+
   useEffect(() => {
     // Set document title
-    document.title = 'E-Signature - Nền tảng ký số điện tử hiện đại';
+    document.title = t('pageTitle');
 
     // Scroll to top on mount
     window.scrollTo(0, 0);
-  }, []);
+  }, [t]);
 
   return (
     <div className="landing-page" style={{ overflowX: 'hidden' }}>
@@ -32,4 +35,3 @@ const LandingPage: React.FC = () => {
 };
 
 export default LandingPage;
-

@@ -1,12 +1,14 @@
 import React from 'react';
 import { Button, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { APP_ROUTES } from '@/app/config/constants';
 
 const { Title, Paragraph } = Typography;
 
 export const CTA: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation('landing');
 
     return (
         <section style={{
@@ -17,10 +19,10 @@ export const CTA: React.FC = () => {
         }}>
             <div style={{ maxWidth: 800, margin: '0 auto' }}>
                 <Title level={2} style={{ color: '#fff', fontSize: 40, marginBottom: 24 }}>
-                    Sẵn sàng để bắt đầu?
+                    {t('cta.title')}
                 </Title>
                 <Paragraph style={{ color: 'rgba(255,255,255,0.85)', fontSize: 20, marginBottom: 40 }}>
-                    Tham gia cùng hàng ngàn doanh nghiệp đang sử dụng E-Signature để tối ưu hóa quy trình làm việc.
+                    {t('cta.subtitle')}
                 </Paragraph>
                 <Button
                     size="large"
@@ -35,7 +37,7 @@ export const CTA: React.FC = () => {
                     }}
                     onClick={() => navigate(APP_ROUTES.REGISTER)}
                 >
-                    Đăng ký ngay - Miễn phí
+                    {t('cta.button')}
                 </Button>
             </div>
         </section>
