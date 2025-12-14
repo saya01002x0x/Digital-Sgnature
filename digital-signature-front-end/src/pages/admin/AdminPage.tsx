@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { Tabs, Card } from 'antd';
 import { BarChartOutlined, TeamOutlined, FileTextOutlined } from '@ant-design/icons';
-import { AdminLayout } from '@/components/layout/AdminLayout';
-import { useAuth } from '@/features/auth/hooks/useAuth';
 import { Overview } from './components/Overview';
 import { UsersPanel } from './components/UsersPanel';
 import { SystemLogs } from './components/SystemLogs';
 
 export const AdminPage: React.FC = () => {
-  const { user, logout, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
 
   const tabItems = [
@@ -45,7 +42,7 @@ export const AdminPage: React.FC = () => {
   ];
 
   return (
-    <AdminLayout user={user} onLogout={logout} logoutLoading={isLoading}>
+    <div style={{ padding: '24px', background: '#f5f7fa', minHeight: 'calc(100vh - 80px)' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <Tabs
           activeKey={activeTab}
@@ -60,7 +57,7 @@ export const AdminPage: React.FC = () => {
           }}
         />
       </div>
-    </AdminLayout>
+    </div>
   );
 };
 

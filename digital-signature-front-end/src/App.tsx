@@ -14,7 +14,7 @@ export const App: React.FC = () => {
     <AntApp>
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <UnifiedHeader />
-        <div style={{ 
+        <div style={{
           flex: 1,
           // Thêm padding-top cho các pages không phải landing (vì header fixed)
           paddingTop: isLandingPage ? 0 : '80px'
