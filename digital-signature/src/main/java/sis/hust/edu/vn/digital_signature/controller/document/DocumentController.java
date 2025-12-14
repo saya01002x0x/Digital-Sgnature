@@ -145,8 +145,8 @@ public class DocumentController extends BaseController {
         
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", encodedFilename);
-        headers.add("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFilename);
+        // Use RFC 5987 format for proper Unicode filename support
+        headers.add("Content-Disposition", "attachment; filename=\"" + filename + "\"; filename*=UTF-8''" + encodedFilename);
         
         return ResponseEntity.ok()
                 .headers(headers)
