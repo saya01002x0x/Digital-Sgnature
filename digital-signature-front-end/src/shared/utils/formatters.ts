@@ -5,19 +5,24 @@
 
 /**
  * Format a date to a localized string
- * @param date - Date string or Date object
+ * @param date - Date string or Date object (can be null/undefined)
  * @param locale - Locale code (vi-VN, en-US, etc.)
  * @param options - Intl.DateTimeFormat options
  */
 export const formatDate = (
-  date: string | Date,
+  date: string | Date | null | undefined,
   locale = 'en-US',
   options?: Intl.DateTimeFormatOptions
 ): string => {
   try {
+    // Handle null/undefined
+    if (!date) {
+      return '-';
+    }
+
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     
-    if (isNaN(dateObj.getTime())) {
+    if (!dateObj || isNaN(dateObj.getTime())) {
       return 'Invalid date';
     }
 
@@ -37,11 +42,11 @@ export const formatDate = (
 
 /**
  * Format a date to include time
- * @param date - Date string or Date object
+ * @param date - Date string or Date object (can be null/undefined)
  * @param locale - Locale code
  */
 export const formatDateTime = (
-  date: string | Date,
+  date: string | Date | null | undefined,
   locale = 'en-US'
 ): string => {
   return formatDate(date, locale, {
@@ -55,17 +60,23 @@ export const formatDateTime = (
 
 /**
  * Format timestamp with full date and time
- * @param timestamp - ISO timestamp string or Date object
+ * @param timestamp - ISO timestamp string or Date object (can be null/undefined)
  * @param locale - Locale code ('vi' or 'en')
  */
 export const formatTimestamp = (
-  timestamp: string | Date,
+  timestamp: string | Date | null | undefined,
   locale: 'vi' | 'en' = 'en'
 ): string => {
   try {
+    // Handle null/undefined
+    if (!timestamp) {
+      return '-';
+    }
+
     const dateObj = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
     
-    if (isNaN(dateObj.getTime())) {
+    // Check if dateObj is valid
+    if (!dateObj || isNaN(dateObj.getTime())) {
       return 'Invalid date';
     }
 
@@ -87,17 +98,22 @@ export const formatTimestamp = (
 
 /**
  * Format a date as relative time (e.g., "2 hours ago")
- * @param date - Date string or Date object
+ * @param date - Date string or Date object (can be null/undefined)
  * @param locale - Locale code
  */
 export const formatRelativeTime = (
-  date: string | Date,
+  date: string | Date | null | undefined,
   locale = 'en-US'
 ): string => {
   try {
+    // Handle null/undefined
+    if (!date) {
+      return '-';
+    }
+
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     
-    if (isNaN(dateObj.getTime())) {
+    if (!dateObj || isNaN(dateObj.getTime())) {
       return 'Invalid date';
     }
 

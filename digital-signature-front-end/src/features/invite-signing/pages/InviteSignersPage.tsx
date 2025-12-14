@@ -52,6 +52,7 @@ export const InviteSignersPage: React.FC = () => {
   const {
     assignedFields,
     handleAssignField,
+    handleUnassignField,
     isReadyToSend,
     handleSendInvitations,
     isSending,
@@ -231,8 +232,8 @@ export const InviteSignersPage: React.FC = () => {
               {/* Signers Summary */}
               <Card title={t('invitePage.signersSummary')}>
                 <Space direction="vertical" style={{ width: '100%' }}>
-                  {formValues.signers.map((signer, index) => (
-                    <div key={index}>
+                  {formValues.signers.map((signer) => (
+                    <div key={`${signer.email}-${signer.order}`}>
                       <Text strong>
                         {signer.order}. {signer.name}
                       </Text>{' '}
@@ -251,6 +252,7 @@ export const InviteSignersPage: React.FC = () => {
                 signers={formValues.signers}
                 assignedFields={assignedFields}
                 onAssign={handleAssignField}
+                onUnassign={handleUnassignField}
               />
 
               {/* Actions */}

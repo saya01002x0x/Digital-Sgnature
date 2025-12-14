@@ -49,10 +49,17 @@ export const InviteForm: React.FC<InviteFormProps> = ({
   };
 
   // Check if any existing signer is incomplete (missing name or email)
+  // A signer is incomplete if it has one field filled but not the other
   const hasIncompleteSigner = () => {
     const signers = form.getFieldValue('signers') || [];
     return signers.some(
-      (s: any) => s && ((s.name && !s.email) || (!s.name && s.email))
+      (s: any) => {
+        if (!s) return false;
+        const hasName = s.name && s.name.trim() !== '';
+        const hasEmail = s.email && s.email.trim() !== '';
+        // Incomplete if one is filled but not both
+        return (hasName && !hasEmail) || (!hasName && hasEmail);
+      }
     );
   };
 
@@ -80,9 +87,9 @@ export const InviteForm: React.FC<InviteFormProps> = ({
 
     const signers = form.getFieldValue('signers') || [];
 
-    // Prevent duplicate email
+    // Prevent duplicate email (case-insensitive)
     const isAlreadyAdded = signers.some(
-      (s: any) => s?.email === user.email
+      (s: any) => s?.email && s.email.toLowerCase().trim() === user.email.toLowerCase().trim()
     );
     if (isAlreadyAdded) {
       message.warning(t('inviteForm.emailDuplicate', 'Email đã tồn tại trong danh sách'));
@@ -119,16 +126,20 @@ export const InviteForm: React.FC<InviteFormProps> = ({
     message.success(t('inviteForm.addedMyself', 'Đã thêm bạn vào danh sách người ký'));
   };
 
-  // Validate unique emails
-  const validateUniqueEmail = (_: any, value: string, index: number) => {
+  // Validate unique emails (case-insensitive)
+  const validateUniqueEmail = (_: any, value: string) => {
     if (!value) return Promise.resolve();
     
     const signers = form.getFieldValue('signers') || [];
-    const duplicateIndex = signers.findIndex(
-      (s: any, i: number) => i !== index && s?.email === value
-    );
+    const normalizedValue = value.toLowerCase().trim();
+    
+    // Count occurrences of this email (case-insensitive)
+    const duplicateCount = signers.filter(
+      (s: any) => s?.email && s.email.toLowerCase().trim() === normalizedValue
+    ).length;
 
-    if (duplicateIndex !== -1) {
+    // If more than 1 occurrence, it's a duplicate
+    if (duplicateCount > 1) {
       return Promise.reject(new Error(t('inviteForm.emailDuplicate', 'Email đã tồn tại trong danh sách')));
     }
     return Promise.resolve();
@@ -209,8 +220,7 @@ export const InviteForm: React.FC<InviteFormProps> = ({
                           { required: true, message: t('inviteForm.emailRequired') },
                           { type: 'email', message: t('inviteForm.emailInvalid') },
                           {
-                            validator: (_, value) =>
-                              validateUniqueEmail(_, value, field.name),
+                            validator: validateUniqueEmail,
                           },
                         ]}
                         style={{ marginBottom: 0 }}
