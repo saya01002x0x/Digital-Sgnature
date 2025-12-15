@@ -12,6 +12,7 @@ const TestCardPage = lazy(() => import('@/pages/TestCardPage').then(module => ({
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import('@/features/auth/pages/RegisterPage').then(module => ({ default: module.RegisterPage })));
 const ForgotPasswordPage = lazy(() => import('@/features/auth/pages/ForgotPasswordPage').then(module => ({ default: module.ForgotPasswordPage })));
+const VerifyRegistrationPage = lazy(() => import('@/features/auth/pages/VerifyRegistrationPage').then(module => ({ default: module.VerifyRegistrationPage })));
 const ProfilePage = lazy(() => import('@/features/auth/pages/ProfilePage').then(module => ({ default: module.ProfilePage })));
 const UsersPage = lazy(() => import('@/features/users/pages/UsersPage').then(module => ({ default: module.UsersPage })));
 const SignatureListPage = lazy(() => import('@/features/signature/pages/SignatureListPage').then(module => ({ default: module.SignatureListPage })));
@@ -87,6 +88,22 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
       element: (
         <Suspense fallback={<Loader />}>
           {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <RegisterPage />}
+        </Suspense>
+      ),
+    },
+    {
+      path: APP_ROUTES.FORGOT_PASSWORD,
+      element: (
+        <Suspense fallback={<Loader />}>
+          {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <ForgotPasswordPage />}
+        </Suspense>
+      ),
+    },
+    {
+      path: '/verify-otp',
+      element: (
+        <Suspense fallback={<Loader />}>
+          {isAuthenticated ? <Navigate to={APP_ROUTES.HOME} replace /> : <VerifyRegistrationPage />}
         </Suspense>
       ),
     },

@@ -34,6 +34,7 @@ public class AuthService {
     private final OtpService otpService;
     private final FileService fileService;
     private final UserContext userContext;
+    private final sis.hust.edu.vn.digital_signature.service.email.EmailService emailService;
 
     public AuthResponse register(RegisterRequest req) {
         if (userRepository.findByUsername(req.getUsername()).isPresent()) {
@@ -56,8 +57,7 @@ public class AuthService {
                         .gender(req.getGender())
                         .isActive(true)
                         .role(Role.USER)
-                        .build()
-        );
+                        .build());
 
         String token = jwtService.generateToken(user.getUsername());
         RefreshToken refresh = refreshTokenService.createRefreshToken(user);
@@ -89,8 +89,7 @@ public class AuthService {
         }
 
         String newAccessToken = jwtService.generateToken(
-                token.getUser().getUsername()
-        );
+                token.getUser().getUsername());
 
         return new AuthResponse(newAccessToken, refreshToken);
     }
@@ -125,16 +124,44 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public String sendOtp(String email) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new BusinessException(ErrorMessages.EMAIL_ALREADY_EXISTS);
+    public String sendOtp(String email, String typeStr) {
+        sis.hust.edu.vn.digital_signature.entity.enums.OtpType type;
+        try {
+            type = sis.hust.edu.vn.digital_signature.entity.enums.OtpType.valueOf(typeStr);
+        } catch (IllegalArgumentException e) {
+            throw new BusinessException("Invalid OTP type");
+        }
+
+        if (type == sis.hust.edu.vn.digital_signature.entity.enums.OtpType.REGISTER) {
+            if (userRepository.findByEmail(email).isPresent()) {
+                throw new BusinessException(ErrorMessages.EMAIL_ALREADY_EXISTS);
+            }
+        } else if (type == sis.hust.edu.vn.digital_signature.entity.enums.OtpType.FORGOT_PASSWORD) {
+            if (userRepository.findByEmail(email).isEmpty()) {
+                throw new EntityNotFoundException(ErrorMessages.USER_NOT_FOUND);
+            }
         }
 
         String otp = otpService.generateOtp(email);
 
-        log.info("OTP {} generated for email: {}", otp, email);
+        log.info("OTP {} generated for email: {}, type: {}", otp, email, type);
+
+        // Send OTP via email
+        emailService.sendOtpEmail(email, otp);
 
         return otp;
+    }
+
+    public void resetPassword(String email, String otp, String newPassword) {
+        if (!otpService.verifyOtp(email, otp)) {
+            throw new BusinessException("Invalid or expired OTP");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.USER_NOT_FOUND));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     public AuthResponse verifyOtpAndRegister(VerifyOtpRequest request) {
@@ -162,8 +189,7 @@ public class AuthService {
                         .gender(request.getGender())
                         .isActive(true)
                         .role(Role.USER)
-                        .build()
-        );
+                        .build());
 
         String token = jwtService.generateToken(user.getUsername());
         RefreshToken refresh = refreshTokenService.createRefreshToken(user);
@@ -231,4 +257,3 @@ public class AuthService {
         return new AuthResponse(token, refresh.getToken());
     }
 }
-
