@@ -46,6 +46,8 @@
     "selfSignSuccess": "Đã tạo phiên ký cho bạn",
     "selfSignError": "Không thể tạo phiên ký",
     "download": "Tải Xuống",
+    "downloadWithQr": "Tải có mã QR",
+    "downloadQrSuccess": "Tải có mã QR thành công!",
     "signers": {
       "title": "Người Ký",
       "name": "Tên",
@@ -133,5 +135,23 @@
     "sortCreatedAsc": "Cũ Nhất Trước",
     "sortUpdatedDesc": "Cập Nhật Gần Đây",
     "sortUpdatedAsc": "Cập Nhật Lâu Nhất"
+  },
+  "verify": {
+    "title": "Xác Minh Tài Liệu",
+    "verifying": "Đang xác minh tài liệu...",
+    "errorTitle": "Xác Minh Thất Bại",
+    "errorSubtitle": "Không thể xác minh tài liệu này",
+    "goHome": "Về Trang Chủ",
+    "valid": "Tài Liệu Hợp Lệ",
+    "validDescription": "Tài liệu này đã được xác minh và không bị sửa đổi sau khi ký.",
+    "modified": "Tài Liệu Đã Bị Sửa Đổi!",
+    "modifiedDescription": "Cảnh báo: Tài liệu này đã bị thay đổi sau khi ký. Chữ ký có thể không còn hợp lệ.",
+    "invalid": "Xác Minh Thất Bại",
+    "documentTitle": "Tài liệu",
+    "signatures": "Chữ ký",
+    "verified": "đã xác minh",
+    "security": "Bảo mật",
+    "verifiedAt": "Xác minh lúc",
+    "poweredBy": "Được hỗ trợ bởi Nền tảng Chữ ký Số"
   }
 }

@@ -23,6 +23,7 @@ const DocumentDetailPage = lazy(() => import('@/features/documents/pages/Documen
 const SigningRoomPage = lazy(() => import('@/features/invite-signing/pages/SigningRoomPage').then(module => ({ default: module.SigningRoomPage })));
 const InviteSignersPage = lazy(() => import('@/features/invite-signing/pages/InviteSignersPage').then(module => ({ default: module.InviteSignersPage })));
 const AdminPage = lazy(() => import('@/pages/admin/AdminPage').then(module => ({ default: module.AdminPage })));
+const PublicVerifyPage = lazy(() => import('@/pages/PublicVerifyPage').then(module => ({ default: module.PublicVerifyPage })));
 
 // Loading fallback
 const Loader = () => <div>Loading...</div>;
@@ -248,6 +249,14 @@ export const routes = (isAuthenticated: boolean, user?: UserBase): RouteObject[]
               </RoleGuard>
             )}
           </ProtectedRoute>
+        </Suspense>
+      ),
+    },
+    {
+      path: '/verify/:documentId',
+      element: (
+        <Suspense fallback={<Loader />}>
+          <PublicVerifyPage />
         </Suspense>
       ),
     },

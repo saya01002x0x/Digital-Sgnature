@@ -26,6 +26,7 @@ import {
   SendOutlined,
   DownloadOutlined,
   FormOutlined,
+  QrcodeOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useGetDocumentQuery, useGetDocumentTimelineQuery } from '../services/documents.api';
@@ -262,16 +263,12 @@ export const DocumentDetailPage: React.FC = () => {
                 <Button
                   icon={<DownloadOutlined />}
                   onClick={() => {
-                    // FIX: Lấy token từ STORAGE_KEYS.AUTH_TOKEN
                     const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-
-                    // Tự động thêm Bearer token vào header
                     fetch(`/api/documents/${id}/download`, {
                       headers: { 'Authorization': `Bearer ${token}` },
                     })
                       .then(res => {
                         if (!res.ok) {
-                          // Báo lỗi 403/404/500 rõ ràng hơn
                           return res.json().then(err => Promise.reject(err));
                         }
                         return res.blob();
@@ -287,11 +284,55 @@ export const DocumentDetailPage: React.FC = () => {
                       })
                       .catch((err) => {
                         console.error('Download error details:', err);
-                        message.error(err?.message || t('detail.downloadError', 'Download failed. Vui lòng kiểm tra đã đăng nhập chưa.'));
+                        message.error(err?.message || t('detail.downloadError', 'Download failed.'));
                       });
                   }}
                 >
                   {t('detail.download')}
+                </Button>
+                <Button
+                  icon={<QrcodeOutlined />}
+                  onClick={() => {
+                    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+                    fetch(`/api/documents/${id}/download-with-qr`, {
+                      headers: { 'Authorization': `Bearer ${token}` },
+                    })
+                      .then(res => {
+                        if (!res.ok) {
+                          return res.json().then(err => Promise.reject(err));
+                        }
+                        return res.blob();
+                      })
+                      .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const link = window.document.createElement('a');
+                        link.href = url;
+                        link.download = `${document.title}_signed_qr.pdf`;
+                        link.click();
+                        window.URL.revokeObjectURL(url);
+                        message.success(t('detail.downloadQrSuccess', 'Download with QR successful!'));
+                      })
+                      .catch((err) => {
+                        console.error('Download error details:', err);
+                        message.error(err?.message || t('detail.downloadError', 'Download failed.'));
+                      });
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #1890FF 0%, #020E1A 100%)',
+                    borderColor: 'transparent',
+                    color: 'white',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(24, 144, 255, 0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {t('detail.downloadWithQr', 'Download with QR')}
                 </Button>
               </Space>
             </Space>
