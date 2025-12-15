@@ -52,7 +52,13 @@
       "email": "Email",
       "order": "Order",
       "status": "Status",
-      "signedAt": "Signed At"
+      "signedAt": "Signed At",
+      "statusLabel": {
+        "PENDING": "Pending",
+        "OPENED": "Opened",
+        "SIGNED": "Signed",
+        "DECLINED": "Declined"
+      }
     },
     "fields": {
       "title": "Fields Summary",

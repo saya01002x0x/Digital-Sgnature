@@ -1,40 +1,47 @@
 /**
  * RegisterPage Component
- * Page for user registration
+ * Page for user registration with OTP verification
  * Using pure Ant Design components
  */
 
-import type React from 'react';
-import { Typography, Space, Divider, message } from 'antd';
+import React from 'react';
+import { Typography, Space, Divider, App } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RegisterForm } from '../components/RegisterForm';
 import { AuthLayout } from '../components/AuthLayout';
-import { useRegisterMutation } from '../api';
+import { useSendOtpMutation } from '../api';
 import type { RegisterFormData } from '../utils/validators';
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 export const RegisterPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [register, { isLoading, error }] = useRegisterMutation();
+  const { message } = App.useApp();
 
-  const handleRegister = async (values: RegisterFormData) => {
+  const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
+
+  const handleRegisterSubmit = async (values: RegisterFormData) => {
     try {
-      await register({
-        username: values.email, // Use email as username since login uses email
-        email: values.email,
-        password: values.password,
-        fullName: values.name,
-      }).unwrap();
+      const response = await sendOtp({ email: values.email, type: 'REGISTER' }).unwrap();
 
-      message.success(t('auth.registerSuccess', 'Registration successful! Please login.'));
-      navigate('/login');
+      // message.success('OTP sent successfully!');
+      // TODO: Remove in production
+      // if (response.otp) {
+      //   console.log('OTP:', response.otp);
+      //   message.info(`Dev Mode: OTP is ${response.otp}`, 10);
+      // }
+      navigate('/verify-otp', { state: values });
     } catch (err: any) {
-      message.error(err?.data?.message || t('auth.registerFailed', 'Registration failed'));
+      if (err?.status === 409) {
+        message.error('Email or Username already exists');
+      } else {
+        message.error(err?.data?.message || t('auth.registerFailed', 'Registration failed'));
+      }
     }
   };
+
 
   return (
     <AuthLayout
@@ -43,9 +50,9 @@ export const RegisterPage: React.FC = () => {
     >
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <RegisterForm
-          onSubmit={handleRegister}
-          isLoading={isLoading}
-          error={error ? String(error) : null}
+          onSubmit={handleRegisterSubmit}
+          isLoading={isSendingOtp}
+          error={null}
         />
 
         <Divider>{t('common.or', 'OR')}</Divider>
