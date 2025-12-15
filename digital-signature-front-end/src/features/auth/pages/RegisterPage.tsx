@@ -26,12 +26,12 @@ export const RegisterPage: React.FC = () => {
     try {
       const response = await sendOtp({ email: values.email, type: 'REGISTER' }).unwrap();
 
-      message.success('OTP sent successfully!');
+      // message.success('OTP sent successfully!');
       // TODO: Remove in production
-      if (response.otp) {
-        console.log('OTP:', response.otp);
-        message.info(`Dev Mode: OTP is ${response.otp}`, 10);
-      }
+      // if (response.otp) {
+      //   console.log('OTP:', response.otp);
+      //   message.info(`Dev Mode: OTP is ${response.otp}`, 10);
+      // }
       navigate('/verify-otp', { state: values });
     } catch (err: any) {
       if (err?.status === 409) {

@@ -150,7 +150,7 @@ public class AuthService {
 
         String otp = otpService.generateOtp(email);
 
-        log.info("OTP {} generated for email: {}, type: {}", otp, email, type);
+        // log.("OTP {} generated for email: {}, type: {}", otp, email, type);
 
         // Send OTP via email
         emailService.sendOtpEmail(email, otp);

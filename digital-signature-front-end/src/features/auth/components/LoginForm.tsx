@@ -116,7 +116,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             )}
           />
           <Link to={APP_ROUTES.FORGOT_PASSWORD}>
-            {t('auth.forgotPassword', 'Forgot password?')}
+            {t('auth.forgotPasswordLink', 'Forgot password?')}
           </Link>
         </div>
 

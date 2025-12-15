@@ -3,15 +3,18 @@
  * Demo page for testing Card with Form
  */
 
-import type React from 'react';
-import { Card, Form, Input, Button, Select, DatePicker, Checkbox, Row, Col, Space, Typography, message } from 'antd';
+import React, { useState } from 'react';
+import { Card, Form, Input, Button, Select, DatePicker, Checkbox, Row, Col, Space, Typography, message, Modal } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 export const TestCardPage: React.FC = () => {
+  const { t } = useTranslation('auth');
   const [form] = Form.useForm();
+  const [termsModalVisible, setTermsModalVisible] = useState(false);
 
   const onFinish = (values: any) => {
     console.log('Form values:', values);
@@ -21,6 +24,11 @@ export const TestCardPage: React.FC = () => {
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
     message.error('Please fill in all required fields');
+  };
+
+  const handleTermsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setTermsModalVisible(true);
   };
 
   return (
@@ -189,9 +197,18 @@ export const TestCardPage: React.FC = () => {
                 <Form.Item
                   name="remember"
                   valuePropName="checked"
+                  rules={[
+                    {
+                      validator: (_, value) =>
+                        value ? Promise.resolve() : Promise.reject(new Error(t('termsRequired'))),
+                    },
+                  ]}
                 >
                   <Checkbox>
-                    I agree to the <a href="#">terms and conditions</a>
+                    {t('agreeToTerms')}{' '}
+                    <a href="#" onClick={handleTermsClick}>
+                      {t('termsAndConditions')}
+                    </a>
                   </Checkbox>
                 </Form.Item>
 
@@ -224,9 +241,37 @@ export const TestCardPage: React.FC = () => {
           </Space>
         </Col>
       </Row>
+
+      {/* Terms and Conditions Modal */}
+      <Modal
+        title={t('termsModal.title')}
+        open={termsModalVisible}
+        onCancel={() => setTermsModalVisible(false)}
+        footer={[
+          <Button key="accept" type="primary" onClick={() => {
+            form.setFieldsValue({ remember: true });
+            setTermsModalVisible(false);
+          }}>
+            {t('termsModal.acceptButton')}
+          </Button>
+        ]}
+        width={700}
+      >
+        <div
+          style={{
+            maxHeight: '400px',
+            overflowY: 'auto',
+            padding: '16px',
+            background: '#fafafa',
+            borderRadius: '8px',
+            whiteSpace: 'pre-wrap',
+            lineHeight: '1.8',
+            fontSize: '14px'
+          }}
+        >
+          {t('termsModal.content')}
+        </div>
+      </Modal>
     </div>
   );
 };
-
-
-

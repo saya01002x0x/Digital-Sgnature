@@ -52,7 +52,13 @@
       "email": "Email",
       "order": "Thứ Tự",
       "status": "Trạng Thái",
-      "signedAt": "Đã Ký Lúc"
+      "signedAt": "Đã Ký Lúc",
+      "statusLabel": {
+        "PENDING": "Chờ Ký",
+        "OPENED": "Đã Mở",
+        "SIGNED": "Đã Ký",
+        "DECLINED": "Đã Từ Chối"
+      }
     },
     "fields": {
       "title": "Tóm Tắt Các Trường",

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Typography, Space, Steps, App, Card } from 'antd';
-import { UserOutlined, MailOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Typography, Steps, App, Card } from 'antd';
+import { MailOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AuthLayout } from '../components/AuthLayout';
 import { useSendOtpMutation, useResetPasswordMutation } from '../api';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export const ForgotPasswordPage: React.FC = () => {
+  const { t } = useTranslation('auth');
   const navigate = useNavigate();
   const { message } = App.useApp();
   const [step, setStep] = useState(0);
@@ -18,31 +20,31 @@ export const ForgotPasswordPage: React.FC = () => {
 
   const handleSendOtp = async (values: { email: string }) => {
     try {
-      const response = await sendOtp({ email: values.email, type: 'FORGOT_PASSWORD' }).unwrap();
+      await sendOtp({ email: values.email, type: 'FORGOT_PASSWORD' }).unwrap();
       setEmail(values.email);
-      message.success('OTP sent successfully!');
+      message.success(t('forgotPassword.otpSentSuccess'));
       setStep(1);
     } catch (error: any) {
       if (error?.status === 404) {
-        message.error('Email not found');
+        message.error(t('forgotPassword.emailNotFound'));
       } else {
-        message.error(error?.data?.message || 'Failed to send OTP');
+        message.error(error?.data?.message || t('forgotPassword.sendOtpFailed'));
       }
     }
   };
 
   const handleResetPassword = async (values: { otp: string; newPassword: string; confirmPassword: string }) => {
     if (values.newPassword !== values.confirmPassword) {
-      message.error('Passwords do not match');
+      message.error(t('forgotPassword.passwordMismatch'));
       return;
     }
 
     try {
       await resetPassword({ email, otp: values.otp, newPassword: values.newPassword }).unwrap();
-      message.success('Password reset successfully! Please login.');
+      message.success(t('forgotPassword.resetSuccess'));
       navigate('/login');
     } catch (error: any) {
-      message.error(error?.data?.message || 'Failed to reset password');
+      message.error(error?.data?.message || t('forgotPassword.resetFailed'));
     }
   };
 
@@ -51,19 +53,19 @@ export const ForgotPasswordPage: React.FC = () => {
       <Form.Item
         name="email"
         rules={[
-          { required: true, message: 'Please input your email!' },
-          { type: 'email', message: 'Please enter a valid email!' }
+          { required: true, message: t('forgotPassword.emailRequired') },
+          { type: 'email', message: t('forgotPassword.emailInvalid') }
         ]}
       >
         <Input
           prefix={<MailOutlined />}
-          placeholder="Email Address"
+          placeholder={t('forgotPassword.emailPlaceholder')}
           size="large"
         />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" block size="large" loading={isSendingOtp}>
-          Send OTP
+          {t('forgotPassword.sendOtp')}
         </Button>
       </Form.Item>
     </Form>
@@ -72,16 +74,16 @@ export const ForgotPasswordPage: React.FC = () => {
   const renderResetStep = () => (
     <Form onFinish={handleResetPassword} layout="vertical">
       <div style={{ marginBottom: 16 }}>
-        <Text type="secondary">OTP sent to {email}</Text>
+        <Text type="secondary">{t('forgotPassword.otpSentTo')} {email}</Text>
       </div>
 
       <Form.Item
         name="otp"
-        rules={[{ required: true, message: 'Please input OTP!' }]}
+        rules={[{ required: true, message: t('forgotPassword.otpRequired') }]}
       >
         <Input
           prefix={<SafetyOutlined />}
-          placeholder="Enter OTP"
+          placeholder={t('forgotPassword.otpPlaceholder')}
           size="large"
           maxLength={6}
         />
@@ -90,50 +92,50 @@ export const ForgotPasswordPage: React.FC = () => {
       <Form.Item
         name="newPassword"
         rules={[
-          { required: true, message: 'Please input new password!' },
-          { min: 6, message: 'Password must be at least 6 characters!' }
+          { required: true, message: t('forgotPassword.newPasswordRequired') },
+          { min: 6, message: t('forgotPassword.newPasswordMin') }
         ]}
       >
         <Input.Password
           prefix={<LockOutlined />}
-          placeholder="New Password"
+          placeholder={t('forgotPassword.newPasswordPlaceholder')}
           size="large"
         />
       </Form.Item>
       <Form.Item
         name="confirmPassword"
         rules={[
-          { required: true, message: 'Please confirm your password!' }
+          { required: true, message: t('forgotPassword.confirmNewPasswordRequired') }
         ]}
       >
         <Input.Password
           prefix={<LockOutlined />}
-          placeholder="Confirm New Password"
+          placeholder={t('forgotPassword.confirmNewPasswordPlaceholder')}
           size="large"
         />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" block size="large" loading={isResetting}>
-          Reset Password
+          {t('forgotPassword.resetPassword')}
         </Button>
       </Form.Item>
       <div style={{ textAlign: 'center' }}>
         <Button type="link" onClick={() => setStep(0)}>
-          Back to Email
+          {t('forgotPassword.backToEmail')}
         </Button>
       </div>
     </Form>
   );
 
   const steps = [
-    { title: 'Email', content: renderEmailStep() },
-    { title: 'Reset Password', content: renderResetStep() },
+    { title: t('forgotPassword.stepEmail'), content: renderEmailStep() },
+    { title: t('forgotPassword.stepReset'), content: renderResetStep() },
   ];
 
   return (
     <AuthLayout
-      title="Forgot Password"
-      description="Recover your account access"
+      title={t('forgotPassword.title')}
+      description={t('forgotPassword.description')}
     >
       <Card variant="borderless" styles={{ body: { padding: 0 } }}>
         <Steps
@@ -146,7 +148,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
         <div style={{ marginTop: 24, textAlign: 'center' }}>
           <Text>
-            Remember your password? <Link to="/login">Login now</Link>
+            {t('forgotPassword.rememberPassword')} <Link to="/login">{t('forgotPassword.loginNow')}</Link>
           </Text>
         </div>
       </Card>
