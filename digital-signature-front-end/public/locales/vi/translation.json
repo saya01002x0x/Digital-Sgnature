@@ -25,7 +25,8 @@
     "or": "HOẶC",
     "tryAgain": "Thử lại",
     "goHome": "Về trang chủ",
-    "noData": "Không có dữ liệu"
+    "noData": "Không có dữ liệu",
+    "optional": "Tùy chọn"
   },
   "auth": {
     "login": "Đăng nhập",

@@ -18,7 +18,7 @@ import type { LoginFormData } from '../utils/validators';
 const { Text } = Typography;
 
 export const LoginPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'translation']);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [login, { isLoading, error }] = useLoginMutation();
@@ -52,19 +52,19 @@ export const LoginPage: React.FC = () => {
         }));
       }
 
-      message.success(t('auth.loginSuccess', 'Login successful!'));
+      message.success(t('loginSuccess'));
       navigate('/documents');
     } catch (err: any) {
-      const errorMessage = err?.data?.message || t('auth.loginFailed', 'Login failed');
+      const errorMessage = err?.data?.message || t('loginFailed');
       dispatch(loginFailure(errorMessage));
       message.error(errorMessage);
     }
-};
+  };
 
   return (
     <AuthLayout
-      title={t('auth.welcomeBack', 'Welcome Back')}
-      description={t('auth.loginSubtitle', 'Sign in to continue to E-Signature')}
+      title={t('welcomeBack')}
+      description={t('loginSubtitle')}
     >
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <LoginForm
@@ -73,13 +73,13 @@ export const LoginPage: React.FC = () => {
           error={error ? String(error) : null}
         />
 
-        <Divider>{t('common.or', 'OR')}</Divider>
+        <Divider>{t('common.or', { ns: 'translation' })}</Divider>
 
         <div style={{ textAlign: 'center' }}>
           <Text>
-            {t('auth.noAccount', "Don't have an account?")}{' '}
+            {t('noAccount')}{' '}
             <Link to="/register">
-              {t('auth.registerNow', 'Register now')}
+              {t('registerNow')}
             </Link>
           </Text>
         </div>

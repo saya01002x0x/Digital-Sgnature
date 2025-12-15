@@ -17,7 +17,7 @@ const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;
 
 export const CreateSignaturePage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['signature', 'translation']);
   const navigate = useNavigate();
   const { createSignature, isCreating } = useSignature();
   const screens = useBreakpoint();
@@ -37,7 +37,7 @@ export const CreateSignaturePage: React.FC = () => {
 
   const handleSave = async () => {
     if (!imageData) {
-      message.warning(t('signature.pleaseCreateSignature', 'Please create a signature first'));
+      message.warning(t('pleaseCreateSignature'));
       return;
     }
 
@@ -61,7 +61,7 @@ export const CreateSignaturePage: React.FC = () => {
       label: (
         <span>
           <HighlightOutlined />
-          {t('signature.drawSignature', 'Draw Signature')}
+          {t('drawSignature')}
         </span>
       ),
       children: (
@@ -81,7 +81,7 @@ export const CreateSignaturePage: React.FC = () => {
       label: (
         <span>
           <EditOutlined />
-          {t('signature.typeSignature', 'Type Signature')}
+          {t('typeSignature')}
         </span>
       ),
       children: (
@@ -101,26 +101,26 @@ export const CreateSignaturePage: React.FC = () => {
             onClick={() => navigate('/signatures')}
             style={{ marginBottom: 16 }}
           >
-            {t('common.back', 'Back')}
+            {t('common.back', { ns: 'translation' })}
           </Button>
-          <Title level={2}>{t('signature.createNewSignature', 'Create New Signature')}</Title>
+          <Title level={2}>{t('createNewSignature')}</Title>
           <Text type="secondary">
-            {t('signature.createDescription', 'Choose your preferred method to create your signature')}
+            {t('createDescription')}
           </Text>
         </div>
 
         {/* Signature Name (Optional) */}
         <Card>
           <Space direction="vertical" size="small" style={{ width: '100%' }}>
-            <Text strong>{t('signature.signatureName', 'Signature Name')} ({t('common.optional', 'Optional')})</Text>
+            <Text strong>{t('signatureName')} ({t('common.optional')})</Text>
             <Input
-              placeholder={t('signature.nameExample', 'e.g., Formal, Casual, Business')}
+              placeholder={t('nameExample')}
               value={signatureName}
               onChange={(e) => setSignatureName(e.target.value)}
               maxLength={50}
             />
             <Text type="secondary" style={{ fontSize: 12 }}>
-              {t('signature.nameHint', 'Give your signature a name to easily identify it later')}
+              {t('nameHint')}
             </Text>
           </Space>
         </Card>
@@ -135,7 +135,7 @@ export const CreateSignaturePage: React.FC = () => {
 
         {/* Preview if created */}
         {imageData && (
-          <Card title={t('signature.preview', 'Preview')}>
+          <Card title={t('preview')}>
             <div
               style={{
                 padding: 24,
@@ -164,7 +164,7 @@ export const CreateSignaturePage: React.FC = () => {
         {/* Save Button */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
           <Button size="large" onClick={() => navigate('/signatures')}>
-            {t('common.cancel', 'Cancel')}
+            {t('common.cancel', { ns: 'translation' })}
           </Button>
           <Button
             type="primary"
@@ -173,7 +173,7 @@ export const CreateSignaturePage: React.FC = () => {
             loading={isCreating}
             disabled={!imageData}
           >
-            {t('signature.saveSignature', 'Save Signature')}
+            {t('saveSignature')}
           </Button>
         </div>
       </Space>

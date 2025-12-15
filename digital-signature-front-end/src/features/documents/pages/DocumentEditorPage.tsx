@@ -26,7 +26,7 @@ const { Title, Text } = Typography;
 const { useBreakpoint } = Grid;
 
 export const DocumentEditorPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['documents', 'translation']);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { pageCount, currentPage, setCurrentPage } = usePDFViewer();
@@ -97,9 +97,9 @@ export const DocumentEditorPage: React.FC = () => {
 
     try {
       await createField({ documentId: id, data: fieldData }).unwrap();
-      message.success(t('documents.fieldAdded', 'Đã thêm trường ký thành công'));
+      message.success(t('fieldAdded'));
     } catch (error: any) {
-      message.error(error?.data?.message || t('documents.fieldAddError', 'Không thể thêm trường ký'));
+      message.error(error?.data?.message || t('fieldAddError'));
     }
 
     setDraggingFieldType(null);
@@ -108,9 +108,9 @@ export const DocumentEditorPage: React.FC = () => {
   const handleDeleteField = async (fieldId: string) => {
     try {
       await deleteField(fieldId).unwrap();
-      message.success(t('documents.fieldDeleted', 'Đã xóa trường ký'));
+      message.success(t('fieldDeleted'));
     } catch (error: any) {
-      message.error(error?.data?.message || t('documents.fieldDeleteError', 'Không thể xóa trường ký'));
+      message.error(error?.data?.message || t('fieldDeleteError'));
     }
   };
 
@@ -125,10 +125,10 @@ export const DocumentEditorPage: React.FC = () => {
       formData.append('title', file.name.replace('.pdf', ''));
 
       const document = await uploadDocument(formData).unwrap();
-      message.success(t('documents.uploadSuccess', 'Tải lên thành công'));
+      message.success(t('uploadSuccess'));
       navigate(`/documents/editor/${document.id}`);
     } catch (error: any) {
-      message.error(error?.data?.message || t('documents.uploadError', 'Không thể tải lên'));
+      message.error(error?.data?.message || t('uploadError'));
     }
   };
 
@@ -142,13 +142,12 @@ export const DocumentEditorPage: React.FC = () => {
               type="text"
               icon={<ArrowLeftOutlined />}
               onClick={() => navigate('/documents')}
-              style={{ marginBottom: 16 }}
             >
-              {t('common.back', 'Quay lại')}
+              {t('common.back', { ns: 'translation' })}
             </Button>
-            <Title level={2}>{t('documents.createNewDocument', 'Tạo tài liệu mới')}</Title>
+            <Title level={2}>{t('createNewDocument')}</Title>
             <Text type="secondary">
-              {t('documents.uploadSubtitle', 'Tải lên tài liệu PDF để bắt đầu')}
+              {t('uploadSubtitle')}
             </Text>
           </div>
           <DocumentUpload onFileSelect={handleFileSelect} disabled={isUploading} />
@@ -168,7 +167,7 @@ export const DocumentEditorPage: React.FC = () => {
   if (documentError || !documentData) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
-        <Text type="danger">{t('documents.loadError', 'Không thể tải tài liệu')}</Text>
+        <Text type="danger">{t('loadError')}</Text>
       </div>
     );
   }
@@ -197,7 +196,7 @@ export const DocumentEditorPage: React.FC = () => {
             </Button>
             <Title level={2}>{document.title}</Title>
             <Text type="secondary">
-              {t('documents.editorSubtitle', 'Thêm trường ký vào tài liệu của bạn')}
+              {t('editorSubtitle')}
             </Text>
           </div>
           <Button
@@ -205,7 +204,7 @@ export const DocumentEditorPage: React.FC = () => {
             icon={<SaveOutlined />}
             onClick={() => navigate(`/documents/${id}/invite`)}
           >
-            {t('documents.saveAndContinue', 'Lưu & Tiếp tục')}
+            {t('saveAndContinue')}
           </Button>
         </div>
 
@@ -282,7 +281,7 @@ export const DocumentEditorPage: React.FC = () => {
                     pointerEvents: 'none',
                   }}
                 >
-                  {t('documents.dropHere', 'Thả vào đây để đặt trường ký')}
+                  {t('dropHere')}
                 </div>
               )}
             </div>
