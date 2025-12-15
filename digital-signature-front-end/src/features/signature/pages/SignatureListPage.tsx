@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Typography, Space, Button, Card, Row, Col, Empty, Modal, Input, Spin, Tag, Popconfirm } from 'antd';
+import { Typography, Space, Button, Card, Row, Col, Empty, Modal, Input, Spin, Tag, Popconfirm, Grid } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined, StarOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { useSignature } from '../hooks/useSignature';
 import { SignaturePreview } from '../components/SignaturePreview';
 
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 export const SignatureListPage: React.FC = () => {
   const { t } = useTranslation();
@@ -25,6 +26,8 @@ export const SignatureListPage: React.FC = () => {
     isDeleting,
     isUpdating,
   } = useSignature();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [editName, setEditName] = React.useState('');
@@ -71,19 +74,25 @@ export const SignatureListPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '24px', maxWidth: 1200, margin: '0 auto' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <div style={{ padding: isMobile ? 16 : 24, maxWidth: 1200, margin: '0 auto' }}>
+      <Space direction="vertical" size={isMobile ? 'middle' : 'large'} style={{ width: '100%' }}>
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          justifyContent: 'space-between',
+          alignItems: isMobile ? 'stretch' : 'center',
+          gap: isMobile ? 12 : 0,
+        }}>
           <div>
-            <Title level={2}>{t('signature.mySignatures', 'My Signatures')}</Title>
-            <Text type="secondary">
+            <Title level={isMobile ? 3 : 2}>{t('signature.mySignatures', 'My Signatures')}</Title>
+            <Text type="secondary" style={{ fontSize: isMobile ? 12 : 14 }}>
               {t('signature.manageSignatures', 'Create and manage your personal signatures')}
             </Text>
           </div>
           <Button
             type="primary"
-            size="large"
+            size={isMobile ? 'middle' : 'large'}
             icon={<PlusOutlined />}
             onClick={() => navigate('/signatures/create')}
           >
