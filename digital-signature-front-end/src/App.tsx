@@ -17,7 +17,7 @@ export const App: React.FC = () => {
         <div style={{
           flex: 1,
           // Thêm padding-top cho các pages không phải landing (vì header fixed)
-          paddingTop: isLandingPage ? 0 : '80px'
+          paddingTop: isLandingPage ? 0 : 'var(--header-height)'
         }}>
           <Outlet />
         </div>
