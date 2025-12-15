@@ -16,6 +16,7 @@ import sis.hust.edu.vn.digital_signature.exception.entity.EntityNotFoundExceptio
 import sis.hust.edu.vn.digital_signature.repository.document.DocumentRepository;
 import sis.hust.edu.vn.digital_signature.repository.field.FieldRepository;
 import sis.hust.edu.vn.digital_signature.repository.signer.SignerRepository;
+import sis.hust.edu.vn.digital_signature.service.crypto.DigitalSignatureService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,7 @@ public class SignerService {
     private final SignerRepository signerRepository;
     private final DocumentRepository documentRepository;
     private final FieldRepository fieldRepository;
+    private final DigitalSignatureService digitalSignatureService;
 
     @Value("${frontend.url:http://localhost:5556}")
     private String frontendUrl;
@@ -224,15 +226,33 @@ public class SignerService {
             fieldRepository.save(field);
         }
 
+        // Get document for digital signature
+        Document document = documentRepository.findById(signer.getDocumentId())
+                .orElseThrow(() -> new EntityNotFoundException("Document not found"));
+
+        // === PKI: Create Digital Signature ===
+        // This creates a cryptographic signature using the signer's RSA private key
+        // Only works for registered users (external signers won't have digital signatures)
+        try {
+            digitalSignatureService.createDigitalSignature(
+                    document.getId(),
+                    signer.getId(),
+                    signer.getEmail(),
+                    document.getFileUrl()
+            );
+        } catch (Exception e) {
+            log.warn("Failed to create digital signature for signer {}: {}", 
+                    signer.getEmail(), e.getMessage());
+            // Continue with signing even if digital signature fails
+            // This allows external signers (without accounts) to still complete signing
+        }
+
         // Update signer status = SIGNED, signedAt = now
         signer.setStatus(SignerStatus.SIGNED);
         signer.setSignedAt(LocalDateTime.now());
         signer = signerRepository.save(signer);
 
         // Check if all signers signed → update document status = DONE, completedAt = now
-        Document document = documentRepository.findById(signer.getDocumentId())
-                .orElseThrow(() -> new EntityNotFoundException("Document not found"));
-
         long totalSigners = signerRepository.countByDocumentIdAndStatus(document.getId(), SignerStatus.PENDING);
         if (totalSigners == 0) {
             // All signers have signed

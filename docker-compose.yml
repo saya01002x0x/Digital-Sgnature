@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -48,6 +48,8 @@ services:
       # Config cho Local Storage
       APP_UPLOAD_DIR: ${APP_UPLOAD_DIR}
       APP_BASE_URL: ${APP_BASE_URL}
+      # PKI Crypto Configuration
+      CRYPTO_AES_KEY: ${CRYPTO_AES_KEY:-DefaultPKI32ByteAESKeyForDev!!}
     ports:
       - "${BACKEND_PORT}:${BACKEND_INTERNAL_PORT}"
     depends_on:
@@ -57,7 +59,7 @@ services:
     volumes:
       - ./uploads:/app/uploads
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${BACKEND_INTERNAL_PORT}/actuator/health"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${BACKEND_INTERNAL_PORT}/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 5
