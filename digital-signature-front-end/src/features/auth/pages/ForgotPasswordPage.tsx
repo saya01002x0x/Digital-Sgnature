@@ -1,120 +1,155 @@
-/**
- * ForgotPasswordPage Component
- * Page for requesting password reset
- * Note: Functionality temporarily disabled until backend endpoint is available
- */
-
-import type React from 'react';
-import { useState } from 'react';
-import { Card, Typography, Space, Form, Input, Button, Alert, message } from 'antd';
-import { MailOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
+import { Form, Input, Button, Typography, Space, Steps, App, Card } from 'antd';
+import { UserOutlined, MailOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthLayout } from '../components/AuthLayout';
+import { useSendOtpMutation, useResetPasswordMutation } from '../api';
 
 const { Title, Text } = Typography;
 
 export const ForgotPasswordPage: React.FC = () => {
-  const { t } = useTranslation();
-  const [form] = Form.useForm();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
+  const { message } = App.useApp();
+  const [step, setStep] = useState(0);
+  const [email, setEmail] = useState('');
 
-  const handleSubmit = async (values: { email: string }) => {
+  const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
+  const [resetPassword, { isLoading: isResetting }] = useResetPasswordMutation();
+
+  const handleSendOtp = async (values: { email: string }) => {
     try {
-      setIsLoading(true);
-      // TODO: Implement when backend endpoint is available
-      // await forgotPassword(values).unwrap();
-
-      // For now, show info message
-      message.info(t('auth.featureComingSoon', 'This feature is coming soon'));
-      setIsLoading(false);
-    } catch (err: any) {
-      setIsLoading(false);
-      message.error(err?.data?.message || t('auth.resetEmailFailed', 'Failed to send reset email'));
+      const response = await sendOtp({ email: values.email, type: 'FORGOT_PASSWORD' }).unwrap();
+      setEmail(values.email);
+      message.success('OTP sent successfully!');
+      setStep(1);
+    } catch (error: any) {
+      if (error?.status === 404) {
+        message.error('Email not found');
+      } else {
+        message.error(error?.data?.message || 'Failed to send OTP');
+      }
     }
   };
 
-  return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: '20px',
-      }}
-    >
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: 450,
-          boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-        }}
+  const handleResetPassword = async (values: { otp: string; newPassword: string; confirmPassword: string }) => {
+    if (values.newPassword !== values.confirmPassword) {
+      message.error('Passwords do not match');
+      return;
+    }
+
+    try {
+      await resetPassword({ email, otp: values.otp, newPassword: values.newPassword }).unwrap();
+      message.success('Password reset successfully! Please login.');
+      navigate('/login');
+    } catch (error: any) {
+      message.error(error?.data?.message || 'Failed to reset password');
+    }
+  };
+
+  const renderEmailStep = () => (
+    <Form onFinish={handleSendOtp} layout="vertical">
+      <Form.Item
+        name="email"
+        rules={[
+          { required: true, message: 'Please input your email!' },
+          { type: 'email', message: 'Please enter a valid email!' }
+        ]}
       >
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <div>
-            <Link to="/login" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
-              <ArrowLeftOutlined />
-              {t('common.back', 'Back to login')}
-            </Link>
+        <Input
+          prefix={<MailOutlined />}
+          placeholder="Email Address"
+          size="large"
+        />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" block size="large" loading={isSendingOtp}>
+          Send OTP
+        </Button>
+      </Form.Item>
+    </Form>
+  );
 
-            <div style={{ textAlign: 'center' }}>
-              <Title level={2} style={{ marginBottom: 8 }}>
-                {t('auth.forgotPassword', 'Forgot Password?')}
-              </Title>
-              <Text type="secondary">
-                {t('auth.forgotPasswordSubtitle', 'Enter your email to reset your password')}
-              </Text>
-            </div>
-          </div>
+  const renderResetStep = () => (
+    <Form onFinish={handleResetPassword} layout="vertical">
+      <div style={{ marginBottom: 16 }}>
+        <Text type="secondary">OTP sent to {email}</Text>
+      </div>
 
-          {isSuccess ? (
-            <Alert
-              message={t('auth.checkEmail', 'Check your email')}
-              description={t('auth.resetInstructions', 'We have sent password reset instructions to your email address.')}
-              type="success"
-              showIcon
-            />
-          ) : (
-            <Form
-              form={form}
-              name="forgot-password"
-              onFinish={handleSubmit}
-              layout="vertical"
-              requiredMark={false}
-            >
-              <Form.Item
-                name="email"
-                label={t('auth.email', 'Email')}
-                rules={[
-                  { required: true, message: t('auth.emailRequired', 'Email is required') },
-                  { type: 'email', message: t('auth.emailInvalid', 'Invalid email address') },
-                ]}
-              >
-                <Input
-                  prefix={<MailOutlined />}
-                  placeholder={t('auth.emailPlaceholder', 'Enter your email')}
-                  size="large"
-                  autoComplete="email"
-                />
-              </Form.Item>
+      <Form.Item
+        name="otp"
+        rules={[{ required: true, message: 'Please input OTP!' }]}
+      >
+        <Input
+          prefix={<SafetyOutlined />}
+          placeholder="Enter OTP"
+          size="large"
+          maxLength={6}
+        />
+      </Form.Item>
 
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  block
-                  loading={isLoading}
-                  size="large"
-                >
-                  {t('auth.sendResetLink', 'Send Reset Link')}
-                </Button>
-              </Form.Item>
-            </Form>
-          )}
-        </Space>
+      <Form.Item
+        name="newPassword"
+        rules={[
+          { required: true, message: 'Please input new password!' },
+          { min: 6, message: 'Password must be at least 6 characters!' }
+        ]}
+      >
+        <Input.Password
+          prefix={<LockOutlined />}
+          placeholder="New Password"
+          size="large"
+        />
+      </Form.Item>
+      <Form.Item
+        name="confirmPassword"
+        rules={[
+          { required: true, message: 'Please confirm your password!' }
+        ]}
+      >
+        <Input.Password
+          prefix={<LockOutlined />}
+          placeholder="Confirm New Password"
+          size="large"
+        />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" block size="large" loading={isResetting}>
+          Reset Password
+        </Button>
+      </Form.Item>
+      <div style={{ textAlign: 'center' }}>
+        <Button type="link" onClick={() => setStep(0)}>
+          Back to Email
+        </Button>
+      </div>
+    </Form>
+  );
+
+  const steps = [
+    { title: 'Email', content: renderEmailStep() },
+    { title: 'Reset Password', content: renderResetStep() },
+  ];
+
+  return (
+    <AuthLayout
+      title="Forgot Password"
+      description="Recover your account access"
+    >
+      <Card variant="borderless" styles={{ body: { padding: 0 } }}>
+        <Steps
+          current={step}
+          items={steps.map(s => ({ title: s.title }))}
+          size="small"
+          style={{ marginBottom: 24 }}
+        />
+        {steps[step].content}
+
+        <div style={{ marginTop: 24, textAlign: 'center' }}>
+          <Text>
+            Remember your password? <Link to="/login">Login now</Link>
+          </Text>
+        </div>
       </Card>
-    </div>
+    </AuthLayout>
   );
 };

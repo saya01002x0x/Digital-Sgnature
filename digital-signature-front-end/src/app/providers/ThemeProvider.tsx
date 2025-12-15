@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type React from 'react';
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { ConfigProvider, theme as antdTheme } from 'antd';
+import { ConfigProvider, App, theme as antdTheme } from 'antd';
 import type { ThemeConfig } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { STORAGE_KEYS } from '@/app/config/constants';
@@ -73,7 +73,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   return (
     <ThemeContext.Provider value={contextValue}>
       <ConfigProvider theme={themeConfig}>
-        {children}
+        <App>
+          {children}
+        </App>
       </ConfigProvider>
     </ThemeContext.Provider>
   );

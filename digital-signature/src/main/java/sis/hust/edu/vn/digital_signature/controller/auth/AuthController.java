@@ -10,6 +10,7 @@ import sis.hust.edu.vn.digital_signature.controller.BaseController;
 import sis.hust.edu.vn.digital_signature.dto.auth.request.ChangePasswordRequest;
 import sis.hust.edu.vn.digital_signature.dto.auth.request.LoginRequest;
 import sis.hust.edu.vn.digital_signature.dto.auth.request.RegisterRequest;
+import sis.hust.edu.vn.digital_signature.dto.auth.request.ResetPasswordRequest;
 import sis.hust.edu.vn.digital_signature.dto.auth.request.SendOtpRequest;
 import sis.hust.edu.vn.digital_signature.dto.auth.response.AuthResponse;
 import sis.hust.edu.vn.digital_signature.dto.common.response.Response;
@@ -71,11 +72,17 @@ public class AuthController extends BaseController {
 
     @PostMapping("/send-otp")
     public ResponseEntity<Response<Map<String, String>>> sendOtp(@Valid @RequestBody SendOtpRequest request) {
-        String otp = authService.sendOtp(request.getEmail());
+        String otp = authService.sendOtp(request.getEmail(), request.getType());
         Map<String, String> response = new HashMap<>();
         response.put("otp", otp);
         response.put("message", "OTP has been generated");
         return success("OTP generated successfully", response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Response<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request.getEmail(), request.getOtp(), request.getNewPassword());
+        return success("Password reset successfully", null);
     }
 
     @PostMapping(value = "/verify-otp", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

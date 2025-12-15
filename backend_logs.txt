@@ -1,0 +1,118 @@
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+18:23:15,711 |-WARN in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@3212a8d7 - SizeAndTimeBasedFNATP class was renamed as SizeAndTimeBasedFileNamingAndTriggeringPolicy.
+18:23:15,761 |-WARN in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@3212a8d7 - Direct use of either SizeAndTimeBasedFNATP or SizeAndTimeBasedFileNamingAndTriggeringPolicy 
+18:23:15,761 |-WARN in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@3212a8d7 - is deprecated. Please use SizeAndTimeBasedRollingPolicy instead.
+18:23:15,761 |-WARN in ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP@3212a8d7 - For more information see https://logback.qos.ch/manual/appenders.html#SizeAndTimeBasedRollingPolicy
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.6)
+
+2025-12-14 18:23:15 - Starting DigitalSignatureWebApplication v0.0.1-SNAPSHOT using Java 17.0.17 with PID 1 (/app/app.jar started by spring in /app)
+2025-12-14 18:23:15 - Running with Spring Boot v3.5.6, Spring v6.2.11
+2025-12-14 18:23:15 - No active profile set, falling back to 1 default profile: "default"
+2025-12-14 18:23:18 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-14 18:23:18 - Finished Spring Data repository scanning in 108 ms. Found 7 JPA repository interfaces.
+2025-12-14 18:23:19 - Tomcat initialized with port 5555 (http)
+2025-12-14 18:23:19 - Starting service [Tomcat]
+2025-12-14 18:23:19 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-14 18:23:20 - Initializing Spring embedded WebApplicationContext
+2025-12-14 18:23:20 - Root WebApplicationContext: initialization completed in 3951 ms
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+2025-12-14 18:23:20 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-14 18:23:20 - HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-12-14 18:23:20 - HHH000026: Second-level cache disabled
+2025-12-14 18:23:21 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-14 18:23:21 - HikariPool-1 - Starting...
+2025-12-14 18:23:22 - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@54e06788
+2025-12-14 18:23:22 - HikariPool-1 - Start completed.
+2025-12-14 18:23:22 - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-14 18:23:22 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 16.11
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-14 18:23:22 - HHH90006001: Encountered incubating setting [hibernate.type.preferred_uuid_jdbc_type].  See javadoc on corresponding `org.hibernate.cfg.AvailableSettings` constant for details.
+2025-12-14 18:23:22 - HHH90006001: Encountered incubating setting [hibernate.type.preferred_uuid_jdbc_type].  See javadoc on corresponding `org.hibernate.cfg.AvailableSettings` constant for details.
+2025-12-14 18:23:23 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-14 18:23:24 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-14 18:23:24 - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-14 18:23:25 - Filter 'jwtAuthenticationFilter' configured for use
+2025-12-14 18:23:25 - Filter 'userContextCleanupFilter' configured for use
+2025-12-14 18:23:26 - ================ EMAIL CONFIG DEBUG ================
+2025-12-14 18:23:26 - Test Mode: false
+2025-12-14 18:23:26 - Email Enabled: true
+2025-12-14 18:23:26 - From Email (Username): hah3182004@gmail.com
+2025-12-14 18:23:26 - ====================================================
+2025-12-14 18:23:26 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-14 18:23:27 - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-12-14 18:23:28 - Exposing 2 endpoints beneath base path '/actuator'
+2025-12-14 18:23:28 - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-12-14 18:23:29 - Tomcat started on port 5555 (http) with context path '/'
+2025-12-14 18:23:29 - Started DigitalSignatureWebApplication in 14.601 seconds (process running for 15.659)
+2025-12-14 18:23:29 - 
+    select
+        u1_0.id,
+        u1_0.address,
+        u1_0.avatar_id,
+        u1_0.created_at,
+        u1_0.created_by,
+        u1_0.date_of_birth,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.gender,
+        u1_0.is_active,
+        u1_0.password,
+        u1_0.phone,
+        u1_0.role,
+        u1_0.updated_at,
+        u1_0.updated_by,
+        u1_0.username 
+    from
+        users u1_0 
+    where
+        u1_0.username=?
+2025-12-14 18:23:29 - Admin user 'miiao29' already exists, skipping creation
+2025-12-14 18:23:34 - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-14 18:23:34 - Initializing Servlet 'dispatcherServlet'
+2025-12-14 18:23:34 - Completed initialization in 2 ms
+2025-12-14 18:23:34 - Securing HEAD /actuator/health
+2025-12-14 18:23:34 - No Bearer token found in request: /actuator/health
+2025-12-14 18:23:34 - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-14 18:23:34 - Secured HEAD /actuator/health
+2025-12-14 18:24:04 - Securing HEAD /actuator/health
+2025-12-14 18:24:04 - No Bearer token found in request: /actuator/health
+2025-12-14 18:24:04 - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-14 18:24:04 - Secured HEAD /actuator/health
+2025-12-14 18:24:34 - Securing HEAD /actuator/health
+2025-12-14 18:24:34 - No Bearer token found in request: /actuator/health
+2025-12-14 18:24:34 - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-14 18:24:34 - Secured HEAD /actuator/health
+2025-12-14 18:25:04 - Securing HEAD /actuator/health
+2025-12-14 18:25:04 - No Bearer token found in request: /actuator/health
+2025-12-14 18:25:04 - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-14 18:25:04 - Secured HEAD /actuator/health
+2025-12-14 18:25:34 - Securing HEAD /actuator/health
+2025-12-14 18:25:34 - No Bearer token found in request: /actuator/health
+2025-12-14 18:25:34 - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-14 18:25:34 - Secured HEAD /actuator/health
+2025-12-14 18:26:04 - Securing HEAD /actuator/health
+2025-12-14 18:26:04 - No Bearer token found in request: /actuator/health
+2025-12-14 18:26:04 - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-14 18:26:04 - Secured HEAD /actuator/health
+2025-12-14 18:26:34 - Securing HEAD /actuator/health
+2025-12-14 18:26:34 - No Bearer token found in request: /actuator/health
+2025-12-14 18:26:34 - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-14 18:26:34 - Secured HEAD /actuator/health
+2025-12-14 18:27:04 - Securing HEAD /actuator/health
+2025-12-14 18:27:04 - No Bearer token found in request: /actuator/health
+2025-12-14 18:27:04 - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-14 18:27:04 - Secured HEAD /actuator/health

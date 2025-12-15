@@ -48,13 +48,22 @@ export const authApi = baseApi.injectEndpoints({
       transformErrorResponse: (response: ApiError) => response,
     }),
 
-    sendOtp: builder.mutation<{ otp: string; message: string }, { email: string }>({
+    sendOtp: builder.mutation<{ otp: string; message: string }, { email: string; type: 'REGISTER' | 'FORGOT_PASSWORD' }>({
       query: (data) => ({
         url: '/api/auth/send-otp',
         method: 'POST',
         body: data,
       }),
       transformResponse: (response: BackendResponse<{ otp: string; message: string }>) => response.data,
+      transformErrorResponse: (response: ApiError) => response,
+    }),
+
+    resetPassword: builder.mutation<void, { email: string; otp: string; newPassword: string }>({
+      query: (data) => ({
+        url: '/api/auth/reset-password',
+        method: 'POST',
+        body: data,
+      }),
       transformErrorResponse: (response: ApiError) => response,
     }),
 
@@ -148,8 +157,11 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useSendOtpMutation,
+  useResetPasswordMutation,
   useVerifyOtpMutation,
   useLogoutMutation,
   useRefreshTokenMutation,
   useGetProfileQuery,
 } = authApi;
+
+
