@@ -1,10 +1,11 @@
 /**
  * SigningView Component
  * Display PDF document with fillable fields for signer
+ * Responsive design for mobile and desktop
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, Space, Typography, Tag, Alert } from 'antd';
+import { Card, Space, Typography, Tag, Alert, Grid } from 'antd';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { SigningSession } from '../types';
@@ -16,6 +17,7 @@ import { SignatureSelector } from '@/features/signature/components/SignatureSele
 import { useListSignaturesQuery } from '@/features/signature/services/signature.api';
 
 const { Text } = Typography;
+const { useBreakpoint } = Grid;
 
 type SigningViewProps = {
   session: SigningSession;
@@ -34,6 +36,8 @@ export const SigningView: React.FC<SigningViewProps> = ({
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const { data: signatures = [] } = useListSignaturesQuery();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   const { document, signer, fields, allSigners } = session;
 
@@ -53,7 +57,7 @@ export const SigningView: React.FC<SigningViewProps> = ({
 
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
-    
+
     // Multiple delays to catch PDF rendering at different stages
     const timers = [
       setTimeout(updateDimensions, 300),
@@ -137,6 +141,138 @@ export const SigningView: React.FC<SigningViewProps> = ({
     }
   };
 
+  // Mobile layout - stacked vertically in correct order
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* 1. Document Info */}
+        <Card title={t('signingView.documentInfo')} size="small">
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <div>
+              <Text type="secondary">{t('signingView.title')}</Text>
+              <br />
+              <Text strong>{document.title}</Text>
+            </div>
+            <div>
+              <Text type="secondary">{t('signingView.status')}</Text>
+              <br />
+              <Tag color="processing">{document.status}</Tag>
+            </div>
+          </Space>
+        </Card>
+
+        {/* 2. Signers List */}
+        <Card title={t('signingView.signers')} size="small">
+          <Space direction="vertical" style={{ width: '100%' }}>
+            {allSigners.map((s) => (
+              <div
+                key={s.id}
+                style={{
+                  padding: 8,
+                  background: s.id === signer.id ? '#e6f7ff' : '#fafafa',
+                  borderRadius: 4,
+                  border: s.id === signer.id ? '1px solid #1890ff' : '1px solid #d9d9d9',
+                }}
+              >
+                <Space>
+                  <UserOutlined />
+                  <div>
+                    <Text strong>{s.name}</Text>
+                    <br />
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      {s.email}
+                    </Text>
+                    <br />
+                    {s.status === 'SIGNED' && (
+                      <Tag color="success" icon={<CheckCircleOutlined />}>
+                        {t('signingView.signed')}
+                      </Tag>
+                    )}
+                    {s.status === 'PENDING' && (
+                      <Tag color="default">{t('signingView.pending')}</Tag>
+                    )}
+                    {s.status === 'DECLINED' && (
+                      <Tag color="error">{t('signingView.declined')}</Tag>
+                    )}
+                  </div>
+                </Space>
+              </div>
+            ))}
+          </Space>
+        </Card>
+
+        {/* 3. Fields to Fill */}
+        <Card title={t('signingView.fieldsToFill')} size="small">
+          <Space direction="vertical" style={{ width: '100%' }}>
+            {fields.length === 0 ? (
+              <Alert
+                message={t('signingView.noFields')}
+                type="info"
+                showIcon
+              />
+            ) : (
+              <>
+                <Alert
+                  message={t('signingView.fillAllFields')}
+                  type="warning"
+                  showIcon
+                  style={{ marginBottom: 8 }}
+                />
+                {fields.map((field) => (
+                  <div key={field.id}>{renderFieldInput(field)}</div>
+                ))}
+                {/* {!allFieldsFilled && (
+                  <Alert
+                    message={t('signingView.requiredFields')}
+                    type="error"
+                    showIcon
+                  />
+                )} */}
+              </>
+            )}
+          </Space>
+        </Card>
+
+        {/* 4. PDF Viewer - Last on mobile */}
+        <div ref={containerRef}>
+          <Card size="small" title={t('signingView.document', 'Tài liệu')}>
+            <div style={{ position: 'relative' }}>
+              <PDFViewer
+                fileUrl={document.fileUrl}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+
+              {containerDimensions.width > 0 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <FieldOverlay
+                    fields={fields}
+                    pageNumber={currentPage}
+                    containerWidth={containerDimensions.width}
+                    containerHeight={containerDimensions.height}
+                    onFieldClick={(field) => setSelectedFieldId(field.id)}
+                    selectedFieldId={selectedFieldId}
+                    fieldValues={fieldValues}
+                    showDeleteButton={false}
+                  />
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop layout - 3 columns
   return (
     <div style={{ display: 'flex', gap: 24, height: '100%' }}>
       {/* Left Panel - Document Info & Signers */}
@@ -204,11 +340,11 @@ export const SigningView: React.FC<SigningViewProps> = ({
       <div ref={containerRef} style={{ flex: 1, overflow: 'auto' }}>
         <Card>
           <div style={{ position: 'relative' }}>
-            <PDFViewer 
-              fileUrl={document.fileUrl} 
+            <PDFViewer
+              fileUrl={document.fileUrl}
               onPageChange={(page) => setCurrentPage(page)}
             />
-            
+
             {/* Field Overlay - Show where to sign */}
             {containerDimensions.width > 0 && (
               <div
@@ -258,13 +394,13 @@ export const SigningView: React.FC<SigningViewProps> = ({
                 {fields.map((field) => (
                   <div key={field.id}>{renderFieldInput(field)}</div>
                 ))}
-                {!allFieldsFilled && (
+                {/* {!allFieldsFilled && (
                   <Alert
                     message={t('signingView.requiredFields')}
                     type="error"
                     showIcon
                   />
-                )}
+                )} */}
               </>
             )}
           </Space>

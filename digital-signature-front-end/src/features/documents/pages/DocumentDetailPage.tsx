@@ -19,6 +19,7 @@ import {
   Divider,
   Table,
   message,
+  Grid,
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -39,12 +40,15 @@ import { formatTimestamp } from '@/shared/utils/formatters';
 import type { Signer, SignerStatus } from '@/features/invite-signing/types';
 
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 export const DocumentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation('documents');
   const { user } = useAuth();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   // Fetch document with fields and signers
   const {
@@ -177,9 +181,10 @@ export const DocumentDetailPage: React.FC = () => {
   const isOwnerSigner = signers.some((s) => s.email === user?.email);
   const currentSigner = signers.find((s) => s.email === user?.email);
   const canSign = currentSigner && (currentSigner.status === 'PENDING' || currentSigner.status === 'OPENED' as SignerStatus);
+  const isCompleted = document.status === DocumentStatus.Done;
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: isMobile ? 12 : 24 }}>
       {/* Header */}
       <Space style={{ marginBottom: 16 }}>
         <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
@@ -228,7 +233,7 @@ export const DocumentDetailPage: React.FC = () => {
                 )}
               </Descriptions>
 
-              <Space>
+              <Space wrap size={isMobile ? 'small' : 'middle'}>
                 {canEdit && (
                   <Button type="primary" icon={<EditOutlined />} onClick={handleEdit}>
                     {t('detail.editDocument')}
@@ -290,50 +295,52 @@ export const DocumentDetailPage: React.FC = () => {
                 >
                   {t('detail.download')}
                 </Button>
-                <Button
-                  icon={<QrcodeOutlined />}
-                  onClick={() => {
-                    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-                    fetch(`/api/documents/${id}/download-with-qr`, {
-                      headers: { 'Authorization': `Bearer ${token}` },
-                    })
-                      .then(res => {
-                        if (!res.ok) {
-                          return res.json().then(err => Promise.reject(err));
-                        }
-                        return res.blob();
+                {isCompleted && (
+                  <Button
+                    icon={<QrcodeOutlined />}
+                    onClick={() => {
+                      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+                      fetch(`/api/documents/${id}/download-with-qr`, {
+                        headers: { 'Authorization': `Bearer ${token}` },
                       })
-                      .then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const link = window.document.createElement('a');
-                        link.href = url;
-                        link.download = `${document.title}_signed_qr.pdf`;
-                        link.click();
-                        window.URL.revokeObjectURL(url);
-                        message.success(t('detail.downloadQrSuccess', 'Download with QR successful!'));
-                      })
-                      .catch((err) => {
-                        console.error('Download error details:', err);
-                        message.error(err?.message || t('detail.downloadError', 'Download failed.'));
-                      });
-                  }}
-                  style={{
-                    background: 'linear-gradient(135deg, #1890FF 0%, #020E1A 100%)',
-                    borderColor: 'transparent',
-                    color: 'white',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(24, 144, 255, 0.5)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  {t('detail.downloadWithQr', 'Download with QR')}
-                </Button>
+                        .then(res => {
+                          if (!res.ok) {
+                            return res.json().then(err => Promise.reject(err));
+                          }
+                          return res.blob();
+                        })
+                        .then(blob => {
+                          const url = window.URL.createObjectURL(blob);
+                          const link = window.document.createElement('a');
+                          link.href = url;
+                          link.download = `${document.title}_signed_qr.pdf`;
+                          link.click();
+                          window.URL.revokeObjectURL(url);
+                          message.success(t('detail.downloadQrSuccess', 'Download with QR successful!'));
+                        })
+                        .catch((err) => {
+                          console.error('Download error details:', err);
+                          message.error(err?.message || t('detail.downloadError', 'Download failed.'));
+                        });
+                    }}
+                    style={{
+                      background: 'linear-gradient(135deg, #1890FF 0%, #36CFC9 100%)',
+                      borderColor: 'transparent',
+                      color: 'white',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(24, 144, 255, 0.5)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    {t('detail.downloadWithQr', 'Download with QR')}
+                  </Button>
+                )}
               </Space>
             </Space>
           </Card>
@@ -344,13 +351,16 @@ export const DocumentDetailPage: React.FC = () => {
               title={<Title level={5}>{t('detail.signers.title')}</Title>}
               style={{ marginTop: 16 }}
             >
-              <Table
-                columns={signerColumns}
-                dataSource={signers}
-                rowKey="id"
-                pagination={false}
-                size="small"
-              />
+              <div style={{ overflowX: 'auto' }}>
+                <Table
+                  columns={signerColumns}
+                  dataSource={signers}
+                  rowKey="id"
+                  pagination={false}
+                  size="small"
+                  scroll={{ x: isMobile ? 600 : undefined }}
+                />
+              </div>
             </Card>
           )}
 
