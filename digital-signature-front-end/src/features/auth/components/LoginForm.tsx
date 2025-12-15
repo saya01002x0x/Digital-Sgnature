@@ -25,7 +25,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   isLoading = false,
   error,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
   const {
     control,
     handleSubmit,
@@ -44,7 +44,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {error && (
           <Alert
-            message={t('auth.loginFailed', 'Login failed')}
+            message={t('loginFailed')}
             description={error}
             type="error"
             showIcon
@@ -55,7 +55,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         {/* Email Field */}
         <div>
           <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
-            {t('auth.email', 'Email')}
+            {t('email')}
           </label>
           <Controller
             name="email"
@@ -64,7 +64,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               <Input
                 {...field}
                 prefix={<UserOutlined />}
-                placeholder={t('auth.emailPlaceholder', 'Enter your email')}
+                placeholder={t('emailPlaceholder')}
                 autoComplete="email"
                 size="large"
                 status={errors.email ? 'error' : undefined}
@@ -81,7 +81,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         {/* Password Field */}
         <div>
           <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
-            {t('auth.password', 'Password')}
+            {t('password')}
           </label>
           <Controller
             name="password"
@@ -90,7 +90,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               <Input.Password
                 {...field}
                 prefix={<LockOutlined />}
-                placeholder={t('auth.passwordPlaceholder', 'Enter your password')}
+                placeholder={t('passwordPlaceholder')}
                 autoComplete="current-password"
                 size="large"
                 status={errors.password ? 'error' : undefined}
@@ -111,12 +111,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             control={control}
             render={({ field: { value, ...field } }) => (
               <Checkbox {...field} checked={value}>
-                {t('auth.rememberMe', 'Remember me')}
+                {t('rememberMe')}
               </Checkbox>
             )}
           />
           <Link to={APP_ROUTES.FORGOT_PASSWORD}>
-            {t('auth.forgotPasswordLink', 'Forgot password?')}
+            {t('forgotPasswordLink')}
           </Link>
         </div>
 
@@ -128,7 +128,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           loading={isLoading}
           size="large"
         >
-          {t('auth.loginButton', 'Login')}
+          {t('loginButton')}
         </Button>
       </Space>
     </form>

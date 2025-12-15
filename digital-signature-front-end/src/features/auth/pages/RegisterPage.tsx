@@ -16,7 +16,7 @@ import type { RegisterFormData } from '../utils/validators';
 const { Text, Title } = Typography;
 
 export const RegisterPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['auth', 'translation']);
   const navigate = useNavigate();
   const { message } = App.useApp();
 
@@ -37,7 +37,7 @@ export const RegisterPage: React.FC = () => {
       if (err?.status === 409) {
         message.error('Email or Username already exists');
       } else {
-        message.error(err?.data?.message || t('auth.registerFailed', 'Registration failed'));
+        message.error(err?.data?.message || t('registerFailed'));
       }
     }
   };
@@ -45,8 +45,8 @@ export const RegisterPage: React.FC = () => {
 
   return (
     <AuthLayout
-      title={t('auth.createAccount', 'Create Account')}
-      description={t('auth.registerSubtitle', 'Join E-Signature platform today')}
+      title={t('createAccount')}
+      description={t('registerSubtitle')}
     >
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <RegisterForm
@@ -55,13 +55,13 @@ export const RegisterPage: React.FC = () => {
           error={null}
         />
 
-        <Divider>{t('common.or', 'OR')}</Divider>
+        <Divider>{t('common.or', { ns: 'translation' })}</Divider>
 
         <div style={{ textAlign: 'center' }}>
           <Text>
-            {t('auth.haveAccount', 'Already have an account?')}{' '}
+            {t('haveAccount')}{' '}
             <Link to="/login">
-              {t('auth.loginNow', 'Login now')}
+              {t('loginNow')}
             </Link>
           </Text>
         </div>

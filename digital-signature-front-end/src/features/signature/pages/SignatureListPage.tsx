@@ -14,7 +14,7 @@ import { SignaturePreview } from '../components/SignaturePreview';
 const { Title, Text } = Typography;
 
 export const SignatureListPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['signature', 'translation']);
   const navigate = useNavigate();
   const {
     signatures,
@@ -76,9 +76,9 @@ export const SignatureListPage: React.FC = () => {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <Title level={2}>{t('signature.mySignatures', 'My Signatures')}</Title>
+            <Title level={2}>{t('mySignatures')}</Title>
             <Text type="secondary">
-              {t('signature.manageSignatures', 'Create and manage your personal signatures')}
+              {t('manageSignatures')}
             </Text>
           </div>
           <Button
@@ -87,7 +87,7 @@ export const SignatureListPage: React.FC = () => {
             icon={<PlusOutlined />}
             onClick={() => navigate('/signatures/create')}
           >
-            {t('signature.createNew', 'Create New')}
+            {t('createNew')}
           </Button>
         </div>
 
@@ -95,7 +95,7 @@ export const SignatureListPage: React.FC = () => {
         {signatures.length === 0 ? (
           <Card>
             <Empty
-              description={t('signature.noSignaturesYet', 'No signatures yet')}
+              description={t('noSignaturesYet')}
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             >
               <Button
@@ -103,7 +103,7 @@ export const SignatureListPage: React.FC = () => {
                 icon={<PlusOutlined />}
                 onClick={() => navigate('/signatures/create')}
               >
-                {t('signature.createFirstSignature', 'Create Your First Signature')}
+                {t('createFirstSignature')}
               </Button>
             </Empty>
           </Card>
@@ -120,11 +120,11 @@ export const SignatureListPage: React.FC = () => {
                       icon={<EditOutlined />}
                       onClick={() => handleEdit(signature.id, signature.name)}
                     >
-                      {t('common.edit', 'Edit')}
+                      {t('common.edit', { ns: 'translation' })}
                     </Button>,
                     signature.isDefault ? (
                       <Tag key="default" color="success" icon={<CheckCircleOutlined />}>
-                        {t('signature.default', 'Default')}
+                        {t('default')}
                       </Tag>
                     ) : (
                       <Button
@@ -134,16 +134,16 @@ export const SignatureListPage: React.FC = () => {
                         onClick={() => handleSetDefault(signature.id)}
                         loading={isUpdating}
                       >
-                        {t('signature.setAsDefault', 'Set as Default')}
+                        {t('setAsDefault')}
                       </Button>
                     ),
                     <Popconfirm
                       key="delete"
-                      title={t('signature.confirmDelete', 'Delete this signature?')}
-                      description={t('signature.deleteWarning', 'This action cannot be undone')}
+                      title={t('confirmDelete')}
+                      description={t('deleteWarning')}
                       onConfirm={() => handleDelete(signature.id)}
-                      okText={t('common.yes', 'Yes')}
-                      cancelText={t('common.no', 'No')}
+                      okText={t('common.yes', { ns: 'translation' })}
+                      cancelText={t('common.no', { ns: 'translation' })}
                     >
                       <Button
                         type="text"
@@ -151,7 +151,7 @@ export const SignatureListPage: React.FC = () => {
                         icon={<DeleteOutlined />}
                         loading={isDeleting}
                       >
-                        {t('common.delete', 'Delete')}
+                        {t('common.delete', { ns: 'translation' })}
                       </Button>
                     </Popconfirm>,
                   ]}
@@ -159,17 +159,17 @@ export const SignatureListPage: React.FC = () => {
                   <Space direction="vertical" size="small" style={{ width: '100%' }}>
                     {/* Name */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Text strong>{signature.name || `${t('signature.signature', 'Signature')} ${signature.id.slice(0, 8)}`}</Text>
+                      <Text strong>{signature.name || `${t('signature')} ${signature.id.slice(0, 8)}`}</Text>
                       {signature.isDefault && (
                         <Tag color="success" icon={<CheckCircleOutlined />}>
-                          {t('signature.default', 'Default')}
+                          {t('default')}
                         </Tag>
                       )}
                     </div>
 
                     {/* Type */}
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                      {t('signature.type', 'Type')}: {signature.type}
+                      {t('type')}: {signature.type}
                     </Text>
 
                     {/* Preview - Larger for A4 documents */}
@@ -206,17 +206,17 @@ export const SignatureListPage: React.FC = () => {
 
       {/* Edit Name Modal */}
       <Modal
-        title={t('signature.editName', 'Edit Signature Name')}
+        title={t('editName')}
         open={!!editingId}
         onOk={handleSaveEdit}
         onCancel={() => setEditingId(null)}
-        okText={t('common.save', 'Save')}
-        cancelText={t('common.cancel', 'Cancel')}
+        okText={t('common.save', { ns: 'translation' })}
+        cancelText={t('common.cancel', { ns: 'translation' })}
       >
         <Input
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
-          placeholder={t('signature.signatureName', 'Signature name')}
+          placeholder={t('signatureName')}
           maxLength={50}
         />
       </Modal>

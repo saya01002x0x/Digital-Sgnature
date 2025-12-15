@@ -22,7 +22,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
   onFileSelect,
   disabled = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['documents', 'translation']);
   const [isLoadingSample, setIsLoadingSample] = React.useState(false);
 
   const handleLoadSample = async () => {
@@ -37,7 +37,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
       onFileSelect(file);
     } catch (error) {
       console.error('Error loading sample:', error);
-      message.error(t('documents.loadSampleError', 'Failed to load sample document'));
+      message.error(t('loadSampleError'));
     } finally {
       setIsLoadingSample(false);
     }
@@ -53,7 +53,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
       const validation = validatePDFUpload(file);
 
       if (!validation.valid) {
-        message.error(validation.error || t('documents.uploadError', 'Upload failed'));
+        message.error(validation.error || t('uploadError'));
         return false;
       }
 
@@ -69,7 +69,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
         if (validation.valid) {
           onFileSelect(file);
         } else {
-          message.error(validation.error || t('documents.uploadError', 'Upload failed'));
+          message.error(validation.error || t('uploadError'));
         }
       }
     },
@@ -82,17 +82,17 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
           <InboxOutlined style={{ fontSize: 48, color: '#1890ff' }} />
         </p>
         <p className="ant-upload-text">
-          {t('documents.uploadText', 'Click or drag PDF file to this area to upload')}
+          {t('uploadText')}
         </p>
         <p className="ant-upload-hint">
           <Text type="secondary">
-            {t('documents.uploadHint', 'Support for a single PDF file. Max size: 10MB')}
+            {t('uploadHint')}
           </Text>
         </p>
       </Dragger>
 
       <div style={{ marginTop: 16, textAlign: 'center' }}>
-        <Text type="secondary" style={{ marginRight: 8 }}>{t('documents.or', 'Or')}</Text>
+        <Text type="secondary" style={{ marginRight: 8 }}>{t('or')}</Text>
         <Button
           onClick={(e) => {
             e.stopPropagation();
@@ -101,7 +101,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
           loading={isLoadingSample}
           disabled={disabled}
         >
-          {t('documents.loadSample', 'Load Sample Document')}
+          {t('loadSample')}
         </Button>
       </div>
     </div>

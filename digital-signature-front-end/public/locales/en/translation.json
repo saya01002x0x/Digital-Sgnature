@@ -25,7 +25,8 @@
     "or": "OR",
     "tryAgain": "Try Again",
     "goHome": "Go to Home",
-    "noData": "No data available"
+    "noData": "No data available",
+    "optional": "Optional"
   },
   "auth": {
     "login": "Login",
