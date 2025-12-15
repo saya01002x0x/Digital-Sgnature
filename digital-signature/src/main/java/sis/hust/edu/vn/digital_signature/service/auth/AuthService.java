@@ -18,6 +18,7 @@ import sis.hust.edu.vn.digital_signature.repository.user.UserRepository;
 import sis.hust.edu.vn.digital_signature.security.jwt.JwtService;
 import sis.hust.edu.vn.digital_signature.security.context.UserContext;
 import sis.hust.edu.vn.digital_signature.service.file.FileService;
+import sis.hust.edu.vn.digital_signature.service.crypto.KeyPairService;
 import sis.hust.edu.vn.digital_signature.entity.enums.FileType;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class AuthService {
     private final OtpService otpService;
     private final FileService fileService;
     private final UserContext userContext;
+    private final KeyPairService keyPairService;
 
     public AuthResponse register(RegisterRequest req) {
         if (userRepository.findByUsername(req.getUsername()).isPresent()) {
@@ -62,6 +64,9 @@ public class AuthService {
         String token = jwtService.generateToken(user.getUsername());
         RefreshToken refresh = refreshTokenService.createRefreshToken(user);
         userContext.setCurrentUser(user);
+        
+        // Generate RSA key pair for digital signing
+        keyPairService.generateAndSaveKeyPair(user.getId());
 
         return new AuthResponse(token, refresh.getToken());
     }
@@ -165,6 +170,9 @@ public class AuthService {
                         .build()
         );
 
+        // Generate RSA key pair for digital signing
+        keyPairService.generateAndSaveKeyPair(user.getId());
+        
         String token = jwtService.generateToken(user.getUsername());
         RefreshToken refresh = refreshTokenService.createRefreshToken(user);
 
@@ -224,6 +232,9 @@ public class AuthService {
         }
 
         User user = userRepository.save(userBuilder.build());
+        
+        // Generate RSA key pair for digital signing
+        keyPairService.generateAndSaveKeyPair(user.getId());
 
         String token = jwtService.generateToken(user.getUsername());
         RefreshToken refresh = refreshTokenService.createRefreshToken(user);
