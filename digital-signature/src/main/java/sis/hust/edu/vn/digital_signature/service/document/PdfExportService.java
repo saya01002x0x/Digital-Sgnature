@@ -12,6 +12,7 @@ import sis.hust.edu.vn.digital_signature.entity.model.Document;
 import sis.hust.edu.vn.digital_signature.entity.model.Field;
 import sis.hust.edu.vn.digital_signature.repository.document.DocumentRepository;
 import sis.hust.edu.vn.digital_signature.repository.field.FieldRepository;
+import sis.hust.edu.vn.digital_signature.service.pdf.PdfQrService;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +31,7 @@ public class PdfExportService {
 
     private final DocumentRepository documentRepository;
     private final FieldRepository fieldRepository;
+    private final PdfQrService pdfQrService;
 
     /**
      * Generate PDF with signatures embedded at their positions
@@ -65,6 +67,17 @@ public class PdfExportService {
             log.error("Error generating PDF with signatures: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to generate PDF with signatures", e);
         }
+    }
+
+    /**
+     * Generate PDF with signatures AND verification QR code on last page
+     */
+    public byte[] generatePdfWithSignaturesAndQr(String documentId) {
+        // First generate PDF with signatures
+        byte[] pdfWithSignatures = generatePdfWithSignatures(documentId);
+        
+        // Then add QR code to the last page
+        return pdfQrService.addVerificationQrCode(pdfWithSignatures, documentId);
     }
 
     private byte[] loadPdfFromUrl(String fileUrl) throws Exception {

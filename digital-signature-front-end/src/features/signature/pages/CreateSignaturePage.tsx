@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Typography, Space, Tabs, Card, Input, Button, message } from 'antd';
+import { Typography, Space, Tabs, Card, Input, Button, message, Grid } from 'antd';
 import { ArrowLeftOutlined, EditOutlined, HighlightOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -14,11 +14,14 @@ import { useSignature } from '../hooks/useSignature';
 import { SignatureType } from '../types';
 
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 export const CreateSignaturePage: React.FC = () => {
   const { t } = useTranslation(['signature', 'translation']);
   const navigate = useNavigate();
   const { createSignature, isCreating } = useSignature();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   const [activeTab, setActiveTab] = React.useState<string>('draw');
   const [signatureName, setSignatureName] = React.useState('');
@@ -64,8 +67,8 @@ export const CreateSignaturePage: React.FC = () => {
       children: (
         <SignatureCanvas
           options={{
-            width: 600,
-            height: 200,
+            width: isMobile ? 320 : 600,
+            height: isMobile ? 150 : 200,
             backgroundColor: '#ffffff',
             penColor: '#000000',
           }}
@@ -88,7 +91,7 @@ export const CreateSignaturePage: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: '24px', maxWidth: 900, margin: '0 auto' }}>
+    <div style={{ padding: isMobile ? 16 : 24, maxWidth: 900, margin: '0 auto' }}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
         <div>

@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useRef } from 'react';
-import { Typography, Space, Row, Col, Button, message, Spin } from 'antd';
+import { Typography, Space, Row, Col, Button, message, Spin, Grid } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -23,6 +23,7 @@ import {
 } from '../services/documents.api';
 
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 export const DocumentEditorPage: React.FC = () => {
   const { t } = useTranslation(['documents', 'translation']);
@@ -30,6 +31,8 @@ export const DocumentEditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { pageCount, currentPage, setCurrentPage } = usePDFViewer();
   const containerRef = useRef<HTMLDivElement>(null);
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   const isNewDocument = id === 'new';
 
@@ -132,7 +135,7 @@ export const DocumentEditorPage: React.FC = () => {
   // Show upload UI for new document
   if (isNewDocument) {
     return (
-      <div style={{ padding: '24px', maxWidth: 800, margin: '0 auto' }}>
+      <div style={{ padding: isMobile ? 16 : 24, maxWidth: 800, margin: '0 auto' }}>
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <div>
             <Button
@@ -172,10 +175,16 @@ export const DocumentEditorPage: React.FC = () => {
   const { document, fields = [] } = documentData;
 
   return (
-    <div style={{ padding: '24px', maxWidth: 1400, margin: '0 auto' }}>
+    <div style={{ padding: isMobile ? 12 : 24, maxWidth: 1400, margin: '0 auto' }}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          justifyContent: 'space-between',
+          alignItems: isMobile ? 'stretch' : 'center',
+          gap: isMobile ? 12 : 0,
+        }}>
           <div>
             <Button
               type="text"

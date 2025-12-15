@@ -14,6 +14,7 @@ import {
   Result,
   Steps,
   Card,
+  Grid,
 } from 'antd';
 import {
   ArrowLeftOutlined,
@@ -30,11 +31,14 @@ import { useGetDocumentQuery } from '@/features/documents/services/documents.api
 import type { InviteFormValues } from '../types';
 
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 export const InviteSignersPage: React.FC = () => {
   const { t } = useTranslation('invite-signing');
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formValues, setFormValues] = useState<InviteFormValues | null>(null);
@@ -151,7 +155,7 @@ export const InviteSignersPage: React.FC = () => {
       {/* Header */}
       <div
         style={{
-          padding: '16px 24px',
+          padding: isMobile ? '12px 16px' : '16px 24px',
           background: '#fff',
           borderBottom: '1px solid #f0f0f0',
           boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
@@ -162,8 +166,10 @@ export const InviteSignersPage: React.FC = () => {
             maxWidth: 1200,
             margin: '0 auto',
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: isMobile ? 'stretch' : 'center',
+            gap: isMobile ? 12 : 0,
           }}
         >
           <Space>
@@ -185,7 +191,7 @@ export const InviteSignersPage: React.FC = () => {
       </div>
 
       {/* Steps */}
-      <div style={{ padding: '24px 24px 16px', background: '#fafafa' }}>
+      <div style={{ padding: isMobile ? '16px' : '24px 24px 16px', background: '#fafafa' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <Steps current={currentStep}>
             <Steps.Step
@@ -203,7 +209,7 @@ export const InviteSignersPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, padding: 24, background: '#fafafa' }}>
+      <div style={{ flex: 1, padding: isMobile ? 16 : 24, background: '#fafafa' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           {/* Step 1: Add Signers */}
           {currentStep === 0 && (

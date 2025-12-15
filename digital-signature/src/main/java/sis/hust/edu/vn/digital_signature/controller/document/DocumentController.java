@@ -152,5 +152,29 @@ public class DocumentController extends BaseController {
                 .headers(headers)
                 .body(pdfBytes);
     }
+
+    @GetMapping("/{id}/download-with-qr")
+    public ResponseEntity<byte[]> downloadDocumentWithQr(
+            @PathVariable String id,
+            @CurrentUser User user) {
+        // Verify user has access (owner or signer)
+        GetDocumentResponse docResponse = documentService.getDocumentWithFieldsAndSigners(id, user.getId(), user.getEmail());
+        Document document = docResponse.getDocument();
+        
+        // Generate PDF with embedded signatures and QR code
+        byte[] pdfBytes = pdfExportService.generatePdfWithSignaturesAndQr(id);
+        
+        // Set filename with proper encoding for Vietnamese characters
+        String filename = document.getTitle() + "_signed_qr.pdf";
+        String encodedFilename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replace("+", "%20");
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add("Content-Disposition", "attachment; filename=\"" + filename + "\"; filename*=UTF-8''" + encodedFilename);
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
 }
 

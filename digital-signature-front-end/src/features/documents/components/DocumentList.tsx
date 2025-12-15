@@ -171,21 +171,24 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   };
 
   return (
-    <Table
-      dataSource={documents}
-      columns={columns}
-      loading={loading}
-      pagination={paginationConfig}
-      rowKey="id"
-      locale={{
-        emptyText: (
-          <Empty
-            description={t('list.noDocuments')}
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
-        ),
-      }}
-    />
+    <div style={{ overflowX: 'auto' }}>
+      <Table
+        dataSource={documents}
+        columns={columns}
+        loading={loading}
+        pagination={paginationConfig}
+        rowKey="id"
+        scroll={{ x: 900 }}
+        locale={{
+          emptyText: (
+            <Empty
+              description={t('list.noDocuments')}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
+        }}
+      />
+    </div>
   );
 };
 
