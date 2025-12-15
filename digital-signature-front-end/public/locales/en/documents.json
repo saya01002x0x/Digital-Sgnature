@@ -46,6 +46,8 @@
     "selfSignSuccess": "Signing session created for you",
     "selfSignError": "Failed to create signing session",
     "download": "Download",
+    "downloadWithQr": "Download with QR",
+    "downloadQrSuccess": "Download with QR successful!",
     "signers": {
       "title": "Signers",
       "name": "Name",
@@ -133,5 +135,23 @@
     "sortCreatedAsc": "Oldest First",
     "sortUpdatedDesc": "Recently Updated",
     "sortUpdatedAsc": "Least Recently Updated"
+  },
+  "verify": {
+    "title": "Document Verification",
+    "verifying": "Verifying document...",
+    "errorTitle": "Verification Failed",
+    "errorSubtitle": "Unable to verify this document",
+    "goHome": "Go to Homepage",
+    "valid": "Document is Valid",
+    "validDescription": "This document has been verified and has not been modified since signing.",
+    "modified": "Document Modified!",
+    "modifiedDescription": "Warning: This document has been modified after signing. The signatures may no longer be valid.",
+    "invalid": "Verification Failed",
+    "documentTitle": "Document",
+    "signatures": "Signatures",
+    "verified": "verified",
+    "security": "Security",
+    "verifiedAt": "Verified at",
+    "poweredBy": "Powered by Digital Signature Platform"
   }
 }

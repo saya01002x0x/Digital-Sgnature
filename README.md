@@ -5,10 +5,10 @@ Hệ thống chữ ký số được xây dựng với Spring Boot (Backend) và
 ## 👥 Team
 
 - **Hà Ngọc Huy:** FE & BE
-- **Dương Đăng Quang:** FE & Tài liệu
+- **Dương Đăng Quang:** FE & Slide báo cáo
 - **Hoàng Chí Thanh:** FE & BE
-- **Trần Hoàng Dũng:** BE & Tài liệu
-- **Hoàng Nhật Minh:** BE & Tài liệu
+- **Trần Hoàng Dũng:** BE & Slide báo cáo
+- **Hoàng Nhật Minh:** BE & Slide báo cáo
 - **Nguyễn Chiêu Văn:** BE 
 
 ## 📋 Yêu cầu hệ thống

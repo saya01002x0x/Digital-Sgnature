@@ -70,6 +70,9 @@ public class SecurityConfig {
                                                 
                                                 // 3. API Public để người ngoài vào ký (quan trọng cho flow Invite)
                                                 .requestMatchers("/api/signing/**").permitAll()
+                                                
+                                                // 4. API Public cho xác minh QR code (không cần đăng nhập)
+                                                .requestMatchers("/api/public/**").permitAll()
 
                                                 // 4. Admin APIs -> BẮT BUỘC ADMIN ROLE
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
