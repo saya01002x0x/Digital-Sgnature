@@ -1,0 +1,80 @@
+# Docker Compose for CLOUD deployment (Supabase + Cloudflare R2)
+# Use this when deploying with external database and storage
+# Usage: docker-compose -f docker-compose.cloud.yml up -d --build
+
+services:
+  backend:
+    build:
+      context: ./digital-signature
+      dockerfile: Dockerfile
+      args:
+        SERVER_PORT: ${SERVER_PORT:-5555}
+    container_name: digital-signature-backend
+    restart: unless-stopped
+    environment:
+      # Database (Supabase)
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      # JWT
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-900000}
+      SERVER_PORT: ${SERVER_PORT:-5555}
+
+      # CORS & Frontend
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+      FRONTEND_URL: ${FRONTEND_URL}
+      APP_BASE_URL: ${APP_BASE_URL}
+
+      # Storage Configuration
+      STORAGE_TYPE: ${STORAGE_TYPE:-r2}
+      APP_UPLOAD_DIR: ${APP_UPLOAD_DIR:-/app/uploads}
+
+      # Cloudflare R2
+      R2_ENDPOINT: ${R2_ENDPOINT}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME}
+      R2_REGION: ${R2_REGION:-auto}
+      R2_PRESIGNED_URL_EXPIRY: ${R2_PRESIGNED_URL_EXPIRY:-60}
+
+      # PKI Crypto
+      CRYPTO_AES_KEY: ${CRYPTO_AES_KEY:-DefaultPKI32ByteAESKeyForDev!!}
+    ports:
+      - "${BACKEND_PORT:-5555}:${BACKEND_INTERNAL_PORT:-5555}"
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${SERVER_PORT:-5555}/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - digital-signature-network
+
+  frontend:
+    build:
+      context: ./digital-signature-front-end
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_APP_NAME: ${VITE_APP_NAME:-Digital Signature}
+        VITE_USE_MSW: ${VITE_USE_MSW:-false}
+        VITE_USE_REDUX_DEVTOOLS: ${VITE_USE_REDUX_DEVTOOLS:-false}
+        VITE_I18N_DEFAULT_LANG: ${VITE_I18N_DEFAULT_LANG:-vi}
+        VITE_IS_DEV: ${VITE_IS_DEV:-false}
+        VITE_IS_PROD: ${VITE_IS_PROD:-true}
+    container_name: digital-signature-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5556}:${FRONTEND_INTERNAL_PORT:-80}"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - digital-signature-network
+
+networks:
+  digital-signature-network:
+    driver: bridge

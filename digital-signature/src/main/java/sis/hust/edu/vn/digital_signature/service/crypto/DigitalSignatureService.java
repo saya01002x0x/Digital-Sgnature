@@ -2,7 +2,6 @@ package sis.hust.edu.vn.digital_signature.service.crypto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sis.hust.edu.vn.digital_signature.entity.model.DocumentSignature;
@@ -10,11 +9,8 @@ import sis.hust.edu.vn.digital_signature.entity.model.User;
 import sis.hust.edu.vn.digital_signature.entity.model.UserKeyPair;
 import sis.hust.edu.vn.digital_signature.repository.crypto.DocumentSignatureRepository;
 import sis.hust.edu.vn.digital_signature.repository.user.UserRepository;
+import sis.hust.edu.vn.digital_signature.service.storage.StorageService;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.time.LocalDateTime;
 
@@ -30,9 +26,7 @@ public class DigitalSignatureService {
     private final KeyPairService keyPairService;
     private final DocumentSignatureRepository documentSignatureRepository;
     private final UserRepository userRepository;
-
-    @Value("${app.upload.dir:uploads}")
-    private String uploadDir;
+    private final StorageService storageService;
 
     /**
      * Create a digital signature for a document during the signing process.
@@ -96,14 +90,15 @@ public class DigitalSignatureService {
     }
 
     /**
-     * Read document bytes from file storage.
+     * Read document bytes from storage.
+     * Works with both local and R2 storage.
      */
     private byte[] getDocumentBytes(String fileUrl) {
         try {
+            // Extract fileName from URL
             String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-            Path filePath = Paths.get(uploadDir, fileName);
-            return Files.readAllBytes(filePath);
-        } catch (IOException e) {
+            return storageService.download(fileName);
+        } catch (Exception e) {
             log.error("Error reading document file: {}", e.getMessage());
             throw new RuntimeException("Error reading document file", e);
         }
