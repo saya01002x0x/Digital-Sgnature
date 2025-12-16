@@ -85,16 +85,15 @@ export const SignatureListPage: React.FC = () => {
           gap: isMobile ? 12 : 0,
         }}>
           <div>
-          <Title level={isMobile ? 3 : 2}>
-            {t('mySignatures')}
-          </Title>
+            <Title level={isMobile ? 3 : 2}>
+              {t('mySignatures')}
+            </Title>
 
-          <Text
-            type="secondary"
-            style={{ fontSize: isMobile ? 12 : 14 }}
-          >
-            {t('manageSignatures')}
-          </Text>
+            <Text
+              type="secondary"
+              style={{ fontSize: isMobile ? 12 : 14 }}
+            >
+              {t('manageSignatures')}
             </Text>
           </div>
           <Button
