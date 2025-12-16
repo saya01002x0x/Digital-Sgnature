@@ -1,19 +1,22 @@
+# Docker Compose for LOCAL development (with local PostgreSQL)
+# For cloud deployment, use: docker-compose -f docker-compose.cloud.yml up -d --build
+
 services:
   postgres:
     image: postgres:16-alpine
     container_name: digital-signature-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-digital_signature_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_INTERNAL_PORT}"
+      - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-digital_signature_db}" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -30,30 +33,45 @@ services:
     container_name: digital-signature-backend
     restart: unless-stopped
     environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRATION: ${JWT_EXPIRATION}
-      SERVER_PORT: ${SERVER_PORT}
-      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
-      FRONTEND_URL: ${FRONTEND_URL}
+      # Database (local postgres)
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/digital_signature_db}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-postgres123}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      # Config cho Local Storage
-      APP_UPLOAD_DIR: ${APP_UPLOAD_DIR}
-      APP_BASE_URL: ${APP_BASE_URL}
-      # PKI Crypto Configuration
+
+      # JWT
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-key-minimum-32-characters-long!!}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-900000}
+      SERVER_PORT: ${SERVER_PORT:-5555}
+
+      # CORS & Frontend
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:5556}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5556}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:5555}
+
+      # Storage Configuration (default to local)
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      APP_UPLOAD_DIR: ${APP_UPLOAD_DIR:-/app/uploads}
+
+      # R2 Configuration (optional for local dev)
+      R2_ENDPOINT: ${R2_ENDPOINT:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME:-}
+      R2_REGION: ${R2_REGION:-auto}
+      R2_PRESIGNED_URL_EXPIRY: ${R2_PRESIGNED_URL_EXPIRY:-60}
+
+      # PKI Crypto
       CRYPTO_AES_KEY: ${CRYPTO_AES_KEY:-DefaultPKI32ByteAESKeyForDev!!}
     ports:
-      - "${BACKEND_PORT}:${BACKEND_INTERNAL_PORT}"
+      - "${BACKEND_PORT:-5555}:${BACKEND_INTERNAL_PORT:-5555}"
     depends_on:
       postgres:
         condition: service_healthy
-    # QUAN TRỌNG: Map thư mục uploads ra ngoài máy thật
     volumes:
       - ./uploads:/app/uploads
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${BACKEND_INTERNAL_PORT}/actuator/health" ]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${SERVER_PORT:-5555}/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -66,17 +84,17 @@ services:
       context: ./digital-signature-front-end
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL}
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:5555}
         VITE_APP_NAME: ${VITE_APP_NAME:-Digital Signature}
         VITE_USE_MSW: ${VITE_USE_MSW:-false}
         VITE_USE_REDUX_DEVTOOLS: ${VITE_USE_REDUX_DEVTOOLS:-false}
-        VITE_I18N_DEFAULT_LANG: ${VITE_I18N_DEFAULT_LANG:-en}
+        VITE_I18N_DEFAULT_LANG: ${VITE_I18N_DEFAULT_LANG:-vi}
         VITE_IS_DEV: ${VITE_IS_DEV:-false}
         VITE_IS_PROD: ${VITE_IS_PROD:-true}
     container_name: digital-signature-frontend
     restart: unless-stopped
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_INTERNAL_PORT}"
+      - "${FRONTEND_PORT:-5556}:${FRONTEND_INTERNAL_PORT:-80}"
     depends_on:
       backend:
         condition: service_healthy

@@ -30,5 +30,9 @@ public abstract class BaseController {
     protected <T> ResponseEntity<PageResponse<T>> successPage(String message, Page<T> page) {
         return ResponseEntity.ok(PageResponse.success(message, page));
     }
+
+    protected <T> ResponseEntity<Response<T>> badRequest(String message) {
+        return ResponseEntity.badRequest().body(Response.error(message));
+    }
 }
 
