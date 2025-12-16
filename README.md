@@ -1,5 +1,8 @@
 # Digital Signature Web Application
 
+[![CI - Docker Build](https://github.com/saya01002x0x/Digital-Sgnature/actions/workflows/ci.yml/badge.svg)](https://github.com/saya01002x0x/Digital-Sgnature/actions/workflows/ci.yml)
+[![CD - Deploy](https://github.com/saya01002x0x/Digital-Sgnature/actions/workflows/deploy.yml/badge.svg)](https://github.com/saya01002x0x/Digital-Sgnature/actions/workflows/deploy.yml)
+
 Hệ thống chữ ký số được xây dựng với Spring Boot (Backend) và React/Vite (Frontend), sử dụng Docker Compose để triển khai.
 
 ## 👥 Team

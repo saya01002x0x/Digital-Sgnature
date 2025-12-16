@@ -1,0 +1,41 @@
+name: CD - Deploy to Render
+
+on:
+  push:
+    branches: ['main']  
+
+jobs:
+  notify-deployment:
+    name: Notify Deployment Started
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🚀 Deployment triggered
+        run: |
+          echo "Deployment to Render started!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+      
+      # Optional: Thêm notification đến Discord/Slack nếu cần
+      # - name: Send notification
+      #   uses: ...
+
+  # Render sẽ tự động deploy khi detect push vào main
+  # Nếu muốn trigger thủ công, có thể dùng Render Deploy Hook
+  trigger-render-deploy:
+    name: Trigger Render Deployment
+    runs-on: ubuntu-latest
+    needs: notify-deployment
+    
+    steps:
+      - name: 📦 Render Auto-Deploy
+        run: |
+          echo "Render will automatically deploy this commit."
+          echo "Check deployment status at: https://dashboard.render.com"
+      
+      # Nếu muốn trigger thủ công qua Deploy Hook:
+      # - name: Trigger Deploy Hook
+      #   run: |
+      #     curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      #   if: secrets.RENDER_DEPLOY_HOOK_URL != ''
