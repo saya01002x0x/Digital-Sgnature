@@ -33,21 +33,13 @@ services:
         value: 900000
       
       # CORS & Frontend
+      # Note: Set these manually after deployment with actual URLs
       - key: CORS_ALLOWED_ORIGIN
-        fromService:
-          type: web
-          name: digital-signature-frontend
-          property: url
+        sync: false  # Set to: https://digital-signature-frontend.onrender.com
       - key: FRONTEND_URL
-        fromService:
-          type: web
-          name: digital-signature-frontend
-          property: url
+        sync: false  # Set to: https://digital-signature-frontend.onrender.com
       - key: APP_BASE_URL
-        fromService:
-          type: web
-          name: digital-signature-backend
-          property: url
+        sync: false  # Set to: https://digital-signature-backend.onrender.com
       
       # Storage
       - key: STORAGE_TYPE
@@ -86,11 +78,9 @@ services:
     branch: main
     
     envVars:
+      # Note: Set this manually after backend is deployed
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: digital-signature-backend
-          property: url
+        sync: false  # Set to: https://digital-signature-backend.onrender.com
       - key: VITE_APP_NAME
         value: Digital Signature
       - key: VITE_USE_MSW
