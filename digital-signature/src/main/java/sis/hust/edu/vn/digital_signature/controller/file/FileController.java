@@ -27,6 +27,7 @@ public class FileController extends BaseController {
     /**
      * Get file content directly.
      * Works for both local and R2 storage.
+     * CORS is handled globally by SecurityConfig - don't add headers here to avoid duplicates.
      */
     @GetMapping("/{fileName}")
     public ResponseEntity<Resource> getFile(@PathVariable String fileName) {
@@ -41,6 +42,8 @@ public class FileController extends BaseController {
                     .contentType(MediaType.parseMediaType(contentType))
                     .contentLength(data.length)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+                    .header(HttpHeaders.ACCEPT_RANGES, "bytes")
+                    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=3600")
                     .body(resource);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

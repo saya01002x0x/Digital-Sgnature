@@ -26,6 +26,7 @@ public class R2StorageService implements StorageService {
     private final S3Presigner s3Presigner;
     private final String bucketName;
     private final int presignedUrlExpiryMinutes;
+    private final String baseUrl; // Backend base URL for proxy endpoint
 
     public R2StorageService(
             String endpoint,
@@ -33,10 +34,12 @@ public class R2StorageService implements StorageService {
             String secretKey,
             String bucketName,
             String region,
-            int presignedUrlExpiryMinutes) {
+            int presignedUrlExpiryMinutes,
+            String baseUrl) {
         
         this.bucketName = bucketName;
         this.presignedUrlExpiryMinutes = presignedUrlExpiryMinutes;
+        this.baseUrl = baseUrl;
 
         // Create AWS credentials
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
@@ -60,7 +63,7 @@ public class R2StorageService implements StorageService {
                 .region(awsRegion)
                 .build();
 
-        log.info("R2StorageService initialized with endpoint: {}, bucket: {}", endpoint, bucketName);
+        log.info("R2StorageService initialized with endpoint: {}, bucket: {}, baseUrl: {}", endpoint, bucketName, baseUrl);
     }
 
     @Override
@@ -118,6 +121,21 @@ public class R2StorageService implements StorageService {
 
     @Override
     public String getFileUrl(String fileName) {
+        // Return backend proxy URL instead of presigned URL
+        // This solves two problems:
+        // 1. CORS issues - backend has CORS headers configured
+        // 2. URL expiration - backend always downloads fresh from R2
+        String proxyUrl = baseUrl + "/api/files/" + fileName;
+        log.debug("Generated proxy URL for {}: {}", fileName, proxyUrl);
+        return proxyUrl;
+    }
+    
+    /**
+     * Generate a presigned URL for direct R2 access (if needed for other purposes).
+     * Not used for frontend file display anymore.
+     */
+    @Deprecated
+    public String getPresignedUrl(String fileName) {
         try {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
