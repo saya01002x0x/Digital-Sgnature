@@ -21,8 +21,15 @@ Hệ thống chữ ký số được xây dựng với Spring Boot (Backend) và
 ```bash
 docker-compose up --build -d
 ```
-**Cách 2: Triển khai trên cloud (Render + Supabase + Cloudflare R2)**
+**Cách 2: Triển khai trên cloud (Supabase + Cloudflare R2)**
+
+> [!IMPORTANT]
+> **Lần đầu deploy:** Đặt `SPRING_JPA_HIBERNATE_DDL_AUTO: create` trong `docker-compose.cloud.yml` để tạo database schema.
+> 
+> **Các lần sau:** Đổi về `SPRING_JPA_HIBERNATE_DDL_AUTO: update` để bảo toàn dữ liệu.
 
 ```bash
 docker-compose -f docker-compose.cloud.yml --env-file .env.cloud up -d --build
 ```
+
+Chi tiết cấu hình cloud deployment xem tại [DEPLOY-CLOUD.md](docs/DEPLOY-CLOUD.md)
