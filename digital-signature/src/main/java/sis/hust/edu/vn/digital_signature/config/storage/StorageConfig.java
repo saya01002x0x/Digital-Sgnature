@@ -63,6 +63,7 @@ public class StorageConfig {
             log.info("R2 Endpoint: {}", r2Endpoint);
             log.info("R2 Bucket: {}", r2Bucket);
             log.info("Pre-signed URL expiry: {} minutes", r2PresignedUrlExpiryMinutes);
+            log.info("Backend base URL: {}", localBaseUrl);
             
             return new R2StorageService(
                     r2Endpoint,
@@ -70,7 +71,8 @@ public class StorageConfig {
                     r2SecretKey,
                     r2Bucket,
                     r2Region,
-                    r2PresignedUrlExpiryMinutes
+                    r2PresignedUrlExpiryMinutes,
+                    localBaseUrl  // Use same base URL as local storage for proxy endpoint
             );
         } else {
             return createLocalStorageService();

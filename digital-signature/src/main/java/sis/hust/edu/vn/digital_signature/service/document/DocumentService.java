@@ -32,6 +32,7 @@ import sis.hust.edu.vn.digital_signature.repository.field.FieldRepository;
 import sis.hust.edu.vn.digital_signature.repository.signer.SignerRepository;
 import sis.hust.edu.vn.digital_signature.repository.user.UserRepository;
 import sis.hust.edu.vn.digital_signature.service.file.FileService;
+import sis.hust.edu.vn.digital_signature.service.storage.StorageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,6 +48,7 @@ public class DocumentService {
     private final FieldRepository fieldRepository;
     private final SignerRepository signerRepository;
     private final UserRepository userRepository;
+    private final StorageService storageService;
 
     @Value("${frontend.url:http://localhost:5556}")
     private String frontendUrl;
@@ -129,11 +131,12 @@ public class DocumentService {
             .collect(Collectors.toMap(User::getId, User::getFullName));
         
         // Step 5: Convert to DocumentListItem with owner info
+        // Use refreshFileUrl to ensure all URLs are fresh proxy URLs
         List<DocumentListItem> items = documentsPage.getContent().stream()
             .map(doc -> DocumentListItem.builder()
                 .id(doc.getId())
                 .title(doc.getTitle())
-                .fileUrl(doc.getFileUrl())
+                .fileUrl(refreshFileUrl(doc.getFileUrl()))  // Refresh URL
                 .fileSize(doc.getFileSize())
                 .pageCount(doc.getPageCount())
                 .status(doc.getStatus())
@@ -174,6 +177,9 @@ public class DocumentService {
         if (!isOwner && !isSigner) {
             throw new BusinessException("Access denied. You are not the owner or a signer of this document.");
         }
+        
+        // Refresh fileUrl to ensure it's always a valid proxy URL
+        document.setFileUrl(refreshFileUrl(document.getFileUrl()));
         
         return document;
     }
@@ -255,6 +261,38 @@ public class DocumentService {
         }
         
         documentRepository.delete(document);
+    }
+
+    /**
+     * Extract fileName from any stored URL format and generate fresh proxy URL.
+     * Handles both old R2 presigned URLs and new proxy URLs.
+     * 
+     * Old format: https://xxxxx.r2.cloudflarestorage.com/uuid.pdf?X-Amz-xxx=...
+     * New format: http://localhost:5555/api/files/uuid.pdf
+     * 
+     * @param storedFileUrl URL stored in database
+     * @return Fresh proxy URL
+     */
+    public String refreshFileUrl(String storedFileUrl) {
+        if (storedFileUrl == null || storedFileUrl.isEmpty()) {
+            return storedFileUrl;
+        }
+        
+        // Extract fileName from URL
+        String fileName;
+        
+        // Check if it's an R2 presigned URL (contains query params)
+        if (storedFileUrl.contains("?")) {
+            // R2 URL: https://xxx.r2.cloudflarestorage.com/uuid.pdf?X-Amz-xxx=...
+            String pathPart = storedFileUrl.split("\\?")[0];
+            fileName = pathPart.substring(pathPart.lastIndexOf("/") + 1);
+        } else {
+            // Regular URL: http://localhost:5555/api/files/uuid.pdf
+            fileName = storedFileUrl.substring(storedFileUrl.lastIndexOf("/") + 1);
+        }
+        
+        // Generate fresh URL using StorageService
+        return storageService.getFileUrl(fileName);
     }
 }
 

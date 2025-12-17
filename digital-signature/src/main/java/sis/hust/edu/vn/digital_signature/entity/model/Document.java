@@ -23,7 +23,7 @@ public class Document extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "file_url", nullable = false)
+    @Column(name = "file_url", nullable = false, length = 1000)
     private String fileUrl;
 
     @Column(name = "file_size", nullable = false)
