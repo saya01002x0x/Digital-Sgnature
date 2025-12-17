@@ -50,10 +50,35 @@ Render will prompt you to set these **sync: false** variables:
 2. Render will:
    - Build Docker images for backend and frontend
    - Deploy both services
-   - Auto-link services (frontend → backend URLs)
    - Set up health checks
 
-### 5. Verify Deployment
+### 5. Configure Service URLs (Important!)
+
+After both services are deployed, you need to set the URLs manually:
+
+1. **Get Backend URL**:
+   - Go to `digital-signature-backend` service
+   - Copy the URL (e.g., `https://digital-signature-backend.onrender.com`)
+
+2. **Get Frontend URL**:
+   - Go to `digital-signature-frontend` service  
+   - Copy the URL (e.g., `https://digital-signature-frontend.onrender.com`)
+
+3. **Update Backend Environment Variables**:
+   - Go to `digital-signature-backend` → **Environment**
+   - Set:
+     - `CORS_ALLOWED_ORIGIN` = Frontend URL
+     - `FRONTEND_URL` = Frontend URL
+     - `APP_BASE_URL` = Backend URL
+   - Click **Save Changes** (will trigger redeploy)
+
+4. **Update Frontend Environment Variables**:
+   - Go to `digital-signature-frontend` → **Environment**
+   - Set:
+     - `VITE_API_URL` = Backend URL
+   - Click **Save Changes** (will trigger rebuild)
+
+### 6. Verify Deployment
 
 1. **Backend**: Check `https://digital-signature-backend.onrender.com/actuator/health`
 2. **Frontend**: Visit `https://digital-signature-frontend.onrender.com`
