@@ -17,6 +17,7 @@ import sis.hust.edu.vn.digital_signature.repository.document.DocumentRepository;
 import sis.hust.edu.vn.digital_signature.repository.field.FieldRepository;
 import sis.hust.edu.vn.digital_signature.repository.signer.SignerRepository;
 import sis.hust.edu.vn.digital_signature.service.crypto.DigitalSignatureService;
+import sis.hust.edu.vn.digital_signature.service.storage.StorageService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +33,7 @@ public class SignerService {
     private final DocumentRepository documentRepository;
     private final FieldRepository fieldRepository;
     private final DigitalSignatureService digitalSignatureService;
+    private final StorageService storageService;
 
     @Value("${frontend.url:http://localhost:5556}")
     private String frontendUrl;
@@ -193,6 +195,9 @@ public class SignerService {
                 .createdAt(signer.getCreatedAt())
                 .updatedAt(signer.getUpdatedAt())
                 .build();
+
+        // Refresh fileUrl to ensure it's always a valid proxy URL
+        document.setFileUrl(refreshFileUrl(document.getFileUrl()));
 
         return SigningSessionResponse.builder()
                 .document(document)
@@ -434,6 +439,27 @@ public class SignerService {
                 .signingUrl(signingUrl)
                 .signer(signerResponse)
                 .build();
+    }
+
+    /**
+     * Extract fileName from any URL format and generate fresh proxy URL.
+     * Handles both old R2 presigned URLs and new proxy URLs.
+     */
+    private String refreshFileUrl(String storedFileUrl) {
+        if (storedFileUrl == null || storedFileUrl.isEmpty()) {
+            return storedFileUrl;
+        }
+        
+        String fileName;
+        if (storedFileUrl.contains("?")) {
+            // R2 URL with query params
+            String pathPart = storedFileUrl.split("\\?")[0];
+            fileName = pathPart.substring(pathPart.lastIndexOf("/") + 1);
+        } else {
+            fileName = storedFileUrl.substring(storedFileUrl.lastIndexOf("/") + 1);
+        }
+        
+        return storageService.getFileUrl(fileName);
     }
 }
 
