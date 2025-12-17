@@ -1,0 +1,105 @@
+# Render.com Blueprint Configuration
+# Deploy Digital Signature App to Render.com
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  # Backend Service (Spring Boot)
+  - type: web
+    name: digital-signature-backend
+    runtime: docker
+    dockerfilePath: ./digital-signature/Dockerfile
+    dockerContext: ./digital-signature
+    plan: free  # Change to 'starter' or higher for production
+    region: singapore  # Closest to Vietnam
+    branch: main  # Deploy from main branch
+    
+    envVars:
+      # Database (Supabase)
+      - key: SPRING_DATASOURCE_URL
+        sync: false  # Set in Render dashboard
+      - key: SPRING_DATASOURCE_USERNAME
+        value: postgres
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      
+      # Server
+      - key: SERVER_PORT
+        value: 5555
+      
+      # JWT
+      - key: JWT_SECRET
+        generateValue: true  # Auto-generate secure secret
+      - key: JWT_EXPIRATION
+        value: 900000
+      
+      # CORS & Frontend
+      - key: CORS_ALLOWED_ORIGIN
+        fromService:
+          type: web
+          name: digital-signature-frontend
+          property: url
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: digital-signature-frontend
+          property: url
+      - key: APP_BASE_URL
+        fromService:
+          type: web
+          name: digital-signature-backend
+          property: url
+      
+      # Storage
+      - key: STORAGE_TYPE
+        value: r2
+      - key: APP_UPLOAD_DIR
+        value: /app/uploads
+      
+      # Cloudflare R2
+      - key: R2_ENDPOINT
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
+      - key: R2_REGION
+        value: auto
+      - key: R2_PRESIGNED_URL_EXPIRY
+        value: 60
+      
+      # PKI Crypto
+      - key: CRYPTO_AES_KEY
+        generateValue: true
+    
+    healthCheckPath: /actuator/health
+    
+  # Frontend Service (React + Nginx)
+  - type: web
+    name: digital-signature-frontend
+    runtime: docker
+    dockerfilePath: ./digital-signature-front-end/Dockerfile
+    dockerContext: ./digital-signature-front-end
+    plan: free
+    region: singapore
+    branch: main
+    
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: digital-signature-backend
+          property: url
+      - key: VITE_APP_NAME
+        value: Digital Signature
+      - key: VITE_USE_MSW
+        value: false
+      - key: VITE_USE_REDUX_DEVTOOLS
+        value: false
+      - key: VITE_I18N_DEFAULT_LANG
+        value: vi
+      - key: VITE_IS_DEV
+        value: false
+      - key: VITE_IS_PROD
+        value: true
