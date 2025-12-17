@@ -16,9 +16,13 @@ Hệ thống chữ ký số được xây dựng với Spring Boot (Backend) và
 
 ### Build và Chạy Docker Compose
 
-**Cách 1: Chạy trực tiếp bằng docker (khuyến nghị)**
+**Cách 1: Chạy trực tiếp bằng docker local (khuyến nghị)**
 
 ```bash
 docker-compose up --build -d
 ```
+**Cách 2: Triển khai trên cloud (Render + Supabase + Cloudflare R2)**
 
+```bash
+docker-compose -f docker-compose.cloud.yml --env-file .env.cloud up -d --build
+```
