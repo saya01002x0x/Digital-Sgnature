@@ -58,6 +58,7 @@ services:
       context: ./digital-signature-front-end
       dockerfile: Dockerfile
       args:
+        NGINX_CONFIG: local # Use local config with backend proxy
         VITE_API_URL: ${VITE_API_URL}
         VITE_APP_NAME: ${VITE_APP_NAME:-Digital Signature}
         VITE_USE_MSW: ${VITE_USE_MSW:-false}

@@ -28,9 +28,15 @@ RUN npx vite build
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 
+# Build arg to choose nginx config: "local" or "cloud"
+# Default to "cloud" for Render deployment
+ARG NGINX_CONFIG=cloud
+
 RUN rm -rf ./*
 COPY --from=build /app/dist .
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy appropriate nginx config based on build arg
+COPY nginx.${NGINX_CONFIG}.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
