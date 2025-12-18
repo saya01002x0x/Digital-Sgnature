@@ -29,13 +29,12 @@ jobs:
     needs: notify-deployment
     
     steps:
-      - name: 📦 Render Auto-Deploy
+      - name: 📦 Trigger Render Deploy Hook
+        if: github.ref == 'refs/heads/main'
         run: |
-          echo "Render will automatically deploy this commit."
-          echo "Check deployment status at: https://dashboard.render.com"
-      
-      # Nếu muốn trigger thủ công qua Deploy Hook:
-      # - name: Trigger Deploy Hook
-      #   run: |
-      #     curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-      #   if: secrets.RENDER_DEPLOY_HOOK_URL != ''
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "🚀 Triggering Render Deploy Hook..."
+            curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          else
+            echo "ℹ️ RENDER_DEPLOY_HOOK_URL not set, relying on Render auto-deploy."
+          fi
