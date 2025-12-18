@@ -78,9 +78,9 @@ services:
     branch: main
     
     envVars:
-      # Note: Set this manually after backend is deployed
+      # API URL of the backend service (Set this after backend is deployed)
       - key: VITE_API_URL
-        sync: false  # Set to: https://digital-signature-backend.onrender.com
+        sync: false  # Example: https://digital-signature-backend.onrender.com
       - key: VITE_APP_NAME
         value: Digital Signature
       - key: VITE_USE_MSW
