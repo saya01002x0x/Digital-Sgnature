@@ -66,7 +66,10 @@ public class SecurityConfig {
                                                 // 2. Các API liên quan đến File và Swagger -> CHO PHÉP HẾT
                                                 .requestMatchers("/api/files/**", "/api/api/files/**").permitAll()
                                                 .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                                                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                                                
+                                                // 3. Actuator endpoints cho Cloud Health Check (Render, Azure, etc.)
+                                                .requestMatchers("/actuator/**").permitAll()
+                                                .requestMatchers("/", "/ping", "/health").permitAll()
                                                 
                                                 // 3. API Public để người ngoài vào ký (quan trọng cho flow Invite)
                                                 .requestMatchers("/api/signing/**").permitAll()
