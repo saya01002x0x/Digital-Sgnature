@@ -2,20 +2,29 @@ package sis.hust.edu.vn.digital_signature.controller.verification;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sis.hust.edu.vn.digital_signature.controller.BaseController;
 import sis.hust.edu.vn.digital_signature.dto.common.response.Response;
-import sis.hust.edu.vn.digital_signature.dto.verification.PublicVerificationResponse;
-import sis.hust.edu.vn.digital_signature.dto.verification.VerificationResponse;
-import sis.hust.edu.vn.digital_signature.service.verification.VerificationService;
+import sis.hust.edu.vn.digital_signature.entity.model.Document;
+import sis.hust.edu.vn.digital_signature.entity.model.Signer;
+import sis.hust.edu.vn.digital_signature.exception.entity.EntityNotFoundException;
+import sis.hust.edu.vn.digital_signature.repository.document.DocumentRepository;
+import sis.hust.edu.vn.digital_signature.repository.signer.SignerRepository;
+import sis.hust.edu.vn.digital_signature.service.storage.StorageService;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Public controller for document verification.
  * Accessible without authentication for QR code scanning.
+ * 
+ * NEW FLOW: Simply display the original document for visual comparison.
  */
 @RestController
 @RequestMapping("/api/public")
@@ -23,74 +32,78 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PublicVerificationController extends BaseController {
 
-    private final VerificationService verificationService;
+    private final DocumentRepository documentRepository;
+    private final SignerRepository signerRepository;
+    private final StorageService storageService;
+    
+    @Value("${app.base-url:http://localhost:5555}")
+    private String baseUrl;
 
     /**
-     * Public endpoint for verifying a document via QR code scan.
+     * Public endpoint for viewing a document via QR code scan.
+     * Returns document info and file URL for visual comparison.
      * Does not require authentication.
      * 
-     * @param documentId The document ID to verify
-     * @return Public verification result with limited information
+     * @param documentId The document ID to view
+     * @return Document info with file URL
      */
     @GetMapping("/verify/{documentId}")
-    public ResponseEntity<Response<PublicVerificationResponse>> publicVerifyDocument(
+    public ResponseEntity<Response<Map<String, Object>>> getDocumentForVerification(
             @PathVariable String documentId) {
         
-        log.info("Public verification request for document: {}", documentId);
+        log.info("Public document view request for: {}", documentId);
         
         try {
-            // Use existing verification service
-            VerificationResponse fullResponse = verificationService.verifyDocument(documentId);
+            // Get document
+            Document document = documentRepository.findById(documentId)
+                    .orElseThrow(() -> new EntityNotFoundException("Document not found"));
             
-            // Convert to public response with limited info
-            PublicVerificationResponse publicResponse = PublicVerificationResponse.builder()
-                    .documentId(fullResponse.getDocumentId())
-                    .documentTitle(fullResponse.getDocumentTitle())
-                    .valid(fullResponse.isValid())
-                    .documentModified(fullResponse.isDocumentModified())
-                    .validSignatures(fullResponse.getValidSignatures())
-                    .totalSignatures(fullResponse.getTotalSignatures())
-                    .signerNames(fullResponse.getSignatures().stream()
-                            .map(sig -> sig.getSignerName())
-                            .collect(Collectors.toList()))
-                    .verifiedAt(LocalDateTime.now())
-                    .statusMessage(getStatusMessage(fullResponse))
-                    .build();
+            // Get signers
+            List<Signer> signers = signerRepository.findByDocumentIdOrderByOrderAsc(documentId);
             
-            return success(publicResponse);
+            // Get file URL (using backend proxy URL for CORS)
+            String fileName = document.getFileUrl().substring(document.getFileUrl().lastIndexOf("/") + 1);
+            String fileUrl = baseUrl + "/api/files/" + fileName;
+            
+            // Build response
+            Map<String, Object> response = new HashMap<>();
+            response.put("documentId", document.getId());
+            response.put("documentTitle", document.getTitle());
+            response.put("status", document.getStatus().name());
+            response.put("pageCount", document.getPageCount());
+            response.put("fileUrl", fileUrl);
+            response.put("createdAt", document.getCreatedAt());
+            response.put("completedAt", document.getCompletedAt());
+            
+            // Signer info (simplified)
+            List<Map<String, Object>> signerInfo = signers.stream()
+                    .filter(s -> "SIGNED".equals(s.getStatus().name()))
+                    .map(s -> {
+                        Map<String, Object> info = new HashMap<>();
+                        info.put("name", s.getName());
+                        info.put("signedAt", s.getSignedAt());
+                        return info;
+                    })
+                    .collect(Collectors.toList());
+            
+            response.put("signers", signerInfo);
+            response.put("totalSigners", signers.size());
+            response.put("signedCount", signerInfo.size());
+            response.put("verifiedAt", LocalDateTime.now());
+            
+            return success("Document found", response);
+            
+        } catch (EntityNotFoundException e) {
+            log.warn("Document not found for verification: {}", documentId);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("documentId", documentId);
+            errorResponse.put("error", "Document not found");
+            errorResponse.put("verifiedAt", LocalDateTime.now());
+            return badRequest("Document not found");
             
         } catch (Exception e) {
-            log.error("Public verification failed for document: {}", documentId, e);
-            
-            // Return a safe error response
-            PublicVerificationResponse errorResponse = PublicVerificationResponse.builder()
-                    .documentId(documentId)
-                    .valid(false)
-                    .verifiedAt(LocalDateTime.now())
-                    .statusMessage("Document not found or verification failed")
-                    .build();
-            
-            return success(errorResponse);
+            log.error("Error getting document for verification: {}", documentId, e);
+            return badRequest("Unable to load document");
         }
-    }
-
-    /**
-     * Generate a user-friendly status message.
-     */
-    private String getStatusMessage(VerificationResponse response) {
-        if (response.getTotalSignatures() == 0) {
-            return "No digital signatures found on this document";
-        }
-        
-        if (response.isDocumentModified()) {
-            return "WARNING: Document has been modified after signing!";
-        }
-        
-        if (response.isValid()) {
-            return String.format("Document is valid with %d verified signature(s)", 
-                    response.getValidSignatures());
-        }
-        
-        return "Document verification failed - signatures may be invalid";
     }
 }

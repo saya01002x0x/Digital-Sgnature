@@ -1,59 +1,74 @@
 /**
  * PublicVerifyPage
- * Public page for verifying documents via QR code scan
+ * Public page for viewing documents via QR code scan
+ * Shows the original PDF for visual verification
  * Accessible without authentication
  */
 
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { env } from '@/app/config/env';
 import {
     Card,
     Typography,
     Space,
     Spin,
-    Alert,
     Divider,
     Tag,
-    List,
     Result,
     Button,
+    Row,
+    Col,
+    List,
+    Grid,
 } from 'antd';
 import {
-    CheckCircleOutlined,
-    CloseCircleOutlined,
     SafetyCertificateOutlined,
     FileTextOutlined,
     UserOutlined,
-    LockOutlined,
-    WarningOutlined,
+    CalendarOutlined,
+    CheckCircleOutlined,
+    DownloadOutlined,
 } from '@ant-design/icons';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const { Title, Text, Paragraph } = Typography;
+const { useBreakpoint } = Grid;
 
-interface VerificationResult {
+interface DocumentInfo {
     documentId: string;
     documentTitle: string;
-    valid: boolean;
-    documentModified: boolean;
-    statusMessage: string;
-    validSignatures: number;
-    totalSignatures: number;
-    signerNames: string[];
+    status: string;
+    pageCount: number;
+    fileUrl: string;
+    createdAt: string;
+    completedAt: string | null;
+    signers: Array<{ name: string; signedAt: string }>;
+    totalSigners: number;
+    signedCount: number;
     verifiedAt: string;
-    hashAlgorithm: string;
-    signatureAlgorithm: string;
 }
 
 export const PublicVerifyPage: React.FC = () => {
     const { documentId } = useParams<{ documentId: string }>();
-    const { t } = useTranslation('documents');
+    const { t, i18n } = useTranslation('documents');
+    const screens = useBreakpoint();
+    const isMobile = !screens.md;
+
     const [loading, setLoading] = useState(true);
-    const [result, setResult] = useState<VerificationResult | null>(null);
+    const [docInfo, setDocInfo] = useState<DocumentInfo | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [numPages, setNumPages] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        const verifyDocument = async () => {
+        const fetchDocument = async () => {
             if (!documentId) {
                 setError('Invalid document ID');
                 setLoading(false);
@@ -61,23 +76,40 @@ export const PublicVerifyPage: React.FC = () => {
             }
 
             try {
-                const response = await fetch(`/api/public/verify/${documentId}`);
+                const response = await fetch(`${env.VITE_API_URL}/api/public/verify/${documentId}`);
                 const data = await response.json();
 
-                if (data.data) {
-                    setResult(data.data);
+                if (data.status === 200 && data.data) {
+                    setDocInfo(data.data);
                 } else {
-                    setError('Verification failed');
+                    setError(data.message || 'Document not found');
                 }
             } catch (err) {
-                setError('Unable to verify document');
+                console.error('Error fetching document:', err);
+                setError('Unable to load document');
             } finally {
                 setLoading(false);
             }
         };
 
-        verifyDocument();
+        fetchDocument();
     }, [documentId]);
+
+    const formatDate = (dateStr: string) => {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString(i18n.language === 'vi' ? 'vi-VN' : 'en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    };
+
+    const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+        setNumPages(numPages);
+    };
 
     if (loading) {
         return (
@@ -85,21 +117,23 @@ export const PublicVerifyPage: React.FC = () => {
                 <Card style={styles.card}>
                     <div style={styles.loadingContainer}>
                         <Spin size="large" />
-                        <Text style={{ marginTop: 16 }}>{t('verify.verifying', 'Verifying document...')}</Text>
+                        <Text style={{ marginTop: 16 }}>
+                            {t('verify.loading', 'Loading document...')}
+                        </Text>
                     </div>
                 </Card>
             </div>
         );
     }
 
-    if (error || !result) {
+    if (error || !docInfo) {
         return (
             <div style={styles.container}>
                 <Card style={styles.card}>
                     <Result
                         status="error"
-                        title={t('verify.errorTitle', 'Verification Failed')}
-                        subTitle={error || t('verify.errorSubtitle', 'Unable to verify this document')}
+                        title={t('verify.errorTitle', 'Document Not Found')}
+                        subTitle={error || t('verify.errorSubtitle', 'This document could not be found or accessed')}
                         extra={
                             <Link to="/">
                                 <Button type="primary">{t('verify.goHome', 'Go to Homepage')}</Button>
@@ -111,125 +145,190 @@ export const PublicVerifyPage: React.FC = () => {
         );
     }
 
-    const isValid = result.valid && !result.documentModified;
+    const isCompleted = docInfo.status === 'DONE';
 
     return (
         <div style={styles.container}>
-            <Card style={styles.card}>
-                {/* Header with Logo */}
-                <div style={styles.header}>
-                    <SafetyCertificateOutlined style={styles.logo} />
-                    <Title level={4} style={{ margin: 0 }}>
-                        {t('verify.title', 'Document Verification')}
-                    </Title>
-                </div>
-
-                <Divider />
-
-                {/* Main Result */}
-                <div style={styles.resultContainer}>
-                    {isValid ? (
-                        <>
-                            <CheckCircleOutlined style={styles.successIcon} />
-                            <Title level={3} style={styles.successText}>
-                                {t('verify.valid', 'Document is Valid')}
-                            </Title>
-                            <Paragraph type="secondary">
-                                {t('verify.validDescription', 'This document has been verified and has not been modified since signing.')}
-                            </Paragraph>
-                        </>
-                    ) : result.documentModified ? (
-                        <>
-                            <WarningOutlined style={styles.warningIcon} />
-                            <Title level={3} style={styles.warningText}>
-                                {t('verify.modified', 'Document Modified!')}
-                            </Title>
-                            <Paragraph type="danger">
-                                {t('verify.modifiedDescription', 'Warning: This document has been modified after signing. The signatures may no longer be valid.')}
-                            </Paragraph>
-                        </>
-                    ) : (
-                        <>
-                            <CloseCircleOutlined style={styles.errorIcon} />
-                            <Title level={3} style={styles.errorText}>
-                                {t('verify.invalid', 'Verification Failed')}
-                            </Title>
-                            <Paragraph type="secondary">
-                                {result.statusMessage}
-                            </Paragraph>
-                        </>
-                    )}
-                </div>
-
-                <Divider />
-
-                {/* Document Info */}
-                <div style={styles.infoSection}>
-                    <Space align="start" size={12}>
-                        <FileTextOutlined style={styles.infoIcon} />
+            <div style={{ maxWidth: 1200, width: '100%', padding: isMobile ? 8 : 24 }}>
+                {/* Header */}
+                <Card style={{ ...styles.headerCard, marginBottom: 16 }}>
+                    <div style={styles.header}>
+                        <SafetyCertificateOutlined style={styles.logo} />
                         <div>
-                            <Text type="secondary">{t('verify.documentTitle', 'Document')}</Text>
-                            <br />
-                            <Text strong>{result.documentTitle || 'Untitled'}</Text>
+                            <Title level={4} style={{ margin: 0 }}>
+                                {t('verify.pageTitle', 'Document Verification')}
+                            </Title>
+                            <Text type="secondary">
+                                {t('verify.pageSubtitle', 'View the original signed document')}
+                            </Text>
                         </div>
-                    </Space>
-                </div>
+                    </div>
+                </Card>
 
-                {/* Signatures Info */}
-                {result.totalSignatures > 0 && (
-                    <div style={styles.infoSection}>
-                        <Space align="start" size={12}>
-                            <UserOutlined style={styles.infoIcon} />
-                            <div style={{ width: '100%' }}>
-                                <Text type="secondary">{t('verify.signatures', 'Signatures')}</Text>
-                                <br />
-                                <Tag color={isValid ? 'green' : 'red'}>
-                                    {result.validSignatures} / {result.totalSignatures} {t('verify.verified', 'verified')}
-                                </Tag>
-                                {result.signerNames && result.signerNames.length > 0 && (
+                <Row gutter={[16, 16]}>
+                    {/* Left: Document Info */}
+                    <Col xs={24} lg={8}>
+                        <Card
+                            title={
+                                <Space>
+                                    <FileTextOutlined />
+                                    {t('verify.documentInfo', 'Document Info')}
+                                </Space>
+                            }
+                        >
+                            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                                {/* Title */}
+                                <div>
+                                    <Text type="secondary">{t('verify.title', 'Title')}</Text>
+                                    <br />
+                                    <Text strong style={{ fontSize: 16 }}>{docInfo.documentTitle}</Text>
+                                </div>
+
+                                {/* Status */}
+                                <div>
+                                    <Text type="secondary">{t('verify.status', 'Status')}</Text>
+                                    <br />
+                                    <Tag color={isCompleted ? 'green' : 'blue'} icon={isCompleted ? <CheckCircleOutlined /> : null}>
+                                        {isCompleted ? t('verify.completed', 'Completed') : docInfo.status}
+                                    </Tag>
+                                </div>
+
+                                {/* Signed Date */}
+                                {docInfo.completedAt && (
+                                    <div>
+                                        <Text type="secondary">{t('verify.signedDate', 'Signed Date')}</Text>
+                                        <br />
+                                        <Space>
+                                            <CalendarOutlined />
+                                            <Text>{formatDate(docInfo.completedAt)}</Text>
+                                        </Space>
+                                    </div>
+                                )}
+
+                                <Divider style={{ margin: '12px 0' }} />
+
+                                {/* Signers */}
+                                <div>
+                                    <Space>
+                                        <UserOutlined />
+                                        <Text type="secondary">
+                                            {t('verify.signedBy', 'Signed by')} ({docInfo.signedCount}/{docInfo.totalSigners})
+                                        </Text>
+                                    </Space>
                                     <List
                                         size="small"
-                                        dataSource={result.signerNames}
-                                        renderItem={(name) => (
-                                            <List.Item style={{ padding: '4px 0', border: 'none' }}>
-                                                <Text>• {name}</Text>
+                                        dataSource={docInfo.signers}
+                                        renderItem={(signer) => (
+                                            <List.Item style={{ padding: '8px 0', border: 'none' }}>
+                                                <Space direction="vertical" size={0}>
+                                                    <Text strong>{signer.name}</Text>
+                                                    <Text type="secondary" style={{ fontSize: 12 }}>
+                                                        {formatDate(signer.signedAt)}
+                                                    </Text>
+                                                </Space>
                                             </List.Item>
                                         )}
-                                        style={{ marginTop: 8 }}
+                                        locale={{ emptyText: t('verify.noSigners', 'No signers yet') }}
                                     />
-                                )}
+                                </div>
+
+                                <Divider style={{ margin: '12px 0' }} />
+
+                                {/* Download Button */}
+                                <Button
+                                    type="primary"
+                                    icon={<DownloadOutlined />}
+                                    block
+                                    onClick={() => {
+                                        window.open(docInfo.fileUrl, '_blank');
+                                    }}
+                                >
+                                    {t('verify.downloadOriginal', 'Download Original')}
+                                </Button>
+
+                                {/* Verification Note */}
+                                <Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 0 }}>
+                                    {t('verify.note', 'Compare this document with your copy to verify authenticity.')}
+                                </Paragraph>
+                            </Space>
+                        </Card>
+                    </Col>
+
+                    {/* Right: PDF Viewer */}
+                    <Col xs={24} lg={16}>
+                        <Card
+                            title={
+                                <Space>
+                                    <FileTextOutlined />
+                                    {t('verify.documentPreview', 'Document Preview')}
+                                    {numPages > 0 && (
+                                        <Text type="secondary">
+                                            ({currentPage} / {numPages})
+                                        </Text>
+                                    )}
+                                </Space>
+                            }
+                            extra={
+                                numPages > 1 && (
+                                    <Space>
+                                        <Button
+                                            size="small"
+                                            disabled={currentPage <= 1}
+                                            onClick={() => setCurrentPage(p => p - 1)}
+                                        >
+                                            ←
+                                        </Button>
+                                        <Button
+                                            size="small"
+                                            disabled={currentPage >= numPages}
+                                            onClick={() => setCurrentPage(p => p + 1)}
+                                        >
+                                            →
+                                        </Button>
+                                    </Space>
+                                )
+                            }
+                        >
+                            <div style={styles.pdfContainer}>
+                                <Document
+                                    file={docInfo.fileUrl}
+                                    onLoadSuccess={onDocumentLoadSuccess}
+                                    loading={
+                                        <div style={{ textAlign: 'center', padding: 40 }}>
+                                            <Spin />
+                                            <br />
+                                            <Text type="secondary">Loading PDF...</Text>
+                                        </div>
+                                    }
+                                    error={
+                                        <div style={{ textAlign: 'center', padding: 40 }}>
+                                            <Text type="danger">Failed to load PDF</Text>
+                                        </div>
+                                    }
+                                >
+                                    <Page
+                                        pageNumber={currentPage}
+                                        width={isMobile ? 300 : 600}
+                                        renderTextLayer={false}
+                                        renderAnnotationLayer={false}
+                                    />
+                                </Document>
                             </div>
-                        </Space>
-                    </div>
-                )}
-
-                {/* Security Info */}
-                <div style={styles.infoSection}>
-                    <Space align="start" size={12}>
-                        <LockOutlined style={styles.infoIcon} />
-                        <div>
-                            <Text type="secondary">{t('verify.security', 'Security')}</Text>
-                            <br />
-                            <Text code>{result.signatureAlgorithm}</Text>
-                            <Text type="secondary"> + </Text>
-                            <Text code>{result.hashAlgorithm}</Text>
-                        </div>
-                    </Space>
-                </div>
-
-                <Divider />
+                        </Card>
+                    </Col>
+                </Row>
 
                 {/* Footer */}
                 <div style={styles.footer}>
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                        {t('verify.verifiedAt', 'Verified at')}: {new Date(result.verifiedAt).toLocaleString()}
+                        {t('verify.verifiedAt', 'Accessed at')}: {formatDate(docInfo.verifiedAt)}
                     </Text>
                     <br />
                     <Text type="secondary" style={{ fontSize: 12 }}>
                         {t('verify.poweredBy', 'Powered by Digital Signature Platform')}
                     </Text>
                 </div>
-            </Card>
+            </div>
         </div>
     );
 };
@@ -237,13 +336,15 @@ export const PublicVerifyPage: React.FC = () => {
 const styles: { [key: string]: React.CSSProperties } = {
     container: {
         minHeight: '100vh',
-        background: 'linear-gradient(180deg, #FFFFFF 0%, #F0F5FF 100%)',
+        background: 'linear-gradient(180deg, #F0F5FF 0%, #FFFFFF 100%)',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
         padding: 16,
-        position: 'relative',
-        overflow: 'hidden',
+    },
+    headerCard: {
+        borderRadius: 16,
+        background: 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(10px)',
     },
     card: {
         maxWidth: 480,
@@ -257,10 +358,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     header: {
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
+        gap: 16,
     },
     logo: {
-        fontSize: 32,
+        fontSize: 40,
         color: '#1890ff',
     },
     loadingContainer: {
@@ -269,44 +370,19 @@ const styles: { [key: string]: React.CSSProperties } = {
         alignItems: 'center',
         padding: 40,
     },
-    resultContainer: {
-        textAlign: 'center' as const,
-        padding: '20px 0',
-    },
-    successIcon: {
-        fontSize: 64,
-        color: '#52c41a',
-    },
-    successText: {
-        color: '#52c41a',
-        marginTop: 16,
-    },
-    warningIcon: {
-        fontSize: 64,
-        color: '#faad14',
-    },
-    warningText: {
-        color: '#faad14',
-        marginTop: 16,
-    },
-    errorIcon: {
-        fontSize: 64,
-        color: '#ff4d4f',
-    },
-    errorText: {
-        color: '#ff4d4f',
-        marginTop: 16,
-    },
-    infoSection: {
-        padding: '12px 0',
-    },
-    infoIcon: {
-        fontSize: 20,
-        color: '#8c8c8c',
+    pdfContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        background: '#f5f5f5',
+        borderRadius: 8,
+        padding: 16,
+        minHeight: 400,
+        overflow: 'auto',
     },
     footer: {
         textAlign: 'center' as const,
-        paddingTop: 8,
+        marginTop: 24,
+        paddingBottom: 24,
     },
 };
 
