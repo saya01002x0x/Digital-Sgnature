@@ -209,84 +209,114 @@ public class SignerService {
 
     @Transactional
     public SigningCompleteResponse completeSigning(String token, SigningCompleteRequest request) {
-        // Validate signer exists and status = PENDING
-        Signer signer = signerRepository.findByToken(token)
-                .orElseThrow(() -> new EntityNotFoundException("Invalid signing token"));
-
-        if (signer.getStatus() != SignerStatus.PENDING) {
-            throw new BusinessException("Signing session is no longer available. Status: " + signer.getStatus());
-        }
-
-        // Update field values
-        for (FieldValue fieldValue : request.getFieldValues()) {
-            Field field = fieldRepository.findById(fieldValue.getFieldId())
-                    .orElseThrow(() -> new EntityNotFoundException("Field not found: " + fieldValue.getFieldId()));
-            
-            // Validate field belongs to this signer
-            if (!field.getSignerId().equals(signer.getId())) {
-                throw new BusinessException("Field does not belong to this signer");
-            }
-            
-            field.setValue(fieldValue.getValue());
-            fieldRepository.save(field);
-        }
-
-        // Get document for digital signature
-        Document document = documentRepository.findById(signer.getDocumentId())
-                .orElseThrow(() -> new EntityNotFoundException("Document not found"));
-
-        // === PKI: Create Digital Signature ===
-        // This creates a cryptographic signature using the signer's RSA private key
-        // Only works for registered users (external signers won't have digital signatures)
+        log.info("=== START completeSigning for token: {} ===", token);
+        
         try {
-            digitalSignatureService.createDigitalSignature(
-                    document.getId(),
-                    signer.getId(),
-                    signer.getEmail(),
-                    document.getFileUrl()
-            );
+            // Validate signer exists and status = PENDING
+            log.debug("Step 1: Finding signer by token");
+            Signer signer = signerRepository.findByToken(token)
+                    .orElseThrow(() -> new EntityNotFoundException("Invalid signing token"));
+            log.debug("Found signer: {} ({})", signer.getName(), signer.getEmail());
+
+            if (signer.getStatus() != SignerStatus.PENDING) {
+                throw new BusinessException("Signing session is no longer available. Status: " + signer.getStatus());
+            }
+
+            // Update field values
+            log.debug("Step 2: Updating {} field values", request.getFieldValues().size());
+            for (FieldValue fieldValue : request.getFieldValues()) {
+                Field field = fieldRepository.findById(fieldValue.getFieldId())
+                        .orElseThrow(() -> new EntityNotFoundException("Field not found: " + fieldValue.getFieldId()));
+                
+                // Validate field belongs to this signer
+                if (!field.getSignerId().equals(signer.getId())) {
+                    throw new BusinessException("Field does not belong to this signer");
+                }
+                
+                field.setValue(fieldValue.getValue());
+                fieldRepository.save(field);
+            }
+            log.debug("Field values updated successfully");
+
+            // Get document for digital signature
+            log.debug("Step 3: Getting document");
+            Document document = documentRepository.findById(signer.getDocumentId())
+                    .orElseThrow(() -> new EntityNotFoundException("Document not found"));
+            log.debug("Found document: {} (URL: {})", document.getTitle(), document.getFileUrl());
+
+            // === PKI: Create Digital Signature ===
+            // This creates a cryptographic signature using the signer's RSA private key
+            // Only works for registered users (external signers won't have digital signatures)
+            log.debug("Step 4: Creating digital signature");
+            try {
+                digitalSignatureService.createDigitalSignature(
+                        document.getId(),
+                        signer.getId(),
+                        signer.getEmail(),
+                        document.getFileUrl()
+                );
+                log.debug("Digital signature created successfully");
+            } catch (Exception e) {
+                log.warn("Failed to create digital signature for signer {}: {}", 
+                        signer.getEmail(), e.getMessage());
+                // Continue with signing even if digital signature fails
+                // This allows external signers (without accounts) to still complete signing
+            }
+
+            // Update signer status = SIGNED, signedAt = now
+            log.debug("Step 5: Updating signer status to SIGNED");
+            signer.setStatus(SignerStatus.SIGNED);
+            signer.setSignedAt(LocalDateTime.now());
+            signer = signerRepository.save(signer);
+            log.debug("Signer status updated");
+
+            // Check if all signers signed → update document status = DONE, completedAt = now
+            log.debug("Step 6: Checking if all signers have signed");
+            long totalSigners = signerRepository.countByDocumentIdAndStatus(document.getId(), SignerStatus.PENDING);
+            if (totalSigners == 0) {
+                // All signers have signed
+                log.debug("All signers have signed, updating document status to DONE");
+                document.setStatus(DocumentStatus.DONE);
+                document.setCompletedAt(LocalDateTime.now());
+                document = documentRepository.save(document);
+            }
+
+            // Build response
+            log.debug("Step 7: Building response");
+            String signingUrl = frontendUrl + "/signing/" + signer.getToken();
+            SignerResponse signerResponse = SignerResponse.builder()
+                    .id(signer.getId())
+                    .documentId(signer.getDocumentId())
+                    .email(signer.getEmail())
+                    .name(signer.getName())
+                    .order(signer.getOrder())
+                    .status(signer.getStatus().name())
+                    .signingUrl(signingUrl)
+                    .signedAt(signer.getSignedAt())
+                    .declinedAt(signer.getDeclinedAt())
+                    .declineReason(signer.getDeclineReason())
+                    .createdAt(signer.getCreatedAt())
+                    .updatedAt(signer.getUpdatedAt())
+                    .build();
+
+            log.info("=== END completeSigning SUCCESS for token: {} ===", token);
+            return SigningCompleteResponse.builder()
+                    .signer(signerResponse)
+                    .document(document)
+                    .build();
+                    
+        } catch (EntityNotFoundException | BusinessException e) {
+            log.error("=== completeSigning FAILED (Business Error): {} ===", e.getMessage());
+            throw e;
         } catch (Exception e) {
-            log.warn("Failed to create digital signature for signer {}: {}", 
-                    signer.getEmail(), e.getMessage());
-            // Continue with signing even if digital signature fails
-            // This allows external signers (without accounts) to still complete signing
+            log.error("=== completeSigning FAILED (Unexpected Error) ===", e);
+            log.error("Exception class: {}", e.getClass().getName());
+            log.error("Exception message: {}", e.getMessage());
+            if (e.getCause() != null) {
+                log.error("Root cause: {} - {}", e.getCause().getClass().getName(), e.getCause().getMessage());
+            }
+            throw new RuntimeException("Signing failed: " + e.getMessage(), e);
         }
-
-        // Update signer status = SIGNED, signedAt = now
-        signer.setStatus(SignerStatus.SIGNED);
-        signer.setSignedAt(LocalDateTime.now());
-        signer = signerRepository.save(signer);
-
-        // Check if all signers signed → update document status = DONE, completedAt = now
-        long totalSigners = signerRepository.countByDocumentIdAndStatus(document.getId(), SignerStatus.PENDING);
-        if (totalSigners == 0) {
-            // All signers have signed
-            document.setStatus(DocumentStatus.DONE);
-            document.setCompletedAt(LocalDateTime.now());
-            document = documentRepository.save(document);
-        }
-
-        // Build response
-        String signingUrl = frontendUrl + "/signing/" + signer.getToken();
-        SignerResponse signerResponse = SignerResponse.builder()
-                .id(signer.getId())
-                .documentId(signer.getDocumentId())
-                .email(signer.getEmail())
-                .name(signer.getName())
-                .order(signer.getOrder())
-                .status(signer.getStatus().name())
-                .signingUrl(signingUrl)
-                .signedAt(signer.getSignedAt())
-                .declinedAt(signer.getDeclinedAt())
-                .declineReason(signer.getDeclineReason())
-                .createdAt(signer.getCreatedAt())
-                .updatedAt(signer.getUpdatedAt())
-                .build();
-
-        return SigningCompleteResponse.builder()
-                .signer(signerResponse)
-                .document(document)
-                .build();
     }
 
 // File: digital-signature/src/main/java/sis.hust.edu.vn/digital_signature/service/signer/SignerService.java

@@ -3,6 +3,7 @@ package sis.hust.edu.vn.digital_signature.service.crypto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import sis.hust.edu.vn.digital_signature.entity.model.DocumentSignature;
 import sis.hust.edu.vn.digital_signature.entity.model.User;
@@ -38,7 +39,7 @@ public class DigitalSignatureService {
      * @param fileUrl The document file URL
      * @return The created DocumentSignature, or null if user is not registered
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public DocumentSignature createDigitalSignature(String documentId, String signerId, 
             String signerEmail, String fileUrl) {
         
