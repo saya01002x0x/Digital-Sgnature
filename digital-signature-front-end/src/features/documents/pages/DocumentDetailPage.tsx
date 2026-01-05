@@ -3,6 +3,7 @@
  * Display document information, signers status, and timeline/audit trail
  */
 import { STORAGE_KEYS } from '@/app/config/constants';
+import { env } from '@/app/config/env';
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -269,7 +270,7 @@ export const DocumentDetailPage: React.FC = () => {
                   icon={<DownloadOutlined />}
                   onClick={() => {
                     const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-                    fetch(`/api/documents/${id}/download`, {
+                    fetch(`${env.VITE_API_URL}/api/documents/${id}/download`, {
                       headers: { 'Authorization': `Bearer ${token}` },
                     })
                       .then(res => {
@@ -300,7 +301,7 @@ export const DocumentDetailPage: React.FC = () => {
                     icon={<QrcodeOutlined />}
                     onClick={() => {
                       const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-                      fetch(`/api/documents/${id}/download-with-qr`, {
+                      fetch(`${env.VITE_API_URL}/api/documents/${id}/download-with-qr`, {
                         headers: { 'Authorization': `Bearer ${token}` },
                       })
                         .then(res => {
