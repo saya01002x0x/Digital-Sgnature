@@ -59,7 +59,7 @@ public class PublicVerificationController extends BaseController {
                     .orElseThrow(() -> new EntityNotFoundException("Document not found"));
             
             // Get signers
-            List<Signer> signers = signerRepository.findByDocumentIdOrderByOrderAsc(documentId);
+            List<Signer> signers = signerRepository.findByDocumentId(documentId);
             
             // Get file URL (using backend proxy URL for CORS)
             String fileName = document.getFileUrl().substring(document.getFileUrl().lastIndexOf("/") + 1);
