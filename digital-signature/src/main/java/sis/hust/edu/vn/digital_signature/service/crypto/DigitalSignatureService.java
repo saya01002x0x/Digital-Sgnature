@@ -96,7 +96,9 @@ public class DigitalSignatureService {
     private byte[] getDocumentBytes(String fileUrl) {
         try {
             // Extract fileName from URL
-            String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+            // Extract fileName from URL, ignoring query parameters (common in R2 presigned URLs)
+            String pathPart = fileUrl.contains("?") ? fileUrl.split("\\?")[0] : fileUrl;
+            String fileName = pathPart.substring(pathPart.lastIndexOf("/") + 1);
             return storageService.download(fileName);
         } catch (Exception e) {
             log.error("Error reading document file: {}", e.getMessage());
